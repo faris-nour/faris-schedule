@@ -490,6 +490,8 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
+const APP_VER="3.3";
+let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
  today:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
@@ -576,7 +578,10 @@ async function sync(manual){
   try{
     // find every data gist; the oldest is the shared one, others (made by a device that synced at the same time) get merged in and removed
     const lr=await gh("/gists?per_page=100"); if(lr.status===401||lr.status===403)throw new Error("auth"); if(!lr.ok)throw new Error("net");
-    const found=(await lr.json()).filter(x=>x.files&&x.files[GIST_FILE]).sort((x,y)=>new Date(x.created_at)-new Date(y.created_at));
+    const all=await lr.json();
+    let found=all.filter(x=>x.files&&x.files[GIST_FILE]).sort((x,y)=>new Date(x.created_at)-new Date(y.created_at));
+    if(!found.length&&L.gistId){const t=await gh("/gists/"+L.gistId);if(t.ok){const j=await t.json();found=[{id:j.id,created_at:j.created_at}]}}
+    DIAG.found=`${found.length} من ${all.length}`;
     let remote={}, main=found[0];
     for(const g of found){
       const r=await gh("/gists/"+g.id); if(!r.ok)continue;
@@ -587,17 +592,19 @@ async function sync(manual){
     if(!main){
       const c=await gh("/gists",{method:"POST",body:JSON.stringify({description:"Faris schedule data (private)",public:false,files:{[GIST_FILE]:{content:mj}}})});
       if(c.status===401||c.status===403)throw new Error("auth"); if(!c.ok)throw new Error("net");
+      const cj=await c.json(); L.gistId=cj.id; DIAG.main=cj.id.slice(0,7)+" (جديد)";
     } else {
       const p=await gh("/gists/"+main.id,{method:"PATCH",body:JSON.stringify({files:{[GIST_FILE]:{content:mj}}})});
       if(!p.ok)throw new Error(p.status===401||p.status===403?"auth":"net");
       for(const g of found.slice(1)){try{await gh("/gists/"+g.id,{method:"DELETE"})}catch(e){}}
-      L.gistId=main.id;
+      L.gistId=main.id; DIAG.main=main.id.slice(0,7);
     }
     const changed=mj!==JSON.stringify(D);
     D=merged; LS.set("fs-data3",D); try{if(window.saveData)window.saveData(mj)}catch(e){}
-    L.lastSync=Date.now(); saveL(); syncState={s:"ok"};
+    L.lastSync=Date.now(); saveL(); syncState={s:"ok"}; DIAG.err=""; DIAG.at=Date.now(); DIAG.counts=["q","att","st","gr","ln","pm"].map(k=>live(merged[k]).length).join("/");
     if(changed)renderAll(); if(manual)toast("اتزامن ✓");
   }catch(e){
+    DIAG.err=String(e&&e.message||e);
     syncState={s:"err",msg:e.message==="auth"?"المفتاح غلط أو مالوش صلاحية Gists":"التزامن فشل، هيحاول تاني"};
     if(manual)toast(syncState.msg);
   }finally{ syncing=false; renderSync(); if(syncAgain){syncAgain=false;setTimeout(sync,500)} }
@@ -847,6 +854,8 @@ function vSettings(){
    :`<ol class="steps"><li>افتح <b>github.com/settings/personal-access-tokens/new</b></li><li>في <b>Token name</b> اكتب faris-schedule، وفي <b>Expiration</b> اختار مدة طويلة</li><li>من <b>Permissions</b> افتح <b>Account permissions</b> واختار <b>Gists: Read and write</b></li><li>اضغط <b>Generate token</b> وانسخ المفتاح اللي بيبدأ بـ github_pat_</li><li>الصقه هنا، مرة على اللاب ومرة على الموبايل</li></ol>
    <form class="f" id="tf" style="margin-top:12px" novalidate><div class="field"><label for="tk">مفتاح GitHub</label><input id="tk" type="password" autocomplete="off" dir="ltr" placeholder="github_pat_..."></div><div class="err" id="terr"></div><button class="btn" type="submit">تشغيل التزامن</button></form>`}
   </section>
+  ${L.token?`<section class="panel"><div class="head"><div><h3>تفاصيل التزامن</h3><p>صوّرها لو التزامن مش شغال</p></div></div>
+   <ul class="kv" id="diag"><li><span>نسخة البرنامج</span><b class="en">${APP_VER}</b></li><li><span>ملفات البيانات اللي لقاها</span><b class="en">${DIAG.found}</b></li><li><span>الملف المستخدم</span><b class="en">${DIAG.main}</b></li><li><span>البيانات (كويزات/حضور/مذاكرة/درجات/روابط/مؤقت)</span><b class="en">${DIAG.counts||"-"}</b></li><li><span>آخر خطأ</span><b class="en">${esc(DIAG.err)||"مفيش"}</b></li></ul></section>`:""}
   <section class="panel"><div class="head"><div><h3>${ico("bell")}التنبيهات</h3><p>بتظهر والبرنامج مفتوح أو شغّال في الخلفية</p></div></div>
    <div class="setrow"><div class="t"><b>تنبيه قبل المواعيد والكويزات</b><div>${perm==="denied"?"التنبيهات مقفولة من إعدادات الجهاز، هتظهر جوه البرنامج بس":perm==="unsupported"?"الجهاز ده مش بيدعم التنبيهات، هتظهر جوه البرنامج بس":"قبل السكشن والمحاضرة الحضوري، وقبل الكويز بيوم ويوم الكويز الصبح"}</div></div>
     <button class="btn sm ${L.notify?"ghost":""}" id="nToggle">${L.notify?"قفل التنبيهات":"شغّل التنبيهات"}</button></div>
@@ -901,7 +910,7 @@ function bind(){
     await sync(true);
     if(syncState.s==="err"){L.token="";saveL();if($("#terr"))$("#terr").textContent=syncState.msg;b.textContent="تشغيل التزامن";b.disabled=false}
     else renderView()});
-  on("syncNow","onclick",()=>sync(true));
+  on("syncNow","onclick",async()=>{await sync(true);if(L.view==="settings")renderView()});
   on("syncOff","onclick",()=>{L.token="";L.gistId="";saveL();syncState={s:"off"};renderView();toast("التزامن اتقفل على الجهاز ده")});
   on("nToggle","onclick",async()=>{if(L.notify){L.notify=false;saveL();renderView();return}
     if("Notification" in window&&Notification.permission==="default"){try{await Notification.requestPermission()}catch(e){}}
