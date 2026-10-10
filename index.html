@@ -497,7 +497,7 @@ const I={
  quiz:'<path d="M9 4h6l1 2h3v15H5V6h3z"/><path d="M9 12l2 2 4-4"/>',
  study:'<path d="M12 6c-2-1.5-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.5 12 6z"/><path d="M12 6v14.5"/>',
  courses:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
- settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+ settings:'<path d="M12.2 2h-.4a2 2 0 0 0-2 2v.2a2 2 0 0 1-1 1.7l-.4.3a2 2 0 0 1-2 0l-.2-.1a2 2 0 0 0-2.7.7l-.2.4a2 2 0 0 0 .7 2.7l.2.1a2 2 0 0 1 1 1.7v.5a2 2 0 0 1-1 1.7l-.2.1a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.2-.1a2 2 0 0 1 2 0l.4.3a2 2 0 0 1 1 1.7v.2a2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2v-.2a2 2 0 0 1 1-1.7l.4-.3a2 2 0 0 1 2 0l.2.1a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.2-.1a2 2 0 0 1-1-1.7v-.5a2 2 0 0 1 1-1.7l.2-.1a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.2.1a2 2 0 0 1-2 0l-.4-.3a2 2 0 0 1-1-1.7V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
  sys:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
@@ -574,20 +574,25 @@ async function sync(manual){
   if(syncing){syncAgain=true;return}
   syncing=true; syncState={s:"busy"}; renderSync();
   try{
-    if(!L.gistId){
-      const r=await gh("/gists?per_page=100"); if(r.status===401||r.status===403)throw new Error("auth"); if(!r.ok)throw new Error("net");
-      const g=(await r.json()).find(x=>x.files&&x.files[GIST_FILE]);
-      if(g)L.gistId=g.id;
-      else{const c=await gh("/gists",{method:"POST",body:JSON.stringify({description:"Faris schedule data (private)",public:false,files:{[GIST_FILE]:{content:JSON.stringify(D)}}})});
-        if(c.status===401||c.status===403)throw new Error("auth"); if(!c.ok)throw new Error("net"); L.gistId=(await c.json()).id}
-      saveL();
+    // find every data gist; the oldest is the shared one, others (made by a device that synced at the same time) get merged in and removed
+    const lr=await gh("/gists?per_page=100"); if(lr.status===401||lr.status===403)throw new Error("auth"); if(!lr.ok)throw new Error("net");
+    const found=(await lr.json()).filter(x=>x.files&&x.files[GIST_FILE]).sort((x,y)=>new Date(x.created_at)-new Date(y.created_at));
+    let remote={}, main=found[0];
+    for(const g of found){
+      const r=await gh("/gists/"+g.id); if(!r.ok)continue;
+      const f=(await r.json()).files[GIST_FILE]; if(!f)continue;
+      try{const txt=f.truncated?await (await fetch(f.raw_url)).text():f.content; const j=JSON.parse(txt); remote=g===main?merge(remote,j):merge(remote,j)}catch(e){}
     }
-    const r=await gh("/gists/"+L.gistId);
-    if(r.status===401||r.status===403)throw new Error("auth"); if(r.status===404){L.gistId="";saveL();throw new Error("net")} if(!r.ok)throw new Error("net");
-    const f=(await r.json()).files[GIST_FILE];
-    let remote={}; if(f){const txt=f.truncated?await (await fetch(f.raw_url)).text():f.content; try{remote=JSON.parse(txt)}catch(e){}}
     const merged=merge(D,remote), mj=JSON.stringify(merged);
-    if(mj!==JSON.stringify(remote)){const p=await gh("/gists/"+L.gistId,{method:"PATCH",body:JSON.stringify({files:{[GIST_FILE]:{content:mj}}})}); if(!p.ok)throw new Error(p.status===401||p.status===403?"auth":"net")}
+    if(!main){
+      const c=await gh("/gists",{method:"POST",body:JSON.stringify({description:"Faris schedule data (private)",public:false,files:{[GIST_FILE]:{content:mj}}})});
+      if(c.status===401||c.status===403)throw new Error("auth"); if(!c.ok)throw new Error("net");
+    } else {
+      const p=await gh("/gists/"+main.id,{method:"PATCH",body:JSON.stringify({files:{[GIST_FILE]:{content:mj}}})});
+      if(!p.ok)throw new Error(p.status===401||p.status===403?"auth":"net");
+      for(const g of found.slice(1)){try{await gh("/gists/"+g.id,{method:"DELETE"})}catch(e){}}
+      L.gistId=main.id;
+    }
     const changed=mj!==JSON.stringify(D);
     D=merged; LS.set("fs-data3",D); try{if(window.saveData)window.saveData(mj)}catch(e){}
     L.lastSync=Date.now(); saveL(); syncState={s:"ok"};
