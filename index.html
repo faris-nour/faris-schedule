@@ -222,7 +222,12 @@ form.f h4{font-size:15.5px}
 .field label{font-size:12.5px;color:var(--muted);font-weight:500}
 .field input,.field select,.field textarea,select.sel{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 12px;min-height:42px;transition:border-color .2s,box-shadow .2s}
 select.sel{width:auto;min-height:36px;padding:6px 10px;border-radius:10px}
-.field input[type="date"],.field input[type="time"]{text-align:left;font-family:var(--font-display)}
+.pick{position:relative;display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 12px;min-height:42px;color:var(--ink);transition:border-color .2s,box-shadow .2s}
+.pick svg.i{color:var(--muted);width:18px;height:18px}
+.pick .ph{color:var(--faint)}
+.pick .ph.set{color:var(--ink);font-weight:500}
+.pick:focus-within{border-color:var(--se);box-shadow:0 0 0 3px color-mix(in srgb,var(--se) 20%,transparent)}
+.field .pick input{position:absolute;inset:0;width:100%;height:100%;min-height:0;opacity:0;cursor:pointer;border:0;padding:0;margin:0}
 .field textarea{min-height:90px;resize:vertical;font-family:ui-monospace,Consolas,monospace;font-size:12px;direction:ltr}
 .field input:focus,.field select:focus,.field textarea:focus{outline:0;border-color:var(--se);box-shadow:0 0 0 3px color-mix(in srgb,var(--se) 20%,transparent)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -492,7 +497,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="3.5";
+const APP_VER="3.6";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -782,7 +787,7 @@ function vQuiz(){
    <form class="f" id="qf" novalidate><h4>إضافة معاد جديد</h4>
      <div class="field"><label for="qc">المادة</label><select id="qc">${courseOpts(p.c)}</select></div>
      <div class="field"><label>النوع</label><div class="types">${QTYPES.map((t,i)=>`<label><input type="radio" name="qtype" value="${t}"${i===0?" checked":""}><span>${t}</span></label>`).join("")}</div></div>
-     <div class="row2"><div class="field"><label for="qd">التاريخ</label><input id="qd" type="date" dir="ltr" lang="en-GB"></div><div class="field"><label for="qt">الساعة (اختياري)</label><input id="qt" type="time" dir="ltr" lang="en-GB"></div></div>
+     <div class="row2"><div class="field"><label for="qd">التاريخ</label><div class="pick">${ico("week")}<span id="qdv" class="ph">اختار التاريخ</span><input id="qd" type="date" aria-label="التاريخ"></div></div><div class="field"><label for="qt">الساعة (اختياري)</label><div class="pick">${ico("today")}<span id="qtv" class="ph">اختار الساعة</span><input id="qt" type="time" aria-label="الساعة"></div></div></div>
      <div class="field"><label for="qn">ملاحظة (اختياري)</label><input id="qn" type="text" maxlength="100" placeholder="مثلًا: محاضرة 1 و 2"></div>
      <div class="err" id="qerr"></div><button class="btn" type="submit">حفظ المعاد</button></form>
    <div class="list">
@@ -892,10 +897,15 @@ function bind(){
   $$("[data-th]").forEach(x=>x.onclick=()=>{L.theme=x.dataset.th;saveL();applyTheme();renderView()});
   $$("form input, form select").forEach(el=>el.addEventListener("input",()=>$$(".err").forEach(e=>e.textContent="")));
   const on=(id,ev,f)=>{const el=$("#"+id);if(el)el[ev]=f};
+  const qd=$("#qd"),qt=$("#qt");
+  if(qd){qd.addEventListener("change",()=>{const v=qd.value,el=$("#qdv");if(v){const d=parseD(v);el.textContent=`${d.toLocaleDateString("ar-EG",{weekday:"long"})} ${dShort(d)} ${d.getFullYear()}`;el.classList.add("set")}else{el.textContent="اختار التاريخ";el.classList.remove("set")}});
+    qd.addEventListener("click",()=>{try{qd.showPicker&&qd.showPicker()}catch(e){}})}
+  if(qt){qt.addEventListener("change",()=>{const v=qt.value,el=$("#qtv");if(v){const [h,mi]=v.split(":").map(Number);el.textContent=`${h12(h)}:${String(mi).padStart(2,"0")} ${ap(h)}`;el.classList.add("set")}else{el.textContent="اختار الساعة";el.classList.remove("set")}});
+    qt.addEventListener("click",()=>{try{qt.showPicker&&qt.showPicker()}catch(e){}})}
   on("qf","onsubmit",ev=>{ev.preventDefault();const date=$("#qd").value;
     if(!date){$("#qerr").textContent="اختار تاريخ الكويز الأول";$("#qd").focus();return}
     if(dayDiff(parseD(date),new Date())<-1){$("#qerr").textContent="التاريخ ده عدّى. اختار تاريخ جاي";return}
-    put("q",uid(),{c:$("#qc").value,type:$('input[name="qtype"]:checked').value,date,time:$("#qt").value,note:$("#qn").value.trim()});renderAll();toast("اتحفظ المعاد ✓")});
+    put("q",uid(),{c:$("#qc").value,type:$('input[name="qtype"]:checked').value,date,time:$("#qt").value?$("#qtv").textContent:"",note:$("#qn").value.trim()});renderAll();toast("اتحفظ المعاد ✓")});
   on("gf","onsubmit",ev=>{ev.preventDefault();const l=$("#gl").value.trim(),s=$("#gs").value,m=$("#gm").value;
     if(!l){$("#gerr").textContent="اكتب اسم الدرجة، مثلًا Quiz 1";return}
     if(s===""||isNaN(+s)){$("#gerr").textContent="اكتب الدرجة اللي جبتها";return}
