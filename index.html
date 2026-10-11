@@ -522,7 +522,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="4.0";
+const APP_VER="4.1";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -770,11 +770,15 @@ function slotHTML(e,ds,k,{liveNow,past,started,q}){
    </div></div>`;
 }
 function planHTML(ds){
-  if(!(ds in PLAN))return "";
+  let label="خطة المذاكرة";
+  if(!(ds in PLAN)){ // no plan for this day: show the next planned day instead
+    const nx=Object.keys(PLAN).sort().find(k=>k>ds&&PLAN[k].length); if(!nx)return "";
+    const d=parseD(nx); label=`خطة ${dayDiff(d,parseD(ds))===1?"بكره":"الجاية"} · ${d.toLocaleDateString("ar-EG",{weekday:"long"})} ${dShort(d)}`; ds=nx;
+  }
   const tasks=PLAN[ds];
-  if(!tasks.length)return `<section class="panel plan"><div class="head"><div><h3>${ico("study")}خطة المذاكرة</h3><p>إجازة من المذاكرة النهارده ✌️</p></div></div></section>`;
+  if(!tasks.length)return `<section class="panel plan"><div class="head"><div><h3>${ico("study")}${label}</h3><p>إجازة من المذاكرة النهارده ✌️</p></div></div></section>`;
   const done=tasks.filter((_,i)=>{const r=D.pl[ds+"|"+i];return r&&!r.del}).length;
-  return `<section class="panel plan"><div class="head"><div><h3>${ico("study")}خطة المذاكرة</h3><p>خلصت ${done} من ${tasks.length}</p></div><div class="progress" style="width:140px;--c:var(--ok)"><i style="width:${done/tasks.length*100}%"></i></div></div>
+  return `<section class="panel plan"><div class="head"><div><h3>${ico("study")}${label}</h3><p>خلصت ${done} من ${tasks.length}</p></div><div class="progress" style="width:140px;--c:var(--ok)"><i style="width:${done/tasks.length*100}%"></i></div></div>
    <div class="ptasks">${tasks.map(([c,t],i)=>{const k=ds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<label class="ptask${on?" on":""}" style="${c?vars(c):""}"><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="pc">${c?C[c].code:""}</span><span class="pt"><b class="en">${c?C[c].short:""}</b> ${esc(t)}</span></label>`}).join("")}</div></section>`;
 }
 function vToday(){
