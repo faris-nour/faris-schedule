@@ -502,22 +502,49 @@ const SEED=[
  {id:"seed-emb-a1",c:"EMB",type:"تسليم",date:"2026-10-25",time:"12:00 م",note:"Assignment 1 · الأسئلة على Moodle · ورقي مطبوع بس (Hard Copy) · سلّمه لـ م. عمرو جمال في سكشن الأحد"},
  {id:"seed-se-q1",c:"SE",type:"كويز",date:"2026-10-22",time:"4:00 م",note:"Quiz 1 · أول 6 محاضرات (أول 3 أسابيع) · مكان المحاضرة الحضوري · مفيش محاضرة أونلاين الأسبوع ده"}
 ];
-const PLAN={ // in-order catch-up for all 5 courses; each section right after its two lectures; quiz courses first
+const PLAN={ // catch-up phase (hand-made). Tuesday: off. Wednesday: light (college all day). Each section right after its two lectures.
  "2026-10-12":[["EMB","محاضرة 1"],["EMB","محاضرة 2"],["EMB","سكشن 1"],["COM","محاضرة 1"],["NET","محاضرة 1"]],
  "2026-10-13":[],
- "2026-10-14":[["COM","محاضرة 2"],["COM","سكشن 1"],["EMB","محاضرة 3"],["GR","محاضرة 1"]],
- "2026-10-15":[["EMB","محاضرة 4"],["EMB","سكشن 2"],["COM","محاضرة 3"],["NET","محاضرة 2"],["NET","سكشن 1"]],
- "2026-10-16":[["COM","محاضرة 4"],["COM","سكشن 2"],["SE","محاضرة 1"],["SE","محاضرة 2"],["GR","محاضرة 2"],["GR","سكشن 1"],["EMB","اكتب حل الـ Assignment على Word"]],
- "2026-10-17":[["SE","سكشن 1"],["SE","محاضرة 3"],["SE","محاضرة 4"],["SE","سكشن 2"],["NET","محاضرة 3"]],
- "2026-10-18":[["EMB","محاضرة 5"],["EMB","محاضرة 6"],["EMB","حل مسائل NRE و Manufacturing Cost"],["SE","محاضرة 5"],["GR","محاضرة 3"]],
- "2026-10-19":[["COM","محاضرة 5"],["COM","محاضرة 6"],["SE","محاضرة 6"],["NET","محاضرة 4"],["EMB","اطبع الـ Assignment"]],
+ "2026-10-14":[["COM","محاضرة 2"]],
+ "2026-10-15":[["COM","سكشن 1"],["EMB","محاضرة 3"],["EMB","محاضرة 4"],["EMB","سكشن 2"],["GR","محاضرة 1"]],
+ "2026-10-16":[["COM","محاضرة 3"],["COM","محاضرة 4"],["COM","سكشن 2"],["SE","محاضرة 1"],["SE","محاضرة 2"],["EMB","اكتب حل الـ Assignment على Word"]],
+ "2026-10-17":[["SE","سكشن 1"],["SE","محاضرة 3"],["SE","محاضرة 4"],["SE","سكشن 2"],["NET","محاضرة 2"]],
+ "2026-10-18":[["EMB","محاضرة 5"],["EMB","محاضرة 6"],["EMB","سكشن 3"],["EMB","حل مسائل NRE و Manufacturing Cost"],["GR","محاضرة 2"]],
+ "2026-10-19":[["COM","محاضرة 5"],["COM","محاضرة 6"],["SE","محاضرة 5"],["SE","محاضرة 6"],["EMB","اطبع الـ Assignment"]],
  "2026-10-20":[],
  "2026-10-21":[["COM","مراجعة سريعة قبل الكويز"],["EMB","مراجعة سريعة قبل الكويز"]],
- "2026-10-22":[["SE","مراجعة قبل الكويز"]],
- "2026-10-23":[["NET","سكشن 2"],["GR","محاضرة 4"],["GR","سكشن 2"]],
- "2026-10-24":[["NET","محاضرة 5"],["NET","محاضرة 6"],["GR","محاضرة 5"],["GR","محاضرة 6"]],
- "2026-10-25":[["EMB","سلّم الـ Assignment لـ م. عمرو جمال"]]
+ "2026-10-22":[["SE","سكشن 3"],["SE","مراجعة قبل الكويز"],["COM","سكشن 3"]],
+ "2026-10-23":[["NET","سكشن 1"],["NET","محاضرة 3"],["NET","محاضرة 4"],["NET","سكشن 2"],["GR","سكشن 1"],["GR","محاضرة 3"]],
+ "2026-10-24":[["GR","محاضرة 4"],["GR","سكشن 2"],["NET","محاضرة 5"],["NET","محاضرة 6"],["NET","سكشن 3"],["GR","محاضرة 5"]],
+ "2026-10-25":[["EMB","سلّم الـ Assignment لـ م. عمرو جمال"],["GR","محاضرة 6"],["GR","سكشن 3"]],
+ "2026-10-26":[["NET","محاضرة 7"],["GR","محاضرة 7"],["SE","سكشن 4"]]
 };
+const KEEPUP_FROM="2026-10-25"; // from here on: study every lecture/section soon after it's given
+// day it was given (0=Sat..5=Thu) -> day to study it. Tuesday & Wednesday stay free.
+function studyIdxFor(e){
+  if(e.d===3)return 6;                         // Tuesday lectures -> Friday
+  if(e.d===4)return e.t==="sc"?5:6;            // Wednesday: sections -> Thursday, lectures -> Friday
+  return e.d;                                  // same day otherwise
+}
+function keepUp(ds){
+  if(ds<KEEPUP_FROM)return [];
+  const d=parseD(ds), js=d.getDay(), si=js===5?6:idxOf(js); // Friday = 6
+  const out=[];
+  for(let back=0;back<=6;back++){
+    const g=new Date(d); g.setDate(d.getDate()-back); const gs=ymd(g); if(gs<KEEPUP_FROM)continue;
+    const gi=idxOf(g.getDay()); if(gi<0)continue;
+    E.filter(e=>e.d===gi&&studyIdxFor(e)===si&&(back===0||si>gi)&&back<7).forEach(e=>{
+      if(back>0&&(si-gi)!==back)return;
+      const w=weekNo(g);
+      const firstDay=Math.min(...E.filter(x=>x.c===e.c&&x.t!=="sc").map(x=>x.d));
+      const n=e.t==="sc"?w:(w-1)*2+(e.d===firstDay?1:2);
+      out.push([e.c,(e.t==="sc"?"سكشن ":"محاضرة ")+n]);
+    });
+  }
+  // lectures before sections, grouped by course
+  return out.sort((x,y)=>x[0].localeCompare(y[0])||(x[1].startsWith("سكشن")-y[1].startsWith("سكشن")));
+}
+const planFor=ds=>[...(PLAN[ds]||[]),...keepUp(ds)];
 const DAYS=["السبت","الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس"];
 const TYPE={lf:"محاضرة حضوري",lo:"محاضرة أونلاين",sc:"سكشن"};
 const QTYPES=["كويز","ميدترم","تسليم","عملي","فاينال"];
@@ -525,7 +552,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="4.4";
+const APP_VER="4.5";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -773,13 +800,13 @@ function slotHTML(e,ds,k,{liveNow,past,started,q}){
    </div></div>`;
 }
 function planHTML(ds){
-  let label="خطة المذاكرة";
-  if(!(ds in PLAN)){ // no plan for this day: show the next planned day instead
-    const nx=Object.keys(PLAN).sort().find(k=>k>ds&&PLAN[k].length); if(!nx)return "";
-    const d=parseD(nx); label=`خطة ${dayDiff(d,parseD(ds))===1?"بكره":"الجاية"} · ${d.toLocaleDateString("ar-EG",{weekday:"long"})} ${dShort(d)}`; ds=nx;
+  let label="خطة المذاكرة", tasks=planFor(ds);
+  if(!tasks.length){
+    let nx=null; const d0=parseD(ds);
+    for(let k=1;k<=10&&!nx;k++){const d=new Date(d0);d.setDate(d0.getDate()+k);if(planFor(ymd(d)).length)nx=ymd(d)}
+    if(!nx)return "";
+    const d=parseD(nx); label=`مفيش مذاكرة النهارده ✌️ · خطة ${dayDiff(d,d0)===1?"بكره":d.toLocaleDateString("ar-EG",{weekday:"long"})} ${dShort(d)}`; ds=nx; tasks=planFor(nx);
   }
-  const tasks=PLAN[ds];
-  if(!tasks.length)return `<section class="panel plan"><div class="head"><div><h3>${ico("study")}${label}</h3><p>إجازة من المذاكرة النهارده ✌️</p></div></div></section>`;
   const done=tasks.filter((_,i)=>{const r=D.pl[ds+"|"+i];return r&&!r.del}).length;
   return `<section class="panel plan"><div class="head"><div><h3>${ico("study")}${label}</h3><p>خلصت ${done} من ${tasks.length}</p></div><div class="progress" style="width:140px;--c:var(--ok)"><i style="width:${done/tasks.length*100}%"></i></div></div>
    <div class="ptasks">${tasks.map(([c,t],i)=>{const k=ds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<label class="ptask${on?" on":""}" style="${c?vars(c):""}"><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="pc">${c?C[c].code:""}</span><span class="pt"><b class="en">${c?C[c].short:""}</b> ${esc(t)}</span></label>`}).join("")}</div></section>`;
