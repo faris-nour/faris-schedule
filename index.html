@@ -331,7 +331,17 @@ details.box summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:
   .pring{width:190px;height:190px}
   .panel{padding:16px;border-radius:20px}
 }
-/*v31*/
+/*v31*/.plan .head h3 svg.i{color:var(--ok)}
+.ptasks{display:grid;gap:8px}
+.ptask{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:background .2s,border-color .2s}
+.ptask:hover{border-color:var(--c,var(--ink))}
+.ptask input{width:20px;height:20px;accent-color:var(--ok);flex:none}
+.ptask .pc{font-family:var(--font-display);font-weight:700;font-size:11px;padding:3px 8px;border-radius:8px;background:var(--c-bg,var(--surface-2));color:var(--c,var(--muted));direction:ltr;flex:none}
+.ptask .pt{flex:1;min-width:0;font-size:14px}
+.ptask .pt b{font-weight:500;color:var(--c,var(--ink))}
+.ptask.on{background:var(--ok-bg);border-color:transparent}
+.ptask.on .pt{text-decoration:line-through;color:var(--muted)}
+
 /* now card (v3.1) */
 .nowcard{display:grid;gap:12px}
 .nc{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:20px 22px 0;box-shadow:var(--shadow);display:grid;gap:14px}
@@ -492,6 +502,19 @@ const SEED=[
  {id:"seed-emb-a1",c:"EMB",type:"تسليم",date:"2026-10-25",time:"12:00 م",note:"Assignment 1 · الأسئلة على Moodle · ورقي مطبوع بس (Hard Copy) · سلّمه لـ م. عمرو جمال في سكشن الأحد"},
  {id:"seed-se-q1",c:"SE",type:"كويز",date:"2026-10-22",time:"4:00 م",note:"Quiz 1 · أول 6 محاضرات (أول 3 أسابيع) · مكان المحاضرة الحضوري · مفيش محاضرة أونلاين الأسبوع ده"}
 ];
+const PLAN={ // study plan until the first quizzes; each task: [course or "", text]
+ "2026-10-12":[["EMB","محاضرة 1"],["EMB","محاضرة 2"],["COM","محاضرة 1"],["SE","حضور المحاضرة الأونلاين 4–5"]],
+ "2026-10-13":[],
+ "2026-10-14":[["EMB","محاضرة 3 (في البريك 10–3)"],["EMB","محاضرة 4"],["COM","محاضرة 2"]],
+ "2026-10-15":[["COM","محاضرة 3 (في البريك 11–4)"],["COM","محاضرة 4"],["COM","سكشن 1 و2"]],
+ "2026-10-16":[["SE","محاضرة 1"],["SE","محاضرة 2"],["EMB","سكشن 1 و2"],["EMB","اكتب حل الـ Assignment على Word"]],
+ "2026-10-17":[["SE","محاضرة 3"],["SE","محاضرة 4"],["NET","محاضرة 1"],["NET","محاضرة 2"]],
+ "2026-10-18":[["GR","محاضرة 1 (في البريك 1–3)"],["GR","محاضرة 2"],["EMB","لخّص محاضرة 5 (الأونلاين)"],["COM","لخّص محاضرة 5 (الأونلاين)"]],
+ "2026-10-19":[["EMB","محاضرة 6"],["COM","محاضرة 6"],["EMB","حل مسائل NRE و Cost"],["SE","حضور المحاضرة الأونلاين 4–5"],["EMB","اطبع الـ Assignment"]],
+ "2026-10-20":[],
+ "2026-10-21":[["EMB","مراجعة سريعة (في البريك 10–3)"],["COM","مراجعة سريعة"]],
+ "2026-10-22":[["SE","محاضرة 5 (في البريك 11–4)"],["SE","محاضرة 6"],["SE","مراجعة قبل الكويز"]]
+};
 const DAYS=["السبت","الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس"];
 const TYPE={lf:"محاضرة حضوري",lo:"محاضرة أونلاين",sc:"سكشن"};
 const QTYPES=["كويز","ميدترم","تسليم","عملي","فاينال"];
@@ -499,7 +522,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="3.9";
+const APP_VER="4.0";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -542,7 +565,7 @@ function weekDates(off=0){const t=sod(new Date()),i=idxOf(t.getDay());const sat=
 const weekNo=d=>Math.floor(dayDiff(d,parseD(TERM_START))/7)+1;
 
 /* ---------- state: D is synced (keyed records with u = updated time), L is per-device ---------- */
-let D={q:{},att:{},st:{},gr:{},ln:{},pm:{}};
+let D={q:{},att:{},st:{},gr:{},ln:{},pm:{},pl:{}};
 let L={filters:{sc:true,lf:true,lo:true},theme:"system",view:"today",token:"",gistId:"",lastSync:0,notify:false,notifyLo:false,notifyMin:30,fired:{},pomo:null,lec:12};
 const live=m=>Object.entries(m||{}).filter(([,v])=>v&&!v.del).map(([id,v])=>({...v,id}));
 function put(map,id,rec){D[map][id]={...rec,u:Date.now()};saveD()}
@@ -555,7 +578,7 @@ async function loadD(){
   if(!raw) raw=LS.get("fs-data3",null);
   if(!raw){ const old=LS.get("fs-data",null); if(old&&Array.isArray(old.quizzes))raw=fromOld(old) }
   if(raw&&Array.isArray(raw.quizzes)) raw=fromOld(raw);
-  D=Object.assign({q:{},att:{},st:{},gr:{},ln:{},pm:{}},raw||{});
+  D=Object.assign({q:{},att:{},st:{},gr:{},ln:{},pm:{},pl:{}},raw||{});
   SEED.forEach(q=>{if(!D.q[q.id])D.q[q.id]={...q,u:1}});
 }
 let saveT;
@@ -746,6 +769,14 @@ function slotHTML(e,ds,k,{liveNow,past,started,q}){
     ${started?`<div class="ab"><button class="y" data-att="${attKey(ds,e)}" data-v="y" aria-pressed="${a==="y"}" title="حضرت" aria-label="حضرت">✓</button><button class="n" data-att="${attKey(ds,e)}" data-v="n" aria-pressed="${a==="n"}" title="غبت" aria-label="غبت">✕</button></div>`:""}
    </div></div>`;
 }
+function planHTML(ds){
+  if(!(ds in PLAN))return "";
+  const tasks=PLAN[ds];
+  if(!tasks.length)return `<section class="panel plan"><div class="head"><div><h3>${ico("study")}خطة المذاكرة</h3><p>إجازة من المذاكرة النهارده ✌️</p></div></div></section>`;
+  const done=tasks.filter((_,i)=>{const r=D.pl[ds+"|"+i];return r&&!r.del}).length;
+  return `<section class="panel plan"><div class="head"><div><h3>${ico("study")}خطة المذاكرة</h3><p>خلصت ${done} من ${tasks.length}</p></div><div class="progress" style="width:140px;--c:var(--ok)"><i style="width:${done/tasks.length*100}%"></i></div></div>
+   <div class="ptasks">${tasks.map(([c,t],i)=>{const k=ds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<label class="ptask${on?" on":""}" style="${c?vars(c):""}"><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="pc">${c?C[c].code:""}</span><span class="pt"><b class="en">${c?C[c].short:""}</b> ${esc(t)}</span></label>`}).join("")}</div></section>`;
+}
 function vToday(){
   const n=new Date(), ti=idxOf(n.getDay()); if(selDay===null)selDay=ti<0?0:ti;
   const wd=weekDates(wkOff), date=wd[selDay], ds=ymd(date), qs=quizzes().filter(q=>q.date===ds);
@@ -764,7 +795,7 @@ function vToday(){
    <div class="dstrip" role="tablist">${days}</div>
    <div style="margin-bottom:14px">${filtersHTML()}</div>
    ${list.length?`<div class="slots">${tl}</div>`:`<div class="empty"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg><h4>يوم فاضي</h4>مفيش مواعيد في اليوم ده مع الفلاتر الحالية.</div>`}
-   ${qs.length?`<div class="list" style="margin-top:14px">${qs.map((q,i)=>qItem(q,i)).join("")}</div>`:""}</section>`;
+   ${qs.length?`<div class="list" style="margin-top:14px">${qs.map((q,i)=>qItem(q,i)).join("")}</div>`:""}</section>${planHTML(ds)}`;
 }
 function vWeek(){
   const n=new Date(), wd=weekDates(wkOff), hours=[8,9,10,11,12,13,14,15,16,17];
@@ -894,6 +925,7 @@ function bind(){
   $$("[data-addq]").forEach(x=>x.onclick=()=>{prefill={c:x.dataset.addq};go("quiz");setTimeout(()=>$("#qd")?.focus(),80)});
   $$("[data-cc]").forEach(x=>x.onclick=()=>{selCourse=x.dataset.cc;pend=null;renderView()});
   $$("[data-sc]").forEach(x=>x.onclick=()=>{studyCourse=x.dataset.sc;renderView()});
+  $$("[data-pl]").forEach(x=>x.onchange=()=>{const k=x.dataset.pl;if(x.checked){put("pl",k,{v:1});toast("برافو ✓")}else del("pl",k);renderView()});
   $$("[data-st]").forEach(x=>x.onchange=()=>{const k=x.dataset.st;if(x.checked)put("st",k,{v:1});else del("st",k);renderView()});
   $$("[data-pomo]").forEach(x=>x.onclick=()=>pomoAct(x.dataset.pomo,+x.dataset.min));
   $$("[data-th]").forEach(x=>x.onclick=()=>{L.theme=x.dataset.th;saveL();applyTheme();renderView()});
