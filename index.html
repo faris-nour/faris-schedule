@@ -402,7 +402,7 @@ details.box summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:
 .brk::after{content:"";flex:1;height:1px;background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 12px)}
 .dstrip{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:16px;padding:2px}
 .dstrip::-webkit-scrollbar{display:none}
-.dstrip .day{flex:1 0 92px}
+.dstrip .day{flex:1 0 86px}
 @media (max-width:760px){
   .nc{padding:16px 16px 0;border-radius:20px}
   .nc-bar{margin:0 -16px}
@@ -546,13 +546,14 @@ function keepUp(ds){
 }
 const planFor=ds=>[...(PLAN[ds]||[]),...keepUp(ds)];
 const DAYS=["السبت","الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس"];
+const DAY7=[...DAYS,"الجمعة"];
 const TYPE={lf:"محاضرة حضوري",lo:"محاضرة أونلاين",sc:"سكشن"};
 const QTYPES=["كويز","ميدترم","تسليم","عملي","فاينال"];
 const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="4.5";
+const APP_VER="4.6";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -591,7 +592,7 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 function leftText(dd){ if(dd<0)return "خلص"; if(dd===0)return "النهارده"; if(dd===1)return "بكرة"; if(dd===2)return "بعد بكرة"; if(dd<=10)return `بعد ${dd} أيام`; return `بعد ${dd} يوم`;}
 const leftCls=dd=>dd<0?"past":dd<=1?"urgent":dd<=4?"soon":"";
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("on"),2600)}
-function weekDates(off=0){const t=sod(new Date()),i=idxOf(t.getDay());const sat=new Date(t);sat.setDate(t.getDate()-(i<0?-1:i)+off*7);return DAYS.map((_,k)=>{const d=new Date(sat);d.setDate(sat.getDate()+k);return d})}
+function weekDates(off=0,withFri=false){const t=sod(new Date()),i=idxOf(t.getDay());const sat=new Date(t);sat.setDate(t.getDate()-(i<0?6:i)+off*7);return (withFri?DAY7:DAYS).map((_,k)=>{const d=new Date(sat);d.setDate(sat.getDate()+k);return d})}
 const weekNo=d=>Math.floor(dayDiff(d,parseD(TERM_START))/7)+1;
 
 /* ---------- state: D is synced (keyed records with u = updated time), L is per-device ---------- */
@@ -812,10 +813,10 @@ function planHTML(ds){
    <div class="ptasks">${tasks.map(([c,t],i)=>{const k=ds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<label class="ptask${on?" on":""}" style="${c?vars(c):""}"><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="pc">${c?C[c].code:""}</span><span class="pt"><b class="en">${c?C[c].short:""}</b> ${esc(t)}</span></label>`}).join("")}</div></section>`;
 }
 function vToday(){
-  const n=new Date(), ti=idxOf(n.getDay()); if(selDay===null)selDay=ti<0?0:ti;
-  const wd=weekDates(wkOff), date=wd[selDay], ds=ymd(date), qs=quizzes().filter(q=>q.date===ds);
-  const days=DAYS.map((d,i)=>{const c=E.filter(e=>e.d===i&&vis(e)).length,hq=quizzes().some(q=>q.date===ymd(wd[i]));
-    return `<button class="day${ymd(wd[i])===ymd(n)?" today":""}" role="tab" aria-selected="${i===selDay}" data-d="${i}">${hq?'<i class="qd"></i>':""}<b>${d}</b><small class="num">${dShort(wd[i])} · ${c||"فاضي"}</small></button>`}).join("");
+  const n=new Date(), ti=idxOf(n.getDay()); if(selDay===null)selDay=ti<0?6:ti;
+  const wd=weekDates(wkOff,true), date=wd[selDay], ds=ymd(date), qs=quizzes().filter(q=>q.date===ds);
+  const days=DAY7.map((d,i)=>{const c=E.filter(e=>e.d===i&&vis(e)).length,hq=quizzes().some(q=>q.date===ymd(wd[i])),pn=planFor(ymd(wd[i])).length;
+    return `<button class="day${ymd(wd[i])===ymd(n)?" today":""}" role="tab" aria-selected="${i===selDay}" data-d="${i}">${hq?'<i class="qd"></i>':""}<b>${d}</b><small class="num">${dShort(wd[i])} · ${i===6?(pn?pn+" مذاكرة":"إجازة"):(c||"فاضي")}</small></button>`}).join("");
   const list=E.filter(e=>e.d===selDay&&vis(e)).sort((a,b)=>a.s-b.s), m=n.getHours()*60+n.getMinutes(), dd=dayDiff(date,n);
   let tl="",prev=null;
   list.forEach((e,k)=>{
@@ -824,11 +825,11 @@ function vToday(){
     tl+=slotHTML(e,ds,k,{liveNow:isT&&m>=e.s*60&&m<(e.s+1)*60,past:dd<0||(isT&&m>=(e.s+1)*60),started:dd<0||(isT&&m>=e.s*60),q:qs.find(x=>x.c===e.c)});
     prev=e.s+1;
   });
-  return `<section class="panel"><div class="head"><div><h3>${dd===0?"النهارده · ":""}${DAYS[selDay]} ${dShort(date)}</h3><p>الأسبوع ${weekNo(date)} من الترم${list.length?` · ${list.length} مواعيد`:""}</p></div>
+  return `<section class="panel"><div class="head"><div><h3>${dd===0?"النهارده · ":""}${DAY7[selDay]} ${dShort(date)}</h3><p>الأسبوع ${weekNo(date)} من الترم${list.length?` · ${list.length} مواعيد`:""}</p></div>
     <div class="wknav"><button data-wk="-1">‹ اللي فات</button>${wkOff?`<button data-wk="0">الأسبوع ده</button>`:""}<button data-wk="1">اللي جاي ›</button></div></div>
    <div class="dstrip" role="tablist">${days}</div>
    <div style="margin-bottom:14px">${filtersHTML()}</div>
-   ${list.length?`<div class="slots">${tl}</div>`:`<div class="empty"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg><h4>يوم فاضي</h4>مفيش مواعيد في اليوم ده مع الفلاتر الحالية.</div>`}
+   ${list.length?`<div class="slots">${tl}</div>`:`<div class="empty"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg><h4>${selDay===6?"الجمعة إجازة من الكلية":"يوم فاضي"}</h4>${selDay===6?"مفيش محاضرات، بس شوف خطة المذاكرة تحت.":"مفيش مواعيد في اليوم ده مع الفلاتر الحالية."}</div>`}
    ${qs.length?`<div class="list" style="margin-top:14px">${qs.map((q,i)=>qItem(q,i)).join("")}</div>`:""}</section>${planHTML(ds)}`;
 }
 function vWeek(){
