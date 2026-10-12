@@ -54,6 +54,7 @@ svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stro
 @keyframes load{to{width:100%}}
 .reveal{opacity:0;transform:translateY(14px)}
 body.ready .reveal{animation:rise .7s var(--ease) forwards;animation-delay:calc(var(--i,0) * 80ms)}
+body.settled .reveal{animation:none;opacity:1;transform:none}
 
 .shell{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}
 .side{position:sticky;top:0;height:100vh;padding:22px 16px;border-inline-start:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;gap:18px}
@@ -341,6 +342,30 @@ details.box summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:
 .pmadd select,.pmadd input{border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:12px;padding:9px 10px;font:inherit}
 .pmlist{display:grid;gap:6px}.pmrow{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;font-size:13.5px}.pmrow .dot{width:8px;height:8px;border-radius:50%;flex:none}.pmrow .muted{color:var(--muted);margin-inline-start:auto;font-size:12.5px}
 
+
+/* ---- settings v6 ---- */
+.set-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+.set-grid>section:first-child{grid-column:1/-1}
+@media (max-width:980px){.set-grid{grid-template-columns:1fr}}
+.setrow.dim{opacity:.5}
+.switch{position:relative;width:46px;height:28px;border-radius:999px;border:0;background:var(--surface-3);flex:none;transition:background .2s;padding:0}
+.switch i{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s var(--ease)}
+.switch[aria-checked="true"]{background:var(--ok)}
+.switch[aria-checked="true"] i{transform:translateX(-18px)}
+.seg{display:inline-flex;flex-wrap:wrap;gap:2px;background:var(--surface-2);border-radius:12px;padding:3px}
+.seg button{border:0;background:transparent;border-radius:9px;padding:6px 11px;font-size:13px;color:var(--muted);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(17,24,41,.12)}
+.themes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.thm{display:grid;justify-items:center;gap:6px;border:1.5px solid var(--line);border-radius:16px;padding:10px 8px 12px;background:var(--surface);font-size:13.5px;color:var(--muted)}
+.thm[aria-pressed="true"]{border-color:var(--accent);color:var(--ink);font-weight:700}
+.thm .pv{width:100%;height:54px;border-radius:10px;display:grid;grid-template-columns:1fr 2fr;grid-template-rows:1fr 1fr;gap:4px;padding:6px;background:#EEF1F8}
+.thm .pv i{border-radius:5px;background:#fff}.thm .pv i:first-child{grid-row:1/3;background:#17214A}
+.thm-dark .pv{background:#0A0E18}.thm-dark .pv i{background:#192032}.thm-dark .pv i:first-child{background:#9A94FF}
+.thm-system .pv{background:linear-gradient(90deg,#0A0E18 50%,#EEF1F8 50%)}.thm-system .pv i{background:#8b93a8}.thm-system .pv i:first-child{background:#17214A}
+.thm svg.i{width:18px;height:18px}
+ol.howto{margin:0;padding-inline-start:20px;display:grid;gap:6px;font-size:13.5px;color:var(--muted)}
+ol.howto b{color:var(--ink)}
+
 /* ---- study v5 ---- */
 .st-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;align-items:start}
 .st-grid .st-week,.st-grid .st-lec{grid-column:1/-1}
@@ -413,7 +438,7 @@ details.box summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:
 .lrow.next{border-color:var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 14%,transparent)}
 .lrow.full{background:var(--c-bg);border-color:transparent}
 .lrow.full .ln b{color:var(--c)}
-.steps{display:flex;gap:6px;flex-wrap:wrap}
+.lsteps{display:flex;gap:6px;flex-wrap:wrap}
 .stp{position:relative;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:12.5px;color:var(--muted);cursor:pointer;user-select:none;background:var(--surface);transition:background .15s,color .15s,border-color .15s}
 .stp input{position:absolute;opacity:0;pointer-events:none}
 .stp::before{content:"";width:12px;height:12px;border-radius:50%;border:1.5px solid currentColor;flex:none}
@@ -421,7 +446,7 @@ details.box summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:
 .stp.on::before{background:#fff;border-color:#fff;box-shadow:inset 0 0 0 2.5px var(--c)}
 :root[data-theme="dark"] .stp.on{color:#0A0E18}
 .stp:has(input:focus-visible){outline:2px solid var(--se);outline-offset:2px}
-@media (max-width:560px){.lrow{grid-template-columns:minmax(0,1fr) 34px}.lrow .steps{grid-column:1/-1;order:3}}
+@media (max-width:560px){.lrow{grid-template-columns:minmax(0,1fr) 34px}.lrow .lsteps{grid-column:1/-1;order:3}}
 .focus{position:fixed;inset:0;z-index:90;animation:fin .35s var(--ease);display:grid;place-items:center;align-content:center;gap:22px;background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--c) 22%,#0A0E18),#0A0E18 70%);color:#E9EDF6;padding:24px;text-align:center}
 .focus .fx{position:absolute;top:18px;inset-inline-start:18px;color:#E9EDF6;border-color:rgba(255,255,255,.2)}
 .focus .btn.ghost{color:#E9EDF6;border-color:rgba(255,255,255,.25)}
@@ -435,6 +460,9 @@ details.box summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:
 @keyframes fin{from{opacity:0}}
 @media (prefers-reduced-motion:reduce){.focus{animation:none}.pring .fg,.gm .fg,.progress i{transition:none}}
 
+.qfil{margin-bottom:6px}
+.cbtn{background:var(--c);color:#fff}:root[data-theme="dark"] .cbtn{color:#0A0E18}
+.pdone{display:flex;align-items:center;gap:8px;margin:12px 0 0;color:var(--ok);font-weight:600}
 .ptask .pc svg.i{width:16px;height:16px;display:block}
 .cico svg.i{width:28px;height:28px}
 .sbox .sq svg.i{width:22px;height:22px}
@@ -473,6 +501,8 @@ details.box summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:
 .qt b{font-family:var(--font-display);font-size:20px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .qt small{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .qt.hot{background:var(--danger-bg);border-color:transparent}
+.qbtn{text-align:right;cursor:pointer;font:inherit;color:inherit;transition:border-color .2s}.qbtn:hover{border-color:var(--ok)}
+.qt.done{background:var(--ok-bg);border-color:transparent}.qt.done b,.qt.done small{color:var(--ok)}
 .qt.hot b,.qt.hot small,.qt.hot .k{color:var(--danger)}
 
 /* today rows (v3.1) */
@@ -569,7 +599,7 @@ details.box summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:
     <section class="nowcard reveal" style="--i:1" id="hero" aria-live="polite">
       <div class="nc" id="nowBox"></div>
       <div class="quick">
-        <div class="qt"><span class="k">الساعة</span><b class="num" id="clk">--:--</b><small id="dnum"></small></div>
+        <button class="qt qbtn" id="stTile" type="button"><span class="k">مذاكرة النهارده</span><b class="num" id="stToday">0د</b><small id="stGoal"></small></button>
         <div class="qt"><span class="k">مواعيد النهارده</span><b class="num" id="todayCount">0</b><small id="todayLeft"></small></div>
         <div class="qt" id="nqTile"><span class="k">أقرب كويز</span><b id="nextQuiz">مفيش</b><small id="nextQuizW"></small></div>
       </div>
@@ -655,10 +685,16 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="5.0";
+const APP_VER="6.0";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
+ edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
+ download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+ upload:'<path d="M12 20V9M7 14l5-5 5 5M5 4h14"/>',
+ info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
+ timer:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>',
+ palette:'<path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.5-.8 1.5-1.6 0-1.2-.9-1.6-.9-2.6 0-1 .8-1.6 1.8-1.6H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/>',
  close:'<path d="M6 6l12 12M18 6 6 18"/>',
  expand:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
  check:'<path d="M5 12.5 10 17 19 7"/>',
@@ -825,8 +861,7 @@ function findNow(){
 }
 function renderHero(){
   const n=new Date(), i=idxOf(n.getDay());
-  $("#clk").innerHTML=`${h12(n.getHours())}:${String(n.getMinutes()).padStart(2,"0")} <small style="font-size:12px;font-weight:500">${ap(n.getHours())}</small>`;
-  $("#dnum").textContent=n.toLocaleDateString("ar-EG",{weekday:"long",day:"numeric",month:"long"});
+  {const tm=dayMin(n),g=L.goal||180;$("#stToday").textContent=hm(tm);$("#stGoal").textContent=tm>=g?"خلصت هدف النهارده 🎉":`فاضل ${hm(g-tm)} على الهدف`;$("#stTile").classList.toggle("done",tm>=g)}
   $("#todayM").textContent=n.toLocaleDateString("ar-EG",{weekday:"long",day:"numeric",month:"long"});
   const todays=i<0?[]:E.filter(e=>e.d===i&&vis(e)), m0=n.getHours()*60+n.getMinutes();
   $("#todayCount").textContent=todays.length;
@@ -867,16 +902,17 @@ function renderNav(){
   $("#tabbar").innerHTML=VIEWS.map(item).join("");
   $$("#nav button,#tabbar button").forEach(x=>x.onclick=()=>go(x.dataset.v));
 }
-function go(v){L.view=v;pend=null;saveL();renderView();window.scrollTo({top:0,behavior:"smooth"})}
+function go(v,noHash){if(!TITLES[v])v="today";L.view=v;pend=null;focusMode=focusMode&&v==="study";saveL();if(!noHash&&location.hash!=="#"+v)history.pushState(null,"","#"+v);renderView();window.scrollTo({top:0,behavior:"smooth"})}
+window.addEventListener("popstate",()=>{const v=location.hash.slice(1);if(TITLES[v]&&v!==L.view)go(v,true)});
 $("#setBtnM").innerHTML=ico("settings"); $("#setBtnM").onclick=()=>go("settings");
 
-let selDay=null, wkOff=0, pend=null, prefill=null, selCourse="NET", studyCourse="NET";
+let qFilter="all", selDay=null, wkOff=0, pend=null, prefill=null, selCourse="NET", studyCourse="NET";
 function renderView(){
   renderNav();
   $("#vtitle").textContent=TITLES[L.view][0]; $("#vsub").textContent=TITLES[L.view][1];
   $("#hero").hidden=!["today","week"].includes(L.view);
   $("#main").innerHTML=`<div class="view">${({today:vToday,week:vWeek,quiz:vQuiz,study:vStudy,courses:vCourses,settings:vSettings})[L.view]()}</div>`;
-  bind(); renderFocus();
+  bind(); renderFocus(); updateBadge();
   const sd=$(".dstrip .day[aria-selected=\"true\"]"), st=$(".dstrip"); if(sd&&st){const r=sd.getBoundingClientRect(),q=st.getBoundingClientRect();st.scrollLeft+=(r.left+r.width/2)-(q.left+q.width/2)}
 }
 const filtersHTML=()=>`<div class="chips" role="group" aria-label="فلترة">
@@ -906,7 +942,7 @@ function qItem(q,k){
   const d=parseD(q.date), dd=dayDiff(d,new Date());
   return `<div class="qi${dd<0?" past":""}" style="${vars(q.c)};animation-delay:${(k||0)*50}ms"><div class="date"><b class="num">${d.getDate()}</b><span>${MONTHS[d.getMonth()]}</span></div>
    <div class="info"><b>${esc(q.type)}</b><div class="cn">${C[q.c].short}</div><div class="meta">${d.toLocaleDateString("ar-EG",{weekday:"long"})}${q.time?" · "+esc(q.time):""}${q.note?" · "+esc(q.note):""}</div></div>
-   <div class="act"><span class="chiptime ${leftCls(dd)}">${leftText(dd)}</span>${delBtn("q",q.id)}</div></div>`;
+   <div class="act"><span class="chiptime ${leftCls(dd)}">${leftText(dd)}</span>${dd>=0?`<button class="del" data-ics="${q.id}" title="ضيفه لتقويم الموبايل" aria-label="ضيفه للتقويم">${ico("week")}</button>`:""}<button class="del" data-editq="${q.id}" title="تعديل" aria-label="تعديل">${ico("edit")}</button>${delBtn("q",q.id)}</div></div>`;
 }
 function slotHTML(e,ds,k,{liveNow,past,started,q}){
   const a=attOf(ds,e);
@@ -928,7 +964,8 @@ function planHTML(ds){
   }
   const done=tasks.filter((_,i)=>{const r=D.pl[ds+"|"+i];return r&&!r.del}).length;
   return `<section class="panel plan"><div class="head"><div><h3>${ico("study")}${label}</h3><p>خلصت ${done} من ${tasks.length}</p></div><div class="progress" style="width:140px;--c:var(--ok)"><i style="width:${done/tasks.length*100}%"></i></div></div>
-   <div class="ptasks">${tasks.map(([c,t],i)=>{const k=ds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<label class="ptask${on?" on":""}" style="${c?vars(c):""}"><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="pc">${c?ico(c):""}</span><span class="pt"><b class="en">${c?C[c].short:""}</b> ${esc(t)}</span></label>`}).join("")}</div></section>`;
+   <div class="ptasks">${tasks.map(([c,t],i)=>{const k=ds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<label class="ptask${on?" on":""}" style="${c?vars(c):""}"><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="pc">${c?ico(c):""}</span><span class="pt"><b class="en">${c?C[c].short:""}</b> ${esc(t)}</span></label>`}).join("")}</div>
+   ${done===tasks.length&&tasks.length?`<p class="pdone">${ico("check")}خلصت خطة اليوم كلها، برافو عليك</p>`:`<button class="btn ghost sm" data-gostudy style="margin-top:10px">${ico("play")}ابدأ تذاكر بالمؤقت</button>`}</section>`;
 }
 function vToday(){
   const n=new Date(), ti=idxOf(n.getDay()); if(selDay===null)selDay=ti<0?6:ti;
@@ -964,23 +1001,26 @@ function vWeek(){
 }
 function vQuiz(){
   const n=new Date(), up=upcoming(), past=quizzes().filter(q=>dayDiff(parseD(q.date),n)<0).sort((a,b)=>b.date.localeCompare(a.date));
-  const p=prefill||{}; prefill=null;
+  const p=prefill||{}; prefill=null; const editing=p.id&&D.q[p.id]?p.id:"";
+  const fq=q=>qFilter==="all"||q.c===qFilter;
   const big=up.filter(q=>q.type==="فاينال"||q.type==="ميدترم");
-  const wk=up.filter(q=>dayDiff(parseD(q.date),n)<=7), later=up.filter(q=>dayDiff(parseD(q.date),n)>7); let k=0;
+  const wk=up.filter(fq).filter(q=>dayDiff(parseD(q.date),n)<=7), later=up.filter(fq).filter(q=>dayDiff(parseD(q.date),n)>7); let k=0;
+  const pastF=past.filter(fq);
   return `${big.length?`<section class="panel"><div class="head"><div><h3>عدّ تنازلي للامتحانات الكبيرة</h3><p>الميدترم والفاينال</p></div></div><div class="finals">${big.map(q=>{const dd=dayDiff(parseD(q.date),n);
       return `<div class="final" style="${vars(q.c)}"><span style="font-size:12.5px">${esc(q.type)} · ${dShort(parseD(q.date))}</span><div class="big num">${dd}<small style="font-size:14px;font-weight:500"> يوم</small></div><div class="cn">${C[q.c].short}</div></div>`}).join("")}</div></section>`:""}
   <div class="grid2 q">
-   <form class="f" id="qf" novalidate><h4>إضافة معاد جديد</h4>
+   <form class="f" id="qf" novalidate data-edit="${editing}"><h4>${editing?"تعديل المعاد":"إضافة معاد جديد"}</h4>
      <div class="field"><label for="qc">المادة</label><select id="qc">${courseOpts(p.c)}</select></div>
-     <div class="field"><label>النوع</label><div class="types">${QTYPES.map((t,i)=>`<label><input type="radio" name="qtype" value="${t}"${i===0?" checked":""}><span>${t}</span></label>`).join("")}</div></div>
-     <div class="row2"><div class="field"><label for="qd">التاريخ</label><div class="pick">${ico("week")}<span id="qdv" class="ph">اختار التاريخ</span><input id="qd" type="date" aria-label="التاريخ"></div></div><div class="field"><label for="qt">الساعة (اختياري)</label><div class="pick">${ico("today")}<span id="qtv" class="ph">اختار الساعة</span><input id="qt" type="time" aria-label="الساعة"></div></div></div>
-     <div class="field"><label for="qn">ملاحظة (اختياري)</label><input id="qn" type="text" maxlength="100" placeholder="مثلًا: محاضرة 1 و 2"></div>
-     <div class="err" id="qerr"></div><button class="btn" type="submit">حفظ المعاد</button></form>
+     <div class="field"><label>النوع</label><div class="types">${QTYPES.map((t,i)=>`<label><input type="radio" name="qtype" value="${t}"${(p.type?p.type===t:i===0)?" checked":""}><span>${t}</span></label>`).join("")}</div></div>
+     <div class="row2"><div class="field"><label for="qd">التاريخ</label><div class="pick">${ico("week")}<span id="qdv" class="ph">اختار التاريخ</span><input id="qd" type="date" aria-label="التاريخ" value="${p.date||""}"></div></div><div class="field"><label for="qt">الساعة (اختياري)</label><div class="pick">${ico("today")}<span id="qtv" class="ph">اختار الساعة</span><input id="qt" type="time" aria-label="الساعة" value="${(()=>{const t=parseQTime(p.time);return t?String(t[0]).padStart(2,"0")+":"+String(t[1]).padStart(2,"0"):""})()}"></div></div></div>
+     <div class="field"><label for="qn">ملاحظة (اختياري)</label><input id="qn" type="text" maxlength="200" placeholder="مثلًا: محاضرة 1 و 2" value="${esc(p.note||"")}"></div>
+     <div class="err" id="qerr"></div><button class="btn" type="submit">${editing?"حفظ التعديل":"حفظ المعاد"}</button>${editing?`<button class="btn ghost" type="button" id="qcancel">إلغاء التعديل</button>`:""}</form>
    <div class="list">
-     ${up.length?"":`<div class="empty"><svg viewBox="0 0 24 24"><path d="M9 4h6l1 2h3v15H5V6h3z"/><path d="M9 13h6M9 17h4"/></svg><h4>مفيش كويزات جاية</h4>أول ما تعرف معاد كويز، ضيفه من الفورم.</div>`}
+     <div class="chips qfil" role="group" aria-label="فلترة حسب المادة"><button class="chip" data-qf="all" aria-pressed="${qFilter==="all"}">كل المواد</button>${Object.keys(C).map(c=>`<button class="chip c" style="${vars(c)}" data-qf="${c}" aria-pressed="${qFilter===c}"><bdi>${C[c].ab}</bdi></button>`).join("")}</div>
+     ${(wk.length||later.length)?"":`<div class="empty"><svg viewBox="0 0 24 24"><path d="M9 4h6l1 2h3v15H5V6h3z"/><path d="M9 13h6M9 17h4"/></svg><h4>${qFilter==="all"?"مفيش كويزات جاية":"مفيش مواعيد جاية للمادة دي"}</h4>أول ما تعرف معاد كويز، ضيفه من الفورم.</div>`}
      ${wk.length?`<div class="lgroup">خلال أسبوع</div>${wk.map(q=>qItem(q,k++)).join("")}`:""}
      ${later.length?`<div class="lgroup">بعد كده</div>${later.map(q=>qItem(q,k++)).join("")}`:""}
-     ${past.length?`<details class="box"><summary>اللي خلص (${past.length})</summary><div class="list" style="margin-top:8px">${past.map(q=>qItem(q,0)).join("")}</div></details>`:""}
+     ${pastF.length?`<details class="box"><summary>اللي خلص (${pastF.length})</summary><div class="list" style="margin-top:8px">${pastF.map(q=>qItem(q,0)).join("")}</div></details>`:""}
    </div></div>`;
 }
 const stOn=(c,l,s)=>{const r=D.st[`${c}|${l}|${s}`];return !!(r&&!r.del&&r.v)};
@@ -988,8 +1028,9 @@ function studyPct(c){let t=0,d=0;for(let l=1;l<=L.lec;l++)for(const [s] of STEPS
 function pomoMinutes(c,days=7){const from=Date.now()-days*864e5;return live(D.pm).filter(p=>(!c||p.c===c)&&p.at>=from).reduce((a,p)=>a+(+p.min||0),0)}
 const hm=m=>m>=60?`${Math.floor(m/60)}س${m%60?" "+m%60+"د":""}`:`${m}د`;
 const PR=95, PC=2*Math.PI*PR;
+const NOTION_C={EMB:"https://app.notion.com/p/3f3b7e72261e811aa5cdcc74066cade0"};
 const NOTES={"EMB|1":"https://app.notion.com/p/3f7b7e72261e8153a56de7a7f5c778c9","EMB|2":"https://app.notion.com/p/3f7b7e72261e81dfbd9fc1974adc328c"};
-let pomoDur=60, focusMode=false;
+let pomoDur=null, focusMode=false;
 const dayMin=(d,c)=>{const a=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),z=a+864e5;return live(D.pm).filter(p=>p.at>=a&&p.at<z&&(!c||p.c===c)).reduce((s,p)=>s+(+p.min||0),0)};
 function streak(){const t=new Date();let d=new Date(t),n=0;if(dayMin(d)<30)d.setDate(d.getDate()-1);for(let k=0;k<400;k++){if(dayMin(d)>=30){n++;d.setDate(d.getDate()-1)}else break}return n}
 const mmss=ms=>`${String(Math.floor(ms/6e4)).padStart(2,"0")}:${String(Math.floor(ms%6e4/1e3)).padStart(2,"0")}`;
@@ -1016,6 +1057,7 @@ function renderFocus(){
   f.querySelectorAll("[data-focus]").forEach(x=>x.onclick=()=>{focusMode=false;renderView()});
 }
 function vStudy(){
+  if(pomoDur==null)pomoDur=L.dur||60;
   const c=studyCourse, P=L.pomo;
   const now=new Date(), today=ymd(now), goal=L.goal||180, tmin=dayMin(now), sk=streak();
   /* focus card */
@@ -1055,7 +1097,7 @@ function vStudy(){
   let nextL=0; for(let l=1;l<=L.lec;l++){if(!STEPS.every(([s])=>stOn(c,l,s))){nextL=l;break}}
   const rows=Array.from({length:L.lec},(_,i)=>i+1).map(l=>{const n=STEPS.filter(([s])=>stOn(c,l,s)).length,all=n===STEPS.length,nt=NOTES[c+"|"+l];
     return `<div class="lrow${all?" full":""}${l===nextL?" next":""}"><div class="ln"><b>محاضرة ${l}</b>${l===nextL?`<span class="nx">اللي عليك</span>`:""}${all?`<span class="ok">${ico("check")}</span>`:""}</div>
-     <div class="steps">${STEPS.map(([s,t])=>`<label class="stp${stOn(c,l,s)?" on":""}"><input type="checkbox" data-st="${c}|${l}|${s}" ${stOn(c,l,s)?"checked":""}>${t}</label>`).join("")}</div>
+     <div class="lsteps">${STEPS.map(([s,t])=>`<label class="stp${stOn(c,l,s)?" on":""}"><input type="checkbox" data-st="${c}|${l}|${s}" ${stOn(c,l,s)?"checked":""}>${t}</label>`).join("")}</div>
      ${nt?`<a class="iconbtn sm" href="${nt}" target="_blank" rel="noopener" title="صفحة المحاضرة في Notion" aria-label="صفحة المحاضرة في Notion">${ico("link")}</a>`:`<span class="lsp"></span>`}</div>`}).join("");
   const lecs=`<section class="panel st-lec" style="${vars(c)}"><div class="head"><div><h3>المحاضرات</h3><p>علّم على كل خطوة خلصتها. «اللي عليك» هي أول محاضرة لسه مخلصتهاش</p></div></div>
     <div class="ctabs" role="tablist">${Object.keys(C).map(k=>`<button role="tab" class="ctab" style="${vars(k)}" data-sc="${k}" aria-selected="${k===c}"><bdi>${C[k].ab}</bdi><span class="num">${studyPct(k)}%</span><i style="width:${studyPct(k)}%"></i></button>`).join("")}</div>
@@ -1070,7 +1112,8 @@ function vCourses(){
   return `<div class="chips">${Object.keys(C).map(x=>`<button class="chip c" style="${vars(x)}" data-cc="${x}" aria-pressed="${x===k}"><bdi>${C[x].ab}</bdi></button>`).join("")}</div>
   <section class="chead" style="${vars(k)}"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><h3>${c.name}</h3><span style="color:var(--c);display:grid">${ico(k)}</span></div>
    <div class="meta"><span>الدكتور: <b>${c.dr}</b></span><span>المعيد: <b>${c.ta}</b></span>${nq?`<span>أقرب ${esc(nq.type)}: <b>${dShort(parseD(nq.date))} (${leftText(dayDiff(parseD(nq.date),n))})</b></span>`:""}</div>
-   <div class="progress" style="background:color-mix(in srgb,var(--c) 18%,transparent)"><i style="width:${studyPct(k)}%"></i></div><span style="font-size:12.5px;color:var(--ink)">خلصت ${studyPct(k)}% من المذاكرة · ذاكرت ${hm(pomoMinutes(k))} آخر أسبوع</span></section>
+   <div class="progress" style="background:color-mix(in srgb,var(--c) 18%,transparent)"><i style="width:${studyPct(k)}%"></i></div><span style="font-size:12.5px;color:var(--ink)">خلصت ${studyPct(k)}% من المذاكرة · ذاكرت ${hm(pomoMinutes(k))} آخر أسبوع</span>
+   <div class="chips" style="margin-top:4px"><button class="btn sm cbtn" data-studyc="${k}">${ico("play")}ذاكر المادة دي</button>${NOTION_C[k]?`<a class="btn ghost sm" href="${NOTION_C[k]}" target="_blank" rel="noopener">${ico("link")}صفحة المادة في Notion</a>`:""}</div></section>
   <div class="stats">
    <div class="stat"><b class="num">${a.sc.y}<small style="font-size:13px;color:var(--muted)"> / ${a.sc.y+a.sc.n}</small></b><span>حضرت سكشن</span></div>
    <div class="stat"><b class="num">${a.lf.y}<small style="font-size:13px;color:var(--muted)"> / ${a.lf.y+a.lf.n}</small></b><span>حضرت محاضرة حضوري</span></div>
@@ -1092,28 +1135,41 @@ function vCourses(){
 }
 function vSettings(){
   const perm=window.nativeNotify?"granted":("Notification" in window)?Notification.permission:"unsupported";
-  return `<section class="panel"><div class="head"><div><h3>${ico("sync")}التزامن بين اللاب والموبايل</h3><p>كل حاجة بتسجّلها بتتحفظ في Gist خاص على حساب GitHub بتاعك</p></div><span id="syncStatus" style="display:flex;align-items:center;gap:6px;font-size:13px"></span></div>
-   ${L.token?`<div class="chips"><button class="btn" id="syncNow">${ico("sync")}زامن دلوقتي</button><button class="btn ghost" id="syncOff">إلغاء التزامن على الجهاز ده</button></div>`
-   :`<ol class="steps"><li>افتح <b>github.com/settings/personal-access-tokens/new</b></li><li>في <b>Token name</b> اكتب faris-schedule، وفي <b>Expiration</b> اختار مدة طويلة</li><li>من <b>Permissions</b> افتح <b>Account permissions</b> واختار <b>Gists: Read and write</b></li><li>اضغط <b>Generate token</b> وانسخ المفتاح اللي بيبدأ بـ github_pat_</li><li>الصقه هنا، مرة على اللاب ومرة على الموبايل</li></ol>
+  const sw=(id,on,lbl)=>`<button class="switch" id="${id}" role="switch" aria-checked="${!!on}" aria-label="${lbl}"><i></i></button>`;
+  const standalone=matchMedia("(display-mode: standalone)").matches||!!window.nativeNotify;
+  return `<div class="set-grid">
+  <section class="panel"><div class="head"><div><h3>${ico("sync")}التزامن بين اللاب والموبايل</h3><p>كل حاجة بتسجّلها بتتحفظ في Gist خاص على حساب GitHub بتاعك</p></div><span id="syncStatus" style="display:flex;align-items:center;gap:6px;font-size:13px"></span></div>
+   ${L.token?`<div class="chips"><button class="btn" id="syncNow">${ico("sync")}زامن دلوقتي</button><button class="btn ghost" id="syncOff">إلغاء التزامن على الجهاز ده</button></div>
+     <details class="box" style="margin-top:14px"><summary>تفاصيل التزامن</summary><ul class="kv" id="diag" style="margin-top:8px"><li><span>ملفات البيانات اللي لقاها</span><b class="en">${DIAG.found}</b></li><li><span>الملف المستخدم</span><b class="en">${DIAG.main}</b></li><li><span>البيانات (كويزات/حضور/مذاكرة/درجات/روابط/مؤقت)</span><b class="en">${DIAG.counts||"-"}</b></li><li><span>آخر خطأ</span><b class="en">${esc(DIAG.err)||"مفيش"}</b></li></ul></details>`
+   :`<ol class="howto"><li>افتح <b class="en">github.com/settings/personal-access-tokens/new</b></li><li>في <b>Token name</b> اكتب faris-schedule، وفي <b>Expiration</b> اختار مدة طويلة</li><li>من <b>Permissions</b> افتح <b>Account permissions</b> واختار <b>Gists: Read and write</b></li><li>اضغط <b>Generate token</b> وانسخ المفتاح اللي بيبدأ بـ <span class="en">github_pat_</span></li><li>الصقه هنا، مرة على اللاب ومرة على الموبايل</li></ol>
    <form class="f" id="tf" style="margin-top:12px" novalidate><div class="field"><label for="tk">مفتاح GitHub</label><input id="tk" type="password" autocomplete="off" dir="ltr" placeholder="github_pat_..."></div><div class="err" id="terr"></div><button class="btn" type="submit">تشغيل التزامن</button></form>`}
   </section>
-  ${L.token?`<section class="panel"><div class="head"><div><h3>تفاصيل التزامن</h3><p>صوّرها لو التزامن مش شغال</p></div></div>
-   <ul class="kv" id="diag"><li><span>نسخة البرنامج</span><b class="en">${APP_VER}</b></li><li><span>ملفات البيانات اللي لقاها</span><b class="en">${DIAG.found}</b></li><li><span>الملف المستخدم</span><b class="en">${DIAG.main}</b></li><li><span>البيانات (كويزات/حضور/مذاكرة/درجات/روابط/مؤقت)</span><b class="en">${DIAG.counts||"-"}</b></li><li><span>آخر خطأ</span><b class="en">${esc(DIAG.err)||"مفيش"}</b></li></ul></section>`:""}
-  <section class="panel"><div class="head"><div><h3>${ico("bell")}التنبيهات</h3><p>بتظهر والبرنامج مفتوح أو شغّال في الخلفية</p></div></div>
-   <div class="setrow"><div class="t"><b>تنبيه قبل المواعيد والكويزات</b><div>${perm==="denied"?"التنبيهات مقفولة من إعدادات الجهاز، هتظهر جوه البرنامج بس":perm==="unsupported"?"الجهاز ده مش بيدعم التنبيهات، هتظهر جوه البرنامج بس":"قبل السكشن والمحاضرة الحضوري، وقبل الكويز بيوم ويوم الكويز الصبح"}</div></div>
-    <button class="btn sm ${L.notify?"ghost":""}" id="nToggle">${L.notify?"قفل التنبيهات":"شغّل التنبيهات"}</button></div>
-   <div class="setrow"><div class="t"><b>قبل الميعاد بـ</b></div><select class="sel" id="nMin">${[10,15,30,60].map(x=>`<option value="${x}"${L.notifyMin===x?" selected":""}>${x} دقيقة</option>`).join("")}</select></div>
-   <div class="setrow"><div class="t"><b>المحاضرات الأونلاين كمان</b><div>تنبيه قبل محاضرات الـ VCR</div></div><button class="chip" id="nLo" aria-pressed="${L.notifyLo}">${L.notifyLo?"شغّال":"مقفول"}</button></div>
-   <div class="setrow"><div class="t"><b>جرّب التنبيه</b></div><button class="btn ghost sm" id="nTest">ابعت تنبيه تجريبي</button></div>
+  <section class="panel"><div class="head"><div><h3>${ico("bell")}التنبيهات</h3><p>${perm==="denied"?"التنبيهات مقفولة من إعدادات الجهاز، هتظهر جوه البرنامج بس":perm==="unsupported"?"الجهاز ده مش بيدعم التنبيهات، هتظهر جوه البرنامج بس":"قبل المواعيد، وقبل الكويز بيوم ويوم الكويز الصبح"}</p></div></div>
+   <div class="setrow"><div class="t"><b>تنبيهات المواعيد والكويزات</b></div>${sw("nToggle",L.notify,"تنبيهات المواعيد والكويزات")}</div>
+   <div class="setrow${L.notify?"":" dim"}"><div class="t"><b>المحاضرات الأونلاين</b><div>تنبيه قبل محاضرات الـ VCR كمان</div></div>${sw("nLo",L.notifyLo,"تنبيه المحاضرات الأونلاين")}</div>
+   <div class="setrow${L.notify?"":" dim"}"><div class="t"><b>وقت التنبيه</b></div><div class="seg">${[10,15,30,60].map(x=>`<button data-nmin="${x}" aria-pressed="${L.notifyMin===x}">${x===60?"ساعة":x+" د"}</button>`).join("")}</div></div>
+   <div class="setrow"><div class="t"><b>تجربة</b></div><button class="btn ghost sm" id="nTest">ابعت تنبيه تجريبي</button></div>
   </section>
-  <section class="panel"><div class="head"><div><h3>المظهر والمذاكرة</h3></div></div>
-   <div class="setrow"><div class="t"><b>المظهر</b></div><div class="chips">${[["system","حسب الجهاز"],["light","فاتح"],["dark","غامق"]].map(([v,l])=>`<button class="chip" data-th="${v}" aria-pressed="${L.theme===v}">${l}</button>`).join("")}</div></div>
-   <div class="setrow"><div class="t"><b>عدد المحاضرات في كل مادة</b><div>للستة المذاكرة</div></div><select class="sel" id="lecN">${[10,11,12,13,14].map(x=>`<option${L.lec===x?" selected":""}>${x}</option>`).join("")}</select></div>
+  <section class="panel"><div class="head"><div><h3>${ico("timer")}المذاكرة</h3><p>إعدادات المؤقت والهدف اليومي</p></div></div>
+   <div class="setrow"><div class="t"><b>مدة الجلسة الافتراضية</b></div><div class="seg">${[30,60,90,120].map(m=>`<button data-sdur="${m}" aria-pressed="${(L.dur||60)===m}">${durTxt(m)}</button>`).join("")}</div></div>
+   <div class="setrow"><div class="t"><b>الهدف اليومي</b><div>الوقت اللي عايز تذاكره كل يوم</div></div><div class="seg">${[60,120,180,240,300].map(m=>`<button data-sgoal="${m}" aria-pressed="${(L.goal||180)===m}">${hm(m)}</button>`).join("")}</div></div>
+   <div class="setrow"><div class="t"><b>صوت نهاية الجلسة</b></div>${sw("sSound",L.sound!==false,"صوت نهاية الجلسة")}</div>
+   <div class="setrow"><div class="t"><b>عدد المحاضرات في كل مادة</b></div><div class="seg">${[10,12,14].map(x=>`<button data-lecn="${x}" aria-pressed="${L.lec===x}">${x}</button>`).join("")}</div></div>
   </section>
-  <section class="panel"><div class="head"><div><h3>نسخة احتياطية</h3><p>انسخ بياناتك كلها أو رجّعها</p></div></div>
-   <div class="field"><textarea id="bk" spellcheck="false" aria-label="نسخة البيانات"></textarea></div>
-   <div class="chips" style="margin-top:10px"><button class="btn ghost sm" id="bkCopy">نسخ البيانات</button><button class="btn ghost sm" id="bkLoad">استرجاع من اللي ملصوق</button></div><div class="err" id="bkErr"></div>
-  </section>`;
+  <section class="panel"><div class="head"><div><h3>${ico("palette")}المظهر</h3></div></div>
+   <div class="themes">${[["system","حسب الجهاز","sys"],["light","فاتح","sun"],["dark","غامق","moon"]].map(([v,l,i])=>`<button class="thm thm-${v}" data-th="${v}" aria-pressed="${L.theme===v}"><span class="pv"><i></i><i></i><i></i></span>${ico(i)}${l}</button>`).join("")}</div>
+  </section>
+  <section class="panel"><div class="head"><div><h3>${ico("download")}بياناتك</h3><p>نسخة احتياطية في ملف، أو رجّع نسخة قديمة</p></div></div>
+   <div class="chips"><button class="btn ghost sm" id="bkFile">${ico("download")}نزّل نسخة احتياطية</button><label class="btn ghost sm" for="bkIn">${ico("upload")}رجّع من ملف</label><input id="bkIn" type="file" accept=".json,application/json" hidden></div>
+   <details class="box" style="margin-top:12px"><summary>نسخ ولصق بدل الملف</summary>
+    <div class="field" style="margin-top:8px"><textarea id="bk" spellcheck="false" aria-label="نسخة البيانات"></textarea></div>
+    <div class="chips" style="margin-top:10px"><button class="btn ghost sm" id="bkCopy">نسخ البيانات</button><button class="btn ghost sm" id="bkLoad">استرجاع من اللي ملصوق</button></div></details>
+   <div class="err" id="bkErr"></div>
+  </section>
+  <section class="panel"><div class="head"><div><h3>${ico("info")}عن البرنامج</h3></div></div>
+   <ul class="kv"><li><span>النسخة</span><b class="en">${APP_VER}</b></li><li><span>آخر تزامن</span><b>${L.lastSync?new Date(L.lastSync).toLocaleString("ar-EG",{weekday:"short",hour:"numeric",minute:"2-digit"}):"لسه"}</b></li><li><span>اختصارات الكيبورد</span><b class="en">1–6 · Space</b></li></ul>
+   <div class="chips" style="margin-top:12px"><button class="btn ghost sm" id="updNow">${ico("sync")}دوّر على تحديث</button>${installEv&&!standalone?`<button class="btn sm" id="instNow">${ico("download")}سطّب البرنامج</button>`:""}</div>
+  </section></div>`;
 }
 
 /* ---------- events ---------- */
@@ -1133,7 +1189,7 @@ function bind(){
   $$("[data-pomo]").forEach(x=>x.onclick=()=>pomoAct(x.dataset.pomo,+x.dataset.min));
   $$("[data-pc]").forEach(x=>x.onclick=()=>{studyCourse=x.dataset.pc;renderView()});
   $$("[data-dur]").forEach(x=>x.onclick=()=>{pomoDur=+x.dataset.dur;renderView()});
-  $$("[data-run]").forEach(x=>x.onclick=()=>{studyCourse=x.dataset.run;pomoAct("start",pomoDur);toast(`بدأت جلسة ${durTxt(pomoDur)} ${C[studyCourse].ab}`);window.scrollTo({top:0,behavior:"smooth"})});
+  $$("[data-run]").forEach(x=>x.onclick=()=>{studyCourse=x.dataset.run;const m=pomoDur||L.dur||60;pomoAct("start",m);toast(`بدأت جلسة ${durTxt(m)} ${C[studyCourse].ab}`);window.scrollTo({top:0,behavior:"smooth"})});
   $$("[data-focus]").forEach(x=>x.onclick=()=>{focusMode=x.dataset.focus==="1";renderView();window.scrollTo({top:0})});
   $$("[data-goal]").forEach(x=>x.onclick=()=>{L.goal=Math.max(30,Math.min(600,(L.goal||180)+(+x.dataset.goal)));saveL();renderView()});
   {const b=$("#pmAdd");if(b)b.onclick=()=>{const m=Math.round(+$("#pmM").value);if(!(m>0&&m<=600)){toast("اكتب عدد دقايق صح");return}put("pm",uid(),{c:$("#pmC").value,min:m,at:Date.now()});toast("اتضاف "+hm(m)+" ✓");renderView();const d=$(".pmlog");if(d)d.open=true}}
@@ -1148,7 +1204,15 @@ function bind(){
   on("qf","onsubmit",ev=>{ev.preventDefault();const date=$("#qd").value;
     if(!date){$("#qerr").textContent="اختار تاريخ الكويز الأول";$("#qd").focus();return}
     if(dayDiff(parseD(date),new Date())<-1){$("#qerr").textContent="التاريخ ده عدّى. اختار تاريخ جاي";return}
-    put("q",uid(),{c:$("#qc").value,type:$('input[name="qtype"]:checked').value,date,time:$("#qt").value?$("#qtv").textContent:"",note:$("#qn").value.trim()});renderAll();toast("اتحفظ المعاد ✓")});
+    const eid=$("#qf").dataset.edit;
+    put("q",eid||uid(),{c:$("#qc").value,type:$('input[name="qtype"]:checked').value,date,time:$("#qt").value?$("#qtv").textContent:"",note:$("#qn").value.trim()});renderAll();updateBadge();toast(eid?"اتعدّل المعاد ✓":"اتحفظ المعاد ✓")});
+  on("qcancel","onclick",()=>renderView());
+  $$("[data-qf]").forEach(x=>x.onclick=()=>{qFilter=x.dataset.qf;renderView()});
+  $$("[data-editq]").forEach(x=>x.onclick=()=>{const q=D.q[x.dataset.editq];if(!q)return;prefill={...q,id:x.dataset.editq};renderView();window.scrollTo({top:0,behavior:"smooth"});setTimeout(()=>$("#qd")&&$("#qd").dispatchEvent(new Event("change")),30);setTimeout(()=>$("#qt")&&$("#qt").value&&$("#qt").dispatchEvent(new Event("change")),40)});
+  $$("[data-ics]").forEach(x=>x.onclick=()=>{const q={...D.q[x.dataset.ics],id:x.dataset.ics};download(`${q.type}-${C[q.c].ab}-${q.date}.ics`.replace(/\s+/g,"-"),icsFor(q),"text/calendar");toast("افتح الملف عشان يتضاف للتقويم")});
+  $$("[data-gostudy]").forEach(x=>x.onclick=()=>go("study"));
+  $$("[data-studyc]").forEach(x=>x.onclick=()=>{studyCourse=x.dataset.studyc;go("study")});
+  on("stTile","onclick",()=>go("study"));
   on("gf","onsubmit",ev=>{ev.preventDefault();const l=$("#gl").value.trim(),s=$("#gs").value,m=$("#gm").value;
     if(!l){$("#gerr").textContent="اكتب اسم الدرجة، مثلًا Quiz 1";return}
     if(s===""||isNaN(+s)){$("#gerr").textContent="اكتب الدرجة اللي جبتها";return}
@@ -1167,27 +1231,55 @@ function bind(){
     else renderView()});
   on("syncNow","onclick",async()=>{await sync(true);if(L.view==="settings")renderView()});
   on("syncOff","onclick",()=>{L.token="";L.gistId="";saveL();syncState={s:"off"};renderView();toast("التزامن اتقفل على الجهاز ده")});
+  $$("[data-nmin]").forEach(x=>x.onclick=()=>{L.notifyMin=+x.dataset.nmin;saveL();renderView()});
+  $$("[data-sdur]").forEach(x=>x.onclick=()=>{L.dur=+x.dataset.sdur;pomoDur=L.dur;saveL();renderView()});
+  $$("[data-sgoal]").forEach(x=>x.onclick=()=>{L.goal=+x.dataset.sgoal;saveL();renderView()});
+  $$("[data-lecn]").forEach(x=>x.onclick=()=>{L.lec=+x.dataset.lecn;saveL();renderView()});
+  on("sSound","onclick",()=>{L.sound=L.sound===false;saveL();renderView();if(L.sound)chime(true)});
+  on("bkFile","onclick",()=>{download(`faris-schedule-backup-${ymd(new Date())}.json`,JSON.stringify(D),"application/json");toast("اتنزّلت النسخة ✓")});
+  on("bkIn","onchange",async e=>{const f=e.target.files[0];if(!f)return;try{const r=JSON.parse(await f.text());if(!r||typeof r!=="object"||!r.q)throw 0;D=merge(D,r);saveD();renderAll();toast("اترجعت البيانات ✓")}catch(err){$("#bkErr").textContent="الملف ده مش نسخة بيانات من البرنامج"}});
+  on("updNow","onclick",async()=>{toast("بيدوّر على تحديث…");try{if(swReg){await swReg.update()}const r=await fetch("index.html",{cache:"no-store"});const t=await r.text();const m=t.match(/APP_VER="([^"]+)"/);if(m&&m[1]!==APP_VER){toast("في نسخة جديدة "+m[1]+"، بيحدّث…");setTimeout(()=>location.reload(),900)}else toast("عندك آخر نسخة ✓")}catch(e){toast("مفيش نت، جرّب تاني")}});
+  on("instNow","onclick",async()=>{if(!installEv)return;installEv.prompt();try{await installEv.userChoice}catch(e){}installEv=null;renderView()});
   on("nToggle","onclick",async()=>{if(L.notify){L.notify=false;saveL();renderView();return}
     if("Notification" in window&&Notification.permission==="default"){try{await Notification.requestPermission()}catch(e){}}
     L.notify=true;saveL();renderView();toast("التنبيهات اشتغلت ✓")});
-  on("nMin","onchange",e=>{L.notifyMin=+e.target.value;saveL()});
   on("nLo","onclick",()=>{L.notifyLo=!L.notifyLo;saveL();renderView()});
   on("nTest","onclick",async()=>{if("Notification" in window&&Notification.permission==="default"){try{await Notification.requestPermission()}catch(e){}}notify("جدول فارس","التنبيهات شغّالة ✓","test"+Date.now())});
-  on("lecN","onchange",e=>{L.lec=+e.target.value;saveL()});
   on("bkCopy","onclick",async()=>{const t=$("#bk");t.value=JSON.stringify(D);try{await navigator.clipboard.writeText(t.value);toast("اتنسخت ✓")}catch(e){t.select();toast("البيانات ظاهرة في المربع، انسخها")}});
   on("bkLoad","onclick",()=>{try{const r=JSON.parse($("#bk").value);if(!r||typeof r!=="object"||!r.q)throw 0;D=merge(D,r);saveD();renderAll();toast("اترجعت البيانات ✓")}catch(e){$("#bkErr").textContent="الكلام الملصوق مش نسخة بيانات صحيحة"}});
   renderSync();
 }
+
+/* ---------- OS integration ---------- */
+let installEv=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEv=e;if(L.view==="settings")renderView()});
+window.addEventListener("appinstalled",()=>{installEv=null;toast("البرنامج اتسطّب ✓")});
+function updateBadge(){try{const n=new Date(),k=upcoming().filter(q=>dayDiff(parseD(q.date),n)<=3).length;if("setAppBadge" in navigator){k?navigator.setAppBadge(k):navigator.clearAppBadge()}}catch(e){}}
+document.addEventListener("keydown",e=>{
+  if(e.ctrlKey||e.metaKey||e.altKey)return; const tg=e.target; if(tg&&/INPUT|TEXTAREA|SELECT/.test(tg.tagName))return;
+  const map={"1":"today","2":"week","3":"quiz","4":"study","5":"courses","6":"settings"};
+  if(map[e.key]){go(map[e.key]);e.preventDefault();return}
+  if(e.key===" "&&L.view==="study"){const P=L.pomo;pomoAct(!P?"start":P.paused?"resume":P.mode==="w"?"pause":"stop");e.preventDefault()}
+});
+function icsFor(q){
+  const d=q.date.replace(/-/g,""); let tm=parseQTime(q.time), st, en;
+  if(tm){const [h,m]=tm;const pad=x=>String(x).padStart(2,"0");st=`DTSTART;TZID=Africa/Cairo:${d}T${pad(h)}${pad(m)}00`;en=`DTEND;TZID=Africa/Cairo:${d}T${pad(Math.min(23,h+1))}${pad(m)}00`}
+  else{const n=parseD(q.date);n.setDate(n.getDate()+1);st=`DTSTART;VALUE=DATE:${d}`;en=`DTEND;VALUE=DATE:${ymd(n).replace(/-/g,"")}`}
+  const esc2=t=>String(t||"").replace(/[,;\\]/g,m=>"\\"+m).replace(/\n/g," ");
+  return ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Faris Schedule//AR","BEGIN:VEVENT",`UID:${q.id}@faris-schedule`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,"").slice(0,15)}Z`,st,en,`SUMMARY:${esc2(q.type+" "+C[q.c].short)}`,`DESCRIPTION:${esc2(q.note)}`,"BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY","DESCRIPTION:بكره عندك "+esc2(q.type),"END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n");
+}
+function parseQTime(t){if(!t)return null;const m=String(t).match(/(\d{1,2}):(\d{2})\s*(ص|م)?/);if(!m)return null;let h=+m[1];const mi=+m[2];if(m[3]==="م"&&h<12)h+=12;if(m[3]==="ص"&&h===12)h=0;return [h,mi]}
+function download(name,text,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 
 /* ---------- pomodoro ---------- */
 const BASE_TITLE=document.title;
 let wlock=null, actx=null;
 async function wake(on){try{if(on&&"wakeLock" in navigator&&!wlock){wlock=await navigator.wakeLock.request("screen");wlock.addEventListener("release",()=>{wlock=null})}else if(!on&&wlock){await wlock.release();wlock=null}}catch(e){}}
 function unlockAudio(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==="suspended")actx.resume()}catch(e){}}
-function chime(work){try{unlockAudio();const notes=work?[523,659,784,1047]:[784,659,523];notes.forEach((f,i)=>{const o=actx.createOscillator(),g=actx.createGain(),t=actx.currentTime+i*.18;o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.25,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+.5);o.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+.55)})}catch(e){}}
+function chime(work){if(L.sound===false)return;try{unlockAudio();const notes=work?[523,659,784,1047]:[784,659,523];notes.forEach((f,i)=>{const o=actx.createOscillator(),g=actx.createGain(),t=actx.currentTime+i*.18;o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.25,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+.5);o.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+.55)})}catch(e){}}
 function pomoAct(a,min){
   const P=L.pomo;
-  if(a==="start"){const c=studyCourse,m=min||pomoDur;L.pomo={c,mode:"w",dur:m,end:Date.now()+m*6e4,paused:0};unlockAudio();wake(true)}
+  if(a==="start"){const c=studyCourse,m=min||pomoDur||L.dur||60;L.pomo={c,mode:"w",dur:m,end:Date.now()+m*6e4,paused:0};unlockAudio();wake(true)}
   else if(a==="pause"&&P){P.paused=Math.max(1,P.end-Date.now());wake(false)}
   else if(a==="resume"&&P){P.end=Date.now()+P.paused;P.paused=0;wake(true)}
   else if(a==="stop"&&P){if(P.mode==="w"){const rem=P.paused||Math.max(0,P.end-Date.now()),done=Math.round((P.dur*6e4-rem)/6e4);if(done>=1){put("pm",uid(),{c:P.c,min:done,at:Date.now()});toast(`اتسجّل ${hm(done)} في ${C[P.c].ab}`)}}L.pomo=null;focusMode=false;wake(false)}
@@ -1241,7 +1333,9 @@ function renderAll(){renderHero();renderAlerts();renderView()}
   const savedL=LS.get("fs-local",null);
   L=Object.assign(L,savedL||{}); L.filters=Object.assign({sc:true,lf:true,lo:true},L.filters||{}); L.fired=L.fired||{};
   if(!savedL){const old=LS.get("fs-data",null);if(old){if(old.theme)L.theme=old.theme;if(old.filters)L.filters=Object.assign(L.filters,old.filters)}}
+  {const hv=location.hash.slice(1);if(TITLES[hv])L.view=hv}
   if(!TITLES[L.view])L.view="today";
+  history.replaceState(null,"","#"+L.view);
   syncState={s:L.token?"busy":"off"};
   await loadD();
   applyTheme(); renderAll(); tickPomo();
@@ -1253,6 +1347,7 @@ function renderAll(){renderHero();renderAlerts();renderView()}
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&focusMode){focusMode=false;renderView()}});
   window.addEventListener("online",()=>sync());
   if("serviceWorker" in navigator&&location.protocol==="https:"){try{swReg=await navigator.serviceWorker.register("sw.js");swReg.update()}catch(e){}}
+  setTimeout(()=>document.body.classList.add("settled"),2600);
   const sp=$("#splash"), reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
   const done=()=>{sp.classList.add("out");document.body.classList.add("ready")};
   sp.onclick=done; setTimeout(done,reduce?0:2000);
