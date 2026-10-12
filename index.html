@@ -499,7 +499,7 @@ const E=[
 const SEED=[
  {id:"seed-com-q1",c:"COM",type:"كويز",date:"2026-10-21",time:"3:50 م",note:"آخر 10 دقايق في المحاضرة الحضوري (3–4 م، مدرج 8) · محاضرات 1–6 وسكشن 1 و2 · في السنتر مش أونلاين"},
  {id:"seed-emb-q1",c:"EMB",type:"كويز",date:"2026-10-21",time:"4:00 م",note:"Quiz 1 في المحاضرة الحضوري (4–5 م، مدرج 8) · من محاضرة 1 لحد مسائل NRE و Manufacturing Cost · مقالي مكتوب مش اختيارات · راجع المسائل الحسابية"},
- {id:"seed-emb-a1",c:"EMB",type:"تسليم",date:"2026-10-25",time:"12:00 م",note:"Assignment 1 · الأسئلة على Moodle · ورقي مطبوع بس (Hard Copy) · سلّمه لـ م. عمرو جمال في سكشن الأحد"},
+ {id:"seed-emb-a1",c:"EMB",type:"تسليم",date:"2026-11-01",time:"12:00 م",note:"Assignment 1 · آخر ميعاد الأحد 1 نوفمبر · الأسئلة على Moodle · ورقي مطبوع بس (Hard Copy) · سلّمه للمعيد م. عمرو جمال في سكشن الأحد",u:1791790900000},
  {id:"seed-se-q1",c:"SE",type:"كويز",date:"2026-10-22",time:"4:00 م",note:"Quiz 1 · أول 6 محاضرات (أول 3 أسابيع) · مكان المحاضرة الحضوري · مفيش محاضرة أونلاين الأسبوع ده"}
 ];
 const PLAN={ // catch-up phase (hand-made). Tuesday: off. Wednesday: light (college all day). Each section right after its two lectures.
@@ -553,7 +553,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="4.6";
+const APP_VER="4.7";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -610,7 +610,7 @@ async function loadD(){
   if(!raw){ const old=LS.get("fs-data",null); if(old&&Array.isArray(old.quizzes))raw=fromOld(old) }
   if(raw&&Array.isArray(raw.quizzes)) raw=fromOld(raw);
   D=Object.assign({q:{},att:{},st:{},gr:{},ln:{},pm:{},pl:{}},raw||{});
-  SEED.forEach(q=>{if(!D.q[q.id])D.q[q.id]={...q,u:1}});
+  SEED.forEach(q=>{const x=D.q[q.id];if(!x||(x.u||0)<(q.u||1))D.q[q.id]={...q,u:q.u||1}});
 }
 let saveT;
 function saveD(){
