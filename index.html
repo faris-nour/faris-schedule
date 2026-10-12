@@ -336,6 +336,10 @@ details.box summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:
 .ptask{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:background .2s,border-color .2s}
 .ptask:hover{border-color:var(--c,var(--ink))}
 .ptask input{width:20px;height:20px;accent-color:var(--ok);flex:none}
+.pmlog summary{cursor:pointer;color:var(--muted);font-size:13.5px;font-weight:600}
+.pmadd{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}.pmadd select{flex:1 1 150px}.pmadd input{width:90px}
+.pmadd select,.pmadd input{border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:12px;padding:9px 10px;font:inherit}
+.pmlist{display:grid;gap:6px}.pmrow{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;font-size:13.5px}.pmrow .dot{width:8px;height:8px;border-radius:50%;flex:none}.pmrow .muted{color:var(--muted);margin-inline-start:auto;font-size:12.5px}
 .ptask .pc svg.i{width:16px;height:16px;display:block}
 .cico svg.i{width:28px;height:28px}
 .sbox .sq svg.i{width:22px;height:22px}
@@ -556,10 +560,11 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="4.9";
+const APP_VER="4.10";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
+ plus:'<path d="M12 5v14M5 12h14"/>',
  NET:'<circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="18" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M11 7 6 16M13 7l5 9M7.2 18h9.6"/>',
  GR:'<path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/>',
  SE:'<path d="M8 7 3 12l5 5M16 7l5 5-5 5M14 4l-4 16"/>',
@@ -611,6 +616,12 @@ function put(map,id,rec){D[map][id]={...rec,u:Date.now()};saveD()}
 function del(map,id){D[map][id]={del:1,u:Date.now()};saveD()}
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 function fromOld(o){const r={q:{}};(o.quizzes||[]).forEach(q=>r.q[q.id]={...q,u:Date.now()});(o.dismissed||[]).forEach(id=>r.q[id]={del:1,u:Date.now()});return r}
+function fixData(d){
+  d.pm=d.pm||{}; const day0=new Date(2026,9,12).getTime(), day1=day0+864e5; let ch=false;
+  for(const [id,v] of Object.entries(d.pm)){ if(v&&!v.del&&v.c==="NET"&&+v.min===53&&v.at>=day0&&v.at<day1){d.pm[id]={del:1,u:Date.now()};ch=true} }
+  if(!d.pm["fix-1012-emb"]){d.pm["fix-1012-emb"]={c:"EMB",min:60,at:new Date(2026,9,12,11,0).getTime(),u:Date.now()};ch=true}
+  return ch;
+}
 async function loadD(){
   let raw=null;
   try{ if(window.loadData){const s=await window.loadData(); if(s)raw=JSON.parse(s)} }catch(e){}
@@ -619,6 +630,7 @@ async function loadD(){
   if(raw&&Array.isArray(raw.quizzes)) raw=fromOld(raw);
   D=Object.assign({q:{},att:{},st:{},gr:{},ln:{},pm:{},pl:{}},raw||{});
   SEED.forEach(q=>{const x=D.q[q.id];if(!x||(x.u||0)<(q.u||1))D.q[q.id]={...q,u:q.u||1}});
+  if(fixData(D))LS.set("fs-data3",D);
 }
 let saveT;
 function saveD(){
@@ -659,7 +671,7 @@ async function sync(manual){
       const f=(await r.json()).files[GIST_FILE]; if(!f)continue;
       try{const txt=f.truncated?await (await fetch(f.raw_url)).text():f.content; const j=JSON.parse(txt); remote=g===main?merge(remote,j):merge(remote,j)}catch(e){}
     }
-    const merged=merge(D,remote), mj=JSON.stringify(merged);
+    const merged=merge(D,remote); fixData(merged); const mj=JSON.stringify(merged);
     if(!main){
       const c=await gh("/gists",{method:"POST",body:JSON.stringify({description:"Faris schedule data (private)",public:false,files:{[GIST_FILE]:{content:mj}}})});
       if(c.status===401||c.status===403)throw new Error("auth"); if(!c.ok)throw new Error("net");
@@ -895,6 +907,10 @@ function vStudy(){
     </div>
     <div class="head" style="margin:22px 0 10px"><div><h3 style="font-size:16px">ذاكرت قد إيه آخر 7 أيام</h3><p>المجموع: ${hm(pomoMinutes())}</p></div></div>
     <div class="coursebar">${Object.keys(C).map(k=>{const m=pomoMinutes(k);return `<div class="cb" style="${vars(k)}"><span class="n"><bdi>${C[k].ab}</bdi></span><div class="progress"><i style="width:${m/mx*100}%"></i></div><span class="num" style="text-align:left">${hm(m)}</span></div>`}).join("")}</div>
+    <details class="pmlog" style="margin-top:16px"><summary>تعديل الوقت المتسجّل</summary>
+     <div class="pmadd"><select id="pmC">${courseOpts(c)}</select><input id="pmM" type="number" min="1" max="600" inputmode="numeric" placeholder="دقايق" value="60"><button class="btn" id="pmAdd">${ico("plus")}ضيف</button></div>
+     <div class="pmlist">${live(D.pm).filter(x=>x.at>=Date.now()-7*864e5).sort((a,b)=>b.at-a.at).map(x=>`<div class="pmrow" style="${vars(x.c)}"><i class="dot" style="background:var(--c)"></i><bdi class="en">${C[x.c]?C[x.c].ab:""}</bdi><span class="num">${hm(+x.min||0)}</span><span class="muted">${new Date(x.at).toLocaleDateString("ar-EG",{weekday:"short",day:"numeric",month:"short"})}</span>${delBtn("pm",x.id)}</div>`).join("")||`<p class="muted">مفيش جلسات متسجلة</p>`}</div>
+    </details>
    </section>
    <section class="panel"><div class="head"><div><h3>المحاضرات</h3><p>علّم على اللي خلصته في كل محاضرة</p></div></div>
     <div class="coursebar" style="margin-bottom:16px">${Object.keys(C).map(k=>`<div class="cb" style="${vars(k)}"><span class="n"><bdi>${C[k].ab}</bdi></span><div class="progress"><i style="width:${studyPct(k)}%"></i></div><span class="num" style="text-align:left">${studyPct(k)}%</span></div>`).join("")}</div>
@@ -971,6 +987,7 @@ function bind(){
   $$("[data-pl]").forEach(x=>x.onchange=()=>{const k=x.dataset.pl;if(x.checked){put("pl",k,{v:1});toast("برافو ✓")}else del("pl",k);renderView()});
   $$("[data-st]").forEach(x=>x.onchange=()=>{const k=x.dataset.st;if(x.checked)put("st",k,{v:1});else del("st",k);renderView()});
   $$("[data-pomo]").forEach(x=>x.onclick=()=>pomoAct(x.dataset.pomo,+x.dataset.min));
+  {const b=$("#pmAdd");if(b)b.onclick=()=>{const m=Math.round(+$("#pmM").value);if(!(m>0&&m<=600)){toast("اكتب عدد دقايق صح");return}put("pm",uid(),{c:$("#pmC").value,min:m,at:Date.now()});toast("اتضاف "+hm(m)+" ✓");renderView();const d=$(".pmlog");if(d)d.open=true}}
   $$("[data-th]").forEach(x=>x.onclick=()=>{L.theme=x.dataset.th;saveL();applyTheme();renderView()});
   $$("form input, form select").forEach(el=>el.addEventListener("input",()=>$$(".err").forEach(e=>e.textContent="")));
   const on=(id,ev,f)=>{const el=$("#"+id);if(el)el[ev]=f};
