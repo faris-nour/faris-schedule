@@ -340,6 +340,101 @@ details.box summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:
 .pmadd{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}.pmadd select{flex:1 1 150px}.pmadd input{width:90px}
 .pmadd select,.pmadd input{border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:12px;padding:9px 10px;font:inherit}
 .pmlist{display:grid;gap:6px}.pmrow{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;font-size:13.5px}.pmrow .dot{width:8px;height:8px;border-radius:50%;flex:none}.pmrow .muted{color:var(--muted);margin-inline-start:auto;font-size:12.5px}
+
+/* ---- study v5 ---- */
+.st-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;align-items:start}
+.st-grid .st-week,.st-grid .st-lec{grid-column:1/-1}
+@media (max-width:980px){.st-grid{grid-template-columns:1fr}}
+.st-focus{display:grid;justify-items:center;text-align:center;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 7%,var(--surface)),var(--surface) 55%)}
+.st-focus .head{width:100%;text-align:right}
+.st-ring{margin:4px 0 14px}
+.pring .lbl{gap:2px}
+.pring .lbl .st{font-size:12.5px;color:var(--muted);margin:0}
+.pring .lbl .cn{font-family:var(--font-display);font-weight:600;font-size:14px;color:var(--c);direction:ltr}
+.pring .bg{stroke:color-mix(in srgb,var(--c) 14%,var(--surface-3))}
+.pring.run .fg{filter:drop-shadow(0 0 6px color-mix(in srgb,var(--c) 55%,transparent))}
+.pring.brk .fg{stroke:var(--ok)}
+.st-pick{display:grid;gap:8px;justify-items:center;width:100%;margin-bottom:14px}
+.st-lab{font-size:12.5px;color:var(--muted)}
+.st-pick .chips{justify-content:center}
+.chip .dot{width:8px;height:8px;border-radius:50%;flex:none}
+.st-go{min-width:220px;padding:13px 20px;font-size:15.5px;background:var(--c);color:#fff}
+:root[data-theme="dark"] .st-go{color:#0A0E18}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .st-go{color:#0A0E18}}
+.st-ctl{justify-content:center}
+.st-goal{display:flex;align-items:center;gap:14px}
+.mobilehead .brand h1{white-space:nowrap}
+@media (max-width:420px){.mobilehead .brand small{display:none}}
+.gm{position:relative;width:76px;height:76px;flex:none}
+.gm svg{width:100%;height:100%;transform:rotate(-90deg)}
+.gm circle{fill:none;stroke-width:7}
+.gm .bg{stroke:var(--surface-3)} .gm .fg{stroke:var(--ok);stroke-linecap:round;transition:stroke-dashoffset .8s var(--ease)}
+.gm b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--font-display);font-size:15px}
+.gt{flex:1;min-width:0}.gt h3{font-size:17px}.gt p{margin:2px 0 6px;color:var(--muted);font-size:13px}
+.gadj{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
+.gadj .btn.sm{padding:2px 10px;font-size:15px;line-height:1.4}
+.gadj b{color:var(--ink);font-family:var(--font-display);min-width:52px;text-align:center}
+.streak{display:grid;justify-items:center;padding:8px 12px;border-radius:16px;background:var(--surface-2);color:var(--faint);flex:none;filter:grayscale(1);opacity:.75}
+.streak.on{background:var(--warn-bg);color:var(--warn);filter:none;opacity:1}
+.streak span{font-size:20px;line-height:1}.streak b{font-family:var(--font-display);font-size:22px;line-height:1.2}.streak small{font-size:11px;white-space:nowrap}
+@media (max-width:560px){.st-goal{flex-wrap:wrap}.streak{order:-1;margin-inline-start:auto}}
+.st-tasks{display:grid;gap:6px}
+.st-task{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:14px;padding:8px 10px;background:var(--surface)}
+.st-task label{display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;min-width:0}
+.st-task input{accent-color:var(--c,var(--ok));width:18px;height:18px;flex:none}
+.st-task .tk{font-size:14px}.st-task .tk bdi{font-weight:700;color:var(--c)}
+.st-task.on{background:var(--surface-2)}.st-task.on .tk{color:var(--faint);text-decoration:line-through}
+.iconbtn.sm{width:34px;height:34px;border-radius:10px;display:inline-grid;place-items:center;flex:none}
+.iconbtn.sm svg.i{width:16px;height:16px}
+.st-task .iconbtn{color:var(--c)}
+.wchart{position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:10px;height:200px;align-items:end;padding-top:22px;margin-bottom:14px}
+.wchart .gline{position:absolute;inset-inline:0;top:calc(22px + (100% - 22px - 26px) * var(--goal) / 100);border-top:1.5px dashed color-mix(in srgb,var(--ok) 60%,transparent);pointer-events:none}
+.wcol{display:grid;grid-template-rows:auto 1fr auto;height:100%;text-align:center;gap:4px;min-width:0}
+.wcol .v{font-size:11.5px;color:var(--muted);height:16px;white-space:nowrap}
+.wcol .stk{display:flex;flex-direction:column-reverse;justify-content:flex-start;background:var(--surface-2);border-radius:10px;overflow:hidden;align-self:stretch}
+.wcol .stk i{display:block;background:var(--c);min-height:3px}
+.wcol .d{font-size:12px;color:var(--muted);height:20px;white-space:nowrap}
+.wcol.today .d{color:var(--ink);font-weight:700}.wcol.today .stk{outline:1.5px solid var(--line)}
+.wleg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin-bottom:12px}
+.wleg span{display:inline-flex;align-items:center;gap:6px}.wleg bdi{color:var(--c);font-weight:600}.wleg b{color:var(--muted);font-weight:500}
+.wleg .dot{width:9px;height:9px;border-radius:3px}
+.ctabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none}
+.ctab{position:relative;flex:1 0 auto;min-width:118px;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:8px 12px 12px;display:flex;justify-content:space-between;gap:10px;font-size:13.5px;color:var(--muted);overflow:hidden}
+.ctab bdi{font-weight:600}.ctab .num{font-family:var(--font-display)}
+.ctab i{position:absolute;bottom:0;right:0;height:4px;background:var(--c);opacity:.55}
+.ctab[aria-selected="true"]{border-color:var(--c);background:var(--c-bg);color:var(--c)}
+.ctab[aria-selected="true"] i{opacity:1}
+.lrows{display:grid;gap:6px}
+.lrow{display:grid;grid-template-columns:150px minmax(0,1fr) 34px;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.lrow .ln{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.lrow .ln b{font-family:var(--font-display);font-weight:500;font-size:14px}
+.lrow .nx{font-size:11.5px;padding:1px 8px;border-radius:999px;background:var(--c);color:#fff}
+:root[data-theme="dark"] .lrow .nx{color:#0A0E18}
+.lrow .ok{color:var(--c);display:grid}.lrow .ok svg.i{width:18px;height:18px}
+.lrow.next{border-color:var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 14%,transparent)}
+.lrow.full{background:var(--c-bg);border-color:transparent}
+.lrow.full .ln b{color:var(--c)}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.stp{position:relative;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:12.5px;color:var(--muted);cursor:pointer;user-select:none;background:var(--surface);transition:background .15s,color .15s,border-color .15s}
+.stp input{position:absolute;opacity:0;pointer-events:none}
+.stp::before{content:"";width:12px;height:12px;border-radius:50%;border:1.5px solid currentColor;flex:none}
+.stp.on{background:var(--c);border-color:var(--c);color:#fff}
+.stp.on::before{background:#fff;border-color:#fff;box-shadow:inset 0 0 0 2.5px var(--c)}
+:root[data-theme="dark"] .stp.on{color:#0A0E18}
+.stp:has(input:focus-visible){outline:2px solid var(--se);outline-offset:2px}
+@media (max-width:560px){.lrow{grid-template-columns:minmax(0,1fr) 34px}.lrow .steps{grid-column:1/-1;order:3}}
+.focus{position:fixed;inset:0;z-index:90;animation:fin .35s var(--ease);display:grid;place-items:center;align-content:center;gap:22px;background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--c) 22%,#0A0E18),#0A0E18 70%);color:#E9EDF6;padding:24px;text-align:center}
+.focus .fx{position:absolute;top:18px;inset-inline-start:18px;color:#E9EDF6;border-color:rgba(255,255,255,.2)}
+.focus .btn.ghost{color:#E9EDF6;border-color:rgba(255,255,255,.25)}
+.focus .btn:not(.ghost){background:var(--c);color:#0A0E18}
+.focus .pring.big{width:min(78vw,420px);height:min(78vw,420px)}
+.focus .pring .bg{stroke:rgba(255,255,255,.1)}
+.focus .pring .lbl b{font-size:clamp(56px,14vw,96px);color:#fff}
+.focus .pring .lbl .st{color:rgba(255,255,255,.65);font-size:15px}
+.focus .pring .lbl .cn{font-size:18px}
+.focus .fhint{color:rgba(255,255,255,.5);font-size:13px;margin:0}
+@keyframes fin{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.focus{animation:none}.pring .fg,.gm .fg,.progress i{transition:none}}
+
 .ptask .pc svg.i{width:16px;height:16px;display:block}
 .cico svg.i{width:28px;height:28px}
 .sbox .sq svg.i{width:22px;height:22px}
@@ -560,10 +655,13 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="4.10";
+const APP_VER="5.0";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
+ close:'<path d="M6 6l12 12M18 6 6 18"/>',
+ expand:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+ check:'<path d="M5 12.5 10 17 19 7"/>',
  plus:'<path d="M12 5v14M5 12h14"/>',
  NET:'<circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="18" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M11 7 6 16M13 7l5 9M7.2 18h9.6"/>',
  GR:'<path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/>',
@@ -610,7 +708,7 @@ const weekNo=d=>Math.floor(dayDiff(d,parseD(TERM_START))/7)+1;
 
 /* ---------- state: D is synced (keyed records with u = updated time), L is per-device ---------- */
 let D={q:{},att:{},st:{},gr:{},ln:{},pm:{},pl:{}};
-let L={filters:{sc:true,lf:true,lo:true},theme:"system",view:"today",token:"",gistId:"",lastSync:0,notify:false,notifyLo:false,notifyMin:30,fired:{},pomo:null,lec:12};
+let L={filters:{sc:true,lf:true,lo:true},theme:"system",view:"today",goal:180,token:"",gistId:"",lastSync:0,notify:false,notifyLo:false,notifyMin:30,fired:{},pomo:null,lec:12};
 const live=m=>Object.entries(m||{}).filter(([,v])=>v&&!v.del).map(([id,v])=>({...v,id}));
 function put(map,id,rec){D[map][id]={...rec,u:Date.now()};saveD()}
 function del(map,id){D[map][id]={del:1,u:Date.now()};saveD()}
@@ -761,7 +859,7 @@ function renderAlerts(){
 
 /* ---------- navigation ---------- */
 const VIEWS=[["today","اليوم","today"],["week","الأسبوع","week"],["quiz","الكويزات","quiz"],["study","المذاكرة","study"],["courses","المواد","courses"]];
-const TITLES={today:["اليوم","مواعيدك بالترتيب، وسجّل حضورك من الكارت"],week:["الأسبوع","الجدول كله في نظرة"],quiz:["الكويزات والامتحانات","سجّل أي معاد، وهيظهرلك تنبيه قبله"],study:["المذاكرة","تابع المحاضرات اللي خلصتها، وذاكر بالمؤقت"],courses:["المواد","الحضور والدرجات والروابط لكل مادة"],settings:["الإعدادات","التزامن والتنبيهات والمظهر"]};
+const TITLES={today:["اليوم","مواعيدك بالترتيب، وسجّل حضورك من الكارت"],week:["الأسبوع","الجدول كله في نظرة"],quiz:["الكويزات والامتحانات","سجّل أي معاد، وهيظهرلك تنبيه قبله"],study:["المذاكرة","ذاكر بالمؤقت، وتابع هدفك اليومي والمحاضرات"],courses:["المواد","الحضور والدرجات والروابط لكل مادة"],settings:["الإعدادات","التزامن والتنبيهات والمظهر"]};
 function renderNav(){
   const b=upcoming().filter(q=>dayDiff(parseD(q.date),new Date())<=7).length;
   const item=([v,l,i])=>`<button data-v="${v}" ${L.view===v?'aria-current="page"':""}>${ico(i)}<span>${l}</span>${v==="quiz"&&b?`<span class="badge num">${b}</span>`:""}</button>`;
@@ -778,7 +876,7 @@ function renderView(){
   $("#vtitle").textContent=TITLES[L.view][0]; $("#vsub").textContent=TITLES[L.view][1];
   $("#hero").hidden=!["today","week"].includes(L.view);
   $("#main").innerHTML=`<div class="view">${({today:vToday,week:vWeek,quiz:vQuiz,study:vStudy,courses:vCourses,settings:vSettings})[L.view]()}</div>`;
-  bind();
+  bind(); renderFocus();
   const sd=$(".dstrip .day[aria-selected=\"true\"]"), st=$(".dstrip"); if(sd&&st){const r=sd.getBoundingClientRect(),q=st.getBoundingClientRect();st.scrollLeft+=(r.left+r.width/2)-(q.left+q.width/2)}
 }
 const filtersHTML=()=>`<div class="chips" role="group" aria-label="فلترة">
@@ -890,33 +988,79 @@ function studyPct(c){let t=0,d=0;for(let l=1;l<=L.lec;l++)for(const [s] of STEPS
 function pomoMinutes(c,days=7){const from=Date.now()-days*864e5;return live(D.pm).filter(p=>(!c||p.c===c)&&p.at>=from).reduce((a,p)=>a+(+p.min||0),0)}
 const hm=m=>m>=60?`${Math.floor(m/60)}س${m%60?" "+m%60+"د":""}`:`${m}د`;
 const PR=95, PC=2*Math.PI*PR;
+const NOTES={"EMB|1":"https://app.notion.com/p/3f7b7e72261e8153a56de7a7f5c778c9","EMB|2":"https://app.notion.com/p/3f7b7e72261e81dfbd9fc1974adc328c"};
+let pomoDur=60, focusMode=false;
+const dayMin=(d,c)=>{const a=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),z=a+864e5;return live(D.pm).filter(p=>p.at>=a&&p.at<z&&(!c||p.c===c)).reduce((s,p)=>s+(+p.min||0),0)};
+function streak(){const t=new Date();let d=new Date(t),n=0;if(dayMin(d)<30)d.setDate(d.getDate()-1);for(let k=0;k<400;k++){if(dayMin(d)>=30){n++;d.setDate(d.getDate()-1)}else break}return n}
+const mmss=ms=>`${String(Math.floor(ms/6e4)).padStart(2,"0")}:${String(Math.floor(ms%6e4/1e3)).padStart(2,"0")}`;
+const durTxt=m=>m===60?"ساعة":m===30?"نص ساعة":m===90?"ساعة ونص":m===120?"ساعتين":m+" دقيقة";
+function ringHTML(P,c,big){
+  const remain=P?(P.paused||Math.max(0,P.end-Date.now())):pomoDur*6e4, total=P?P.dur*6e4:pomoDur*6e4;
+  const st=P?(P.mode==="w"?(P.paused?"متوقف مؤقتاً":"بتذاكر"):"راحة"):"جاهز";
+  return `<div class="pring${big?" big":""}${P&&!P.paused&&P.mode==="w"?" run":""}${P&&P.mode==="b"?" brk":""}"><svg viewBox="0 0 220 220"><circle class="bg" cx="110" cy="110" r="${PR}"/><circle class="fg" data-pf cx="110" cy="110" r="${PR}" stroke-dasharray="${PC}" stroke-dashoffset="${PC*(1-remain/total)}"/></svg>
+   <div class="lbl"><span class="st">${st}</span><b class="num" data-pt>${mmss(remain)}</b><bdi class="cn">${C[P?P.c:c].ab}</bdi></div></div>`;
+}
+function vFocus(P){
+  return `<div class="focus" style="${vars(P.c)}" role="dialog" aria-label="وضع التركيز">
+   <button class="btn ghost sm fx" data-focus="0">${ico("close")}خروج</button>
+   ${ringHTML(P,P.c,true)}
+   <div class="chips">${P.mode==="w"?`<button class="btn" data-pomo="${P.paused?"resume":"pause"}">${ico(P.paused?"play":"pause")}${P.paused?"كمّل":"وقفة"}</button>`:""}<button class="btn ghost" data-pomo="stop">${ico("stop")}${P.mode==="w"?"إنهاء الجلسة":"إنهاء الراحة"}</button></div>
+   <p class="fhint">الشاشة هتفضل منوّرة لحد ما الجلسة تخلص</p></div>`;
+}
+function renderFocus(){
+  let f=$("#focusLayer"); const on=focusMode&&L.pomo&&L.view==="study";
+  if(!on){if(f)f.remove();document.body.style.overflow="";return}
+  if(!f){f=document.createElement("div");f.id="focusLayer";document.body.appendChild(f)}
+  f.innerHTML=vFocus(L.pomo); document.body.style.overflow="hidden";
+  f.querySelectorAll("[data-pomo]").forEach(x=>x.onclick=()=>pomoAct(x.dataset.pomo,+x.dataset.min));
+  f.querySelectorAll("[data-focus]").forEach(x=>x.onclick=()=>{focusMode=false;renderView()});
+}
 function vStudy(){
   const c=studyCourse, P=L.pomo;
-  const lecs=Array.from({length:L.lec},(_,i)=>i+1).map(l=>{const all=STEPS.every(([s])=>stOn(c,l,s));
-    return `<div class="lec${all?" full":""}" style="${vars(c)}"><b>محاضرة ${l}</b>${STEPS.map(([s,t])=>`<label><input type="checkbox" data-st="${c}|${l}|${s}" ${stOn(c,l,s)?"checked":""}>${t}</label>`).join("")}</div>`}).join("");
-  const remain=P?(P.paused||Math.max(0,P.end-Date.now())):60*6e4, total=P?P.dur*6e4:60*6e4, pc=P?P.c:c;
-  const mx=Math.max(60,...Object.keys(C).map(x=>pomoMinutes(x)));
-  return `<div class="grid2">
-   <section class="panel"><div class="head"><div><h3>مؤقت المذاكرة</h3><p>جلسة مذاكرة وبعدها راحة (10 دقايق بعد الساعة)، والوقت بيتسجّل للمادة</p></div></div>
-    <div class="pomo" style="${vars(pc)}">
-     <div class="pring"><svg viewBox="0 0 220 220"><circle class="bg" cx="110" cy="110" r="${PR}"/><circle class="fg" id="pfg" cx="110" cy="110" r="${PR}" stroke-dasharray="${PC}" stroke-dashoffset="${PC*(remain/total)}"/></svg>
-      <div class="lbl"><b class="num" id="ptime">${String(Math.floor(remain/6e4)).padStart(2,"0")}:${String(Math.floor(remain%6e4/1e3)).padStart(2,"0")}</b><span>${P?(P.mode==="w"?"مذاكرة · <bdi>"+C[P.c].ab+"</bdi>":"راحة"):"جاهز"}</span></div></div>
-     ${P?`<div class="chips"><button class="btn" data-pomo="${P.paused?"resume":"pause"}">${ico(P.paused?"play":"pause")}${P.paused?"كمّل":"إيقاف مؤقت"}</button><button class="btn ghost" data-pomo="stop">${ico("stop")}إنهاء</button></div>`
-       :`<div class="field" style="width:100%;max-width:300px"><label for="pc">بذاكر إيه؟</label><select id="pc">${courseOpts(c)}</select></div>
-        <div class="chips"><button class="btn" data-pomo="start" data-min="60">${ico("play")}ابدأ ساعة</button><button class="btn ghost" data-pomo="start" data-min="30">نص ساعة</button></div>`}
-    </div>
-    <div class="head" style="margin:22px 0 10px"><div><h3 style="font-size:16px">ذاكرت قد إيه آخر 7 أيام</h3><p>المجموع: ${hm(pomoMinutes())}</p></div></div>
-    <div class="coursebar">${Object.keys(C).map(k=>{const m=pomoMinutes(k);return `<div class="cb" style="${vars(k)}"><span class="n"><bdi>${C[k].ab}</bdi></span><div class="progress"><i style="width:${m/mx*100}%"></i></div><span class="num" style="text-align:left">${hm(m)}</span></div>`}).join("")}</div>
-    <details class="pmlog" style="margin-top:16px"><summary>تعديل الوقت المتسجّل</summary>
+  const now=new Date(), today=ymd(now), goal=L.goal||180, tmin=dayMin(now), sk=streak();
+  /* focus card */
+  const focus=`<section class="panel st-focus" style="${vars(P?P.c:c)}">
+    <div class="head"><div><h3>مؤقت المذاكرة</h3><p>${P?(P.mode==="w"?`جلسة ${durTxt(P.dur)} · ${C[P.c].short}`:`راحة ${P.dur} دقايق، وبعدها ترجع تذاكر`):"اختار المادة والمدة، وبعد الجلسة هتاخد راحة"}</p></div>${P?`<button class="btn ghost sm" data-focus="1">${ico("expand")}وضع التركيز</button>`:""}</div>
+    <div class="st-ring">${ringHTML(P,c,false)}</div>
+    ${P?`<div class="chips st-ctl">${P.mode==="w"?`<button class="btn" data-pomo="${P.paused?"resume":"pause"}">${ico(P.paused?"play":"pause")}${P.paused?"كمّل":"وقفة"}</button>`:""}<button class="btn ghost" data-pomo="stop">${ico("stop")}${P.mode==="w"?"إنهاء الجلسة":"إنهاء الراحة"}</button></div>`
+    :`<div class="st-pick"><div class="st-lab">هتذاكر إيه؟</div><div class="chips">${Object.keys(C).map(k=>`<button class="chip c" style="${vars(k)}" data-pc="${k}" aria-pressed="${k===c}"><i class="dot" style="background:var(--c)"></i><bdi>${C[k].ab}</bdi></button>`).join("")}</div>
+      <div class="st-lab">المدة</div><div class="chips">${[30,60,90,120].map(m=>`<button class="chip" data-dur="${m}" aria-pressed="${m===pomoDur}">${durTxt(m)}</button>`).join("")}</div></div>
+      <button class="btn st-go" data-pomo="start" data-min="${pomoDur}">${ico("play")}ابدأ ${durTxt(pomoDur)} ${C[c].ab}</button>`}
+   </section>`;
+  /* today card */
+  let tasks=planFor(today), pds=today, plabel="خطة النهارده";
+  if(!tasks.length){for(let k=1;k<=10;k++){const d=new Date(now);d.setDate(now.getDate()+k);const t=planFor(ymd(d));if(t.length){tasks=t;pds=ymd(d);plabel=`مفيش مذاكرة النهارده · خطة ${k===1?"بكره":d.toLocaleDateString("ar-EG",{weekday:"long"})}`;break}}}
+  const pdone=tasks.filter((_,i)=>{const x=D.pl[pds+"|"+i];return x&&!x.del}).length;
+  const gp=Math.min(1,tmin/goal);
+  const todayCard=`<section class="panel st-today">
+    <div class="st-goal"><div class="gm"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="25" class="bg"/><circle cx="30" cy="30" r="25" class="fg" stroke-dasharray="${2*Math.PI*25}" stroke-dashoffset="${2*Math.PI*25*(1-gp)}"/></svg><b class="num">${Math.round(gp*100)}%</b></div>
+      <div class="gt"><h3>${tmin>=goal?"خلصت هدف النهارده 🎉":`ذاكرت ${hm(tmin)} من ${hm(goal)}`}</h3><p>${tmin>=goal?"أي وقت زيادة بونص":`فاضلك ${hm(goal-tmin)} على هدف النهارده`}</p>
+      <div class="gadj"><span>الهدف</span><button class="btn ghost sm" data-goal="-30" aria-label="قلّل الهدف">−</button><b class="num">${hm(goal)}</b><button class="btn ghost sm" data-goal="30" aria-label="زوّد الهدف">+</button></div></div>
+      <div class="streak${sk?" on":""}" title="أيام ورا بعض ذاكرت فيها نص ساعة على الأقل"><span>🔥</span><b class="num">${sk}</b><small>${sk===1?"يوم":"أيام"} ورا بعض</small></div></div>
+    <div class="head" style="margin:18px 0 8px"><div><h3 style="font-size:16px">${plabel}</h3><p>${tasks.length?`خلصت ${pdone} من ${tasks.length}`:"مفيش خطة متسجلة"}</p></div></div>
+    <div class="st-tasks">${tasks.map(([tc,t],i)=>{const k=pds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<div class="st-task${on?" on":""}" style="${tc?vars(tc):""}"><label><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="tk"><bdi>${tc?C[tc].ab:""}</bdi> ${esc(t)}</span></label>${tc&&!on&&!P?`<button class="iconbtn sm" data-run="${tc}" title="ابدأ جلسة ${C[tc].ab}" aria-label="ابدأ جلسة ${C[tc].ab}">${ico("play")}</button>`:""}</div>`}).join("")||`<p class="muted" style="margin:0">ضيف خطة أو ذاكر بالمؤقت على طول</p>`}</div>
+   </section>`;
+  /* week chart */
+  const days=[...Array(7)].map((_,i)=>{const d=new Date(now);d.setDate(now.getDate()-6+i);return d});
+  const per=days.map(d=>Object.keys(C).map(k=>dayMin(d,k)));
+  const tot=per.map(a=>a.reduce((x,y)=>x+y,0)), mxd=Math.max(goal,...tot), wsum=tot.reduce((a,b)=>a+b,0);
+  const week=`<section class="panel st-week"><div class="head"><div><h3>آخر 7 أيام</h3><p>المجموع ${hm(wsum)} · متوسط ${hm(Math.round(wsum/7))} في اليوم</p></div></div>
+    <div class="wchart" style="--goal:${(1-goal/mxd)*100}%"><i class="gline" title="الهدف اليومي"></i>${days.map((d,i)=>`<div class="wcol${i===6?" today":""}"><span class="num v">${tot[i]?hm(tot[i]):""}</span><div class="stk">${Object.keys(C).map((k,j)=>per[i][j]?`<i style="${vars(k)};height:${per[i][j]/mxd*100}%" title="${C[k].ab}: ${hm(per[i][j])}"></i>`:"").join("")}</div><span class="d">${i===6?"النهارده":d.toLocaleDateString("ar-EG",{weekday:"short"})}</span></div>`).join("")}</div>
+    <div class="wleg">${Object.keys(C).map(k=>{const m=pomoMinutes(k);return `<span style="${vars(k)}"><i class="dot" style="background:var(--c)"></i><bdi>${C[k].ab}</bdi><b class="num">${hm(m)}</b></span>`}).join("")}</div>
+    <details class="pmlog"><summary>تعديل الوقت المتسجّل</summary>
      <div class="pmadd"><select id="pmC">${courseOpts(c)}</select><input id="pmM" type="number" min="1" max="600" inputmode="numeric" placeholder="دقايق" value="60"><button class="btn" id="pmAdd">${ico("plus")}ضيف</button></div>
      <div class="pmlist">${live(D.pm).filter(x=>x.at>=Date.now()-7*864e5).sort((a,b)=>b.at-a.at).map(x=>`<div class="pmrow" style="${vars(x.c)}"><i class="dot" style="background:var(--c)"></i><bdi class="en">${C[x.c]?C[x.c].ab:""}</bdi><span class="num">${hm(+x.min||0)}</span><span class="muted">${new Date(x.at).toLocaleDateString("ar-EG",{weekday:"short",day:"numeric",month:"short"})}</span>${delBtn("pm",x.id)}</div>`).join("")||`<p class="muted">مفيش جلسات متسجلة</p>`}</div>
-    </details>
-   </section>
-   <section class="panel"><div class="head"><div><h3>المحاضرات</h3><p>علّم على اللي خلصته في كل محاضرة</p></div></div>
-    <div class="coursebar" style="margin-bottom:16px">${Object.keys(C).map(k=>`<div class="cb" style="${vars(k)}"><span class="n"><bdi>${C[k].ab}</bdi></span><div class="progress"><i style="width:${studyPct(k)}%"></i></div><span class="num" style="text-align:left">${studyPct(k)}%</span></div>`).join("")}</div>
-    <div class="chips" style="margin-bottom:12px">${Object.keys(C).map(k=>`<button class="chip c" style="${vars(k)}" data-sc="${k}" aria-pressed="${k===c}"><bdi>${C[k].ab}</bdi></button>`).join("")}</div>
-    <div class="sgrid">${lecs}</div>
-   </section></div>`;
+    </details></section>`;
+  /* lectures */
+  let nextL=0; for(let l=1;l<=L.lec;l++){if(!STEPS.every(([s])=>stOn(c,l,s))){nextL=l;break}}
+  const rows=Array.from({length:L.lec},(_,i)=>i+1).map(l=>{const n=STEPS.filter(([s])=>stOn(c,l,s)).length,all=n===STEPS.length,nt=NOTES[c+"|"+l];
+    return `<div class="lrow${all?" full":""}${l===nextL?" next":""}"><div class="ln"><b>محاضرة ${l}</b>${l===nextL?`<span class="nx">اللي عليك</span>`:""}${all?`<span class="ok">${ico("check")}</span>`:""}</div>
+     <div class="steps">${STEPS.map(([s,t])=>`<label class="stp${stOn(c,l,s)?" on":""}"><input type="checkbox" data-st="${c}|${l}|${s}" ${stOn(c,l,s)?"checked":""}>${t}</label>`).join("")}</div>
+     ${nt?`<a class="iconbtn sm" href="${nt}" target="_blank" rel="noopener" title="صفحة المحاضرة في Notion" aria-label="صفحة المحاضرة في Notion">${ico("link")}</a>`:`<span class="lsp"></span>`}</div>`}).join("");
+  const lecs=`<section class="panel st-lec" style="${vars(c)}"><div class="head"><div><h3>المحاضرات</h3><p>علّم على كل خطوة خلصتها. «اللي عليك» هي أول محاضرة لسه مخلصتهاش</p></div></div>
+    <div class="ctabs" role="tablist">${Object.keys(C).map(k=>`<button role="tab" class="ctab" style="${vars(k)}" data-sc="${k}" aria-selected="${k===c}"><bdi>${C[k].ab}</bdi><span class="num">${studyPct(k)}%</span><i style="width:${studyPct(k)}%"></i></button>`).join("")}</div>
+    <div class="lrows">${rows}</div></section>`;
+  return `<div class="st-grid">${focus}${todayCard}${week}${lecs}</div>`;
 }
 function vCourses(){
   const k=selCourse, c=C[k], n=new Date(), a=attStats(k);
@@ -987,6 +1131,11 @@ function bind(){
   $$("[data-pl]").forEach(x=>x.onchange=()=>{const k=x.dataset.pl;if(x.checked){put("pl",k,{v:1});toast("برافو ✓")}else del("pl",k);renderView()});
   $$("[data-st]").forEach(x=>x.onchange=()=>{const k=x.dataset.st;if(x.checked)put("st",k,{v:1});else del("st",k);renderView()});
   $$("[data-pomo]").forEach(x=>x.onclick=()=>pomoAct(x.dataset.pomo,+x.dataset.min));
+  $$("[data-pc]").forEach(x=>x.onclick=()=>{studyCourse=x.dataset.pc;renderView()});
+  $$("[data-dur]").forEach(x=>x.onclick=()=>{pomoDur=+x.dataset.dur;renderView()});
+  $$("[data-run]").forEach(x=>x.onclick=()=>{studyCourse=x.dataset.run;pomoAct("start",pomoDur);toast(`بدأت جلسة ${durTxt(pomoDur)} ${C[studyCourse].ab}`);window.scrollTo({top:0,behavior:"smooth"})});
+  $$("[data-focus]").forEach(x=>x.onclick=()=>{focusMode=x.dataset.focus==="1";renderView();window.scrollTo({top:0})});
+  $$("[data-goal]").forEach(x=>x.onclick=()=>{L.goal=Math.max(30,Math.min(600,(L.goal||180)+(+x.dataset.goal)));saveL();renderView()});
   {const b=$("#pmAdd");if(b)b.onclick=()=>{const m=Math.round(+$("#pmM").value);if(!(m>0&&m<=600)){toast("اكتب عدد دقايق صح");return}put("pm",uid(),{c:$("#pmC").value,min:m,at:Date.now()});toast("اتضاف "+hm(m)+" ✓");renderView();const d=$(".pmlog");if(d)d.open=true}}
   $$("[data-th]").forEach(x=>x.onclick=()=>{L.theme=x.dataset.th;saveL();applyTheme();renderView()});
   $$("form input, form select").forEach(el=>el.addEventListener("input",()=>$$(".err").forEach(e=>e.textContent="")));
@@ -1031,24 +1180,31 @@ function bind(){
 }
 
 /* ---------- pomodoro ---------- */
+const BASE_TITLE=document.title;
+let wlock=null, actx=null;
+async function wake(on){try{if(on&&"wakeLock" in navigator&&!wlock){wlock=await navigator.wakeLock.request("screen");wlock.addEventListener("release",()=>{wlock=null})}else if(!on&&wlock){await wlock.release();wlock=null}}catch(e){}}
+function unlockAudio(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==="suspended")actx.resume()}catch(e){}}
+function chime(work){try{unlockAudio();const notes=work?[523,659,784,1047]:[784,659,523];notes.forEach((f,i)=>{const o=actx.createOscillator(),g=actx.createGain(),t=actx.currentTime+i*.18;o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.25,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+.5);o.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+.55)})}catch(e){}}
 function pomoAct(a,min){
   const P=L.pomo;
-  if(a==="start"){const c=$("#pc")?.value||studyCourse;studyCourse=c;L.pomo={c,mode:"w",dur:min||60,end:Date.now()+(min||60)*6e4,paused:0}}
-  else if(a==="pause"&&P){P.paused=Math.max(1,P.end-Date.now())}
-  else if(a==="resume"&&P){P.end=Date.now()+P.paused;P.paused=0}
-  else if(a==="stop"&&P){if(P.mode==="w"){const rem=P.paused||Math.max(0,P.end-Date.now()),done=Math.round((P.dur*6e4-rem)/6e4);if(done>=1)put("pm",uid(),{c:P.c,min:done,at:Date.now()})}L.pomo=null}
+  if(a==="start"){const c=studyCourse,m=min||pomoDur;L.pomo={c,mode:"w",dur:m,end:Date.now()+m*6e4,paused:0};unlockAudio();wake(true)}
+  else if(a==="pause"&&P){P.paused=Math.max(1,P.end-Date.now());wake(false)}
+  else if(a==="resume"&&P){P.end=Date.now()+P.paused;P.paused=0;wake(true)}
+  else if(a==="stop"&&P){if(P.mode==="w"){const rem=P.paused||Math.max(0,P.end-Date.now()),done=Math.round((P.dur*6e4-rem)/6e4);if(done>=1){put("pm",uid(),{c:P.c,min:done,at:Date.now()});toast(`اتسجّل ${hm(done)} في ${C[P.c].ab}`)}}L.pomo=null;focusMode=false;wake(false)}
   saveL();renderView();tickPomo();
 }
 function tickPomo(){
   const P=L.pomo, pills=[$("#pomoPill"),$("#pomoPillM")];
-  if(!P){pills.forEach(p=>p.hidden=true);return}
+  if(!P){pills.forEach(p=>p.hidden=true);if(document.title!==BASE_TITLE)document.title=BASE_TITLE;return}
   const rem=P.paused||Math.max(0,P.end-Date.now()), txt=`${String(Math.floor(rem/6e4)).padStart(2,"0")}:${String(Math.floor(rem%6e4/1e3)).padStart(2,"0")}`;
   pills.forEach(p=>{p.hidden=false;p.innerHTML=`<i class="dot"></i><span class="num en">${txt}</span><span style="font-size:12px;color:var(--muted)">${P.mode==="w"?C[P.c].ab:"راحة"}</span>`;p.onclick=()=>go("study")});
-  const t=$("#ptime"); if(t){t.textContent=txt;const f=$("#pfg");if(f)f.style.strokeDashoffset=PC*(rem/(P.dur*6e4))}
+  document.title=`${txt} · ${P.mode==="w"?C[P.c].ab:"راحة"}`;
+  $$("[data-pt]").forEach(t=>t.textContent=txt); $$("[data-pf]").forEach(f=>f.style.strokeDashoffset=PC*(1-rem/(P.dur*6e4)));
   if(!P.paused&&rem<=0){
+    chime(P.mode==="w");
     if(P.mode==="w"){put("pm",uid(),{c:P.c,min:P.dur,at:Date.now()});notify("خلصت جلسة مذاكرة 👏",`${P.dur} دقيقة في ${C[P.c].short}. خد ${P.dur>=50?10:5} دقايق راحة`,"pomo");const br=P.dur>=50?10:5;L.pomo={c:P.c,mode:"b",dur:br,end:Date.now()+br*6e4,paused:0}}
-    else{notify("الراحة خلصت","يلا نرجع نذاكر","pomo");L.pomo=null}
-    saveL(); if(L.view==="study")renderView();
+    else{notify("الراحة خلصت","يلا نرجع نذاكر","pomo");L.pomo=null;focusMode=false;wake(false)}
+    saveL(); if(L.view==="study")renderView(); else renderFocus();
   }
 }
 
@@ -1093,7 +1249,8 @@ function renderAll(){renderHero();renderAlerts();renderView()}
   setInterval(()=>{renderAlerts();checkNotify();renderSync()},30000);
   setTimeout(checkNotify,3000);
   setInterval(()=>sync(),90000); setTimeout(()=>sync(),1200);
-  document.addEventListener("visibilitychange",()=>{if(!document.hidden){sync();renderAll()}});
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden){sync();renderAll();if(L.pomo&&!L.pomo.paused)wake(true)}});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&focusMode){focusMode=false;renderView()}});
   window.addEventListener("online",()=>sync());
   if("serviceWorker" in navigator&&location.protocol==="https:"){try{swReg=await navigator.serviceWorker.register("sw.js");swReg.update()}catch(e){}}
   const sp=$("#splash"), reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
