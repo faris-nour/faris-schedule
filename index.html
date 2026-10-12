@@ -553,7 +553,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="4.7";
+const APP_VER="4.8";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -874,7 +874,7 @@ function vStudy(){
   const c=studyCourse, P=L.pomo;
   const lecs=Array.from({length:L.lec},(_,i)=>i+1).map(l=>{const all=STEPS.every(([s])=>stOn(c,l,s));
     return `<div class="lec${all?" full":""}" style="${vars(c)}"><b>محاضرة ${l}</b>${STEPS.map(([s,t])=>`<label><input type="checkbox" data-st="${c}|${l}|${s}" ${stOn(c,l,s)?"checked":""}>${t}</label>`).join("")}</div>`}).join("");
-  const remain=P?(P.paused||Math.max(0,P.end-Date.now())):25*6e4, total=P?P.dur*6e4:25*6e4, pc=P?P.c:c;
+  const remain=P?(P.paused||Math.max(0,P.end-Date.now())):60*6e4, total=P?P.dur*6e4:60*6e4, pc=P?P.c:c;
   const mx=Math.max(60,...Object.keys(C).map(x=>pomoMinutes(x)));
   return `<div class="grid2">
    <section class="panel"><div class="head"><div><h3>مؤقت المذاكرة</h3><p>جلسة مذاكرة وبعدها 5 دقايق راحة، والوقت بيتسجّل للمادة</p></div></div>
@@ -883,7 +883,7 @@ function vStudy(){
       <div class="lbl"><b class="num" id="ptime">${String(Math.floor(remain/6e4)).padStart(2,"0")}:${String(Math.floor(remain%6e4/1e3)).padStart(2,"0")}</b><span>${P?(P.mode==="w"?"مذاكرة · "+C[P.c].code:"راحة"):"جاهز"}</span></div></div>
      ${P?`<div class="chips"><button class="btn" data-pomo="${P.paused?"resume":"pause"}">${ico(P.paused?"play":"pause")}${P.paused?"كمّل":"إيقاف مؤقت"}</button><button class="btn ghost" data-pomo="stop">${ico("stop")}إنهاء</button></div>`
        :`<div class="field" style="width:100%;max-width:300px"><label for="pc">بذاكر إيه؟</label><select id="pc">${courseOpts(c)}</select></div>
-        <div class="chips"><button class="btn" data-pomo="start" data-min="25">${ico("play")}ابدأ 25 دقيقة</button><button class="btn ghost" data-pomo="start" data-min="50">50 دقيقة</button></div>`}
+        <div class="chips"><button class="btn" data-pomo="start" data-min="60">${ico("play")}ابدأ ساعة</button><button class="btn ghost" data-pomo="start" data-min="30">نص ساعة</button></div>`}
     </div>
     <div class="head" style="margin:22px 0 10px"><div><h3 style="font-size:16px">ذاكرت قد إيه آخر 7 أيام</h3><p>المجموع: ${hm(pomoMinutes())}</p></div></div>
     <div class="coursebar">${Object.keys(C).map(k=>{const m=pomoMinutes(k);return `<div class="cb" style="${vars(k)}"><span class="n">${C[k].short}</span><div class="progress"><i style="width:${m/mx*100}%"></i></div><span class="num" style="text-align:left">${hm(m)}</span></div>`}).join("")}</div>
@@ -1008,7 +1008,7 @@ function bind(){
 /* ---------- pomodoro ---------- */
 function pomoAct(a,min){
   const P=L.pomo;
-  if(a==="start"){const c=$("#pc")?.value||studyCourse;studyCourse=c;L.pomo={c,mode:"w",dur:min||25,end:Date.now()+(min||25)*6e4,paused:0}}
+  if(a==="start"){const c=$("#pc")?.value||studyCourse;studyCourse=c;L.pomo={c,mode:"w",dur:min||60,end:Date.now()+(min||60)*6e4,paused:0}}
   else if(a==="pause"&&P){P.paused=Math.max(1,P.end-Date.now())}
   else if(a==="resume"&&P){P.end=Date.now()+P.paused;P.paused=0}
   else if(a==="stop"&&P){if(P.mode==="w"){const rem=P.paused||Math.max(0,P.end-Date.now()),done=Math.round((P.dur*6e4-rem)/6e4);if(done>=1)put("pm",uid(),{c:P.c,min:done,at:Date.now()})}L.pomo=null}
@@ -1021,7 +1021,7 @@ function tickPomo(){
   pills.forEach(p=>{p.hidden=false;p.innerHTML=`<i class="dot"></i><span class="num en">${txt}</span><span style="font-size:12px;color:var(--muted)">${P.mode==="w"?C[P.c].code:"راحة"}</span>`;p.onclick=()=>go("study")});
   const t=$("#ptime"); if(t){t.textContent=txt;const f=$("#pfg");if(f)f.style.strokeDashoffset=PC*(rem/(P.dur*6e4))}
   if(!P.paused&&rem<=0){
-    if(P.mode==="w"){put("pm",uid(),{c:P.c,min:P.dur,at:Date.now()});notify("خلصت جلسة مذاكرة 👏",`${P.dur} دقيقة في ${C[P.c].short}. خد 5 دقايق راحة`,"pomo");L.pomo={c:P.c,mode:"b",dur:5,end:Date.now()+5*6e4,paused:0}}
+    if(P.mode==="w"){put("pm",uid(),{c:P.c,min:P.dur,at:Date.now()});notify("خلصت جلسة مذاكرة 👏",`${P.dur} دقيقة في ${C[P.c].short}. خد ${P.dur>=50?10:5} دقايق راحة`,"pomo");const br=P.dur>=50?10:5;L.pomo={c:P.c,mode:"b",dur:br,end:Date.now()+br*6e4,paused:0}}
     else{notify("الراحة خلصت","يلا نرجع نذاكر","pomo");L.pomo=null}
     saveL(); if(L.view==="study")renderView();
   }
