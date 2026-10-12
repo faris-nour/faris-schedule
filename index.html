@@ -336,6 +336,9 @@ details.box summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:
 .ptask{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:background .2s,border-color .2s}
 .ptask:hover{border-color:var(--c,var(--ink))}
 .ptask input{width:20px;height:20px;accent-color:var(--ok);flex:none}
+.ptask .pc svg.i{width:16px;height:16px;display:block}
+.cico svg.i{width:28px;height:28px}
+.sbox .sq svg.i{width:22px;height:22px}
 .ptask .pc{font-family:var(--font-display);font-weight:700;font-size:11px;padding:3px 8px;border-radius:8px;background:var(--c-bg,var(--surface-2));color:var(--c,var(--muted));direction:ltr;flex:none}
 .ptask .pt{flex:1;min-width:0;font-size:14px}
 .ptask .pt b{font-weight:500;color:var(--c,var(--ink))}
@@ -482,11 +485,11 @@ details.box summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:
 
 <script>
 const C={
- NET:{name:"Advanced Computer Networks",short:"Adv. Computer Networks",code:"IT434",dr:"د. شيماء مسعد",ta:"م. نور حسن",v:"net"},
- GR:{name:"Computer Graphics",short:"Computer Graphics",code:"IT221",dr:"د. وفاء سامي",ta:"م. إيمان حسن",v:"gr"},
- SE:{name:"Introduction to Software Engineering",short:"Software Engineering",code:"IT240",dr:"د. أسماء جاد أمين",ta:"م. إيمان صلاح",v:"se"},
- EMB:{name:"Embedded Systems",short:"Embedded Systems",code:"IT423",dr:"د. أسماء جاد أمين",ta:"م. عمرو جمال",v:"emb"},
- COM:{name:"Communication Technology",short:"Communication Technology",code:"IT438",dr:"د. رهام عادل",ta:"م. رفيدة",v:"com"}
+ NET:{name:"Advanced Computer Networks",short:"Adv. Computer Networks",ab:"Networks",dr:"د. شيماء مسعد",ta:"م. نور حسن",v:"net"},
+ GR:{name:"Computer Graphics",short:"Computer Graphics",ab:"Graphics",dr:"د. وفاء سامي",ta:"م. إيمان حسن",v:"gr"},
+ SE:{name:"Introduction to Software Engineering",short:"Software Engineering",ab:"Software Eng.",dr:"د. أسماء جاد أمين",ta:"م. إيمان صلاح",v:"se"},
+ EMB:{name:"Embedded Systems",short:"Embedded Systems",ab:"Embedded",dr:"د. أسماء جاد أمين",ta:"م. عمرو جمال",v:"emb"},
+ COM:{name:"Communication Technology",short:"Communication Technology",ab:"Comm. Tech",dr:"د. رهام عادل",ta:"م. رفيدة",v:"com"}
 };
 const E=[
  {d:0,s:8,c:"NET",t:"lo"},{d:0,s:10,c:"GR",t:"lo"},{d:0,s:11,c:"SE",t:"sc",sec:"S7",room:"R2"},
@@ -553,10 +556,15 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="4.8";
+const APP_VER="4.9";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
+ NET:'<circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="18" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M11 7 6 16M13 7l5 9M7.2 18h9.6"/>',
+ GR:'<path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/>',
+ SE:'<path d="M8 7 3 12l5 5M16 7l5 5-5 5M14 4l-4 16"/>',
+ EMB:'<rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',
+ COM:'<path d="M12 13v8M9 21h6"/><circle cx="12" cy="11" r="2"/><path d="M8 7a6 6 0 0 0 0 8M16 7a6 6 0 0 1 0 8M5 4a10 10 0 0 0 0 14M19 4a10 10 0 0 1 0 14"/>',
  today:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
  week:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',
  quiz:'<path d="M9 4h6l1 2h3v15H5V6h3z"/><path d="M9 12l2 2 4-4"/>',
@@ -714,7 +722,7 @@ function renderHero(){
   $("#todayCount").textContent=todays.length;
   const left=todays.filter(e=>e.s*60>m0).length; $("#todayLeft").textContent=i<0?"الجمعة إجازة":!todays.length?"يوم فاضي":left?`فاضل ${left}`:"خلصوا";
   const u=upcoming()[0], ud=u?dayDiff(parseD(u.date),n):99;
-  $("#nextQuiz").innerHTML=u?`<span class="en">${C[u.c].code}</span>`:"مفيش"; $("#nextQuizW").textContent=u?`${u.type} · ${leftText(ud)}`:"سجّل الكويزات من تابها";
+  $("#nextQuiz").innerHTML=u?`<span class="en">${C[u.c].ab}</span>`:"مفيش"; $("#nextQuizW").textContent=u?`${u.type} · ${leftText(ud)}`:"سجّل الكويزات من تابها";
   $("#nqTile").classList.toggle("hot",!!u&&ud<=3);
   const {cur,next,at,m}=findNow(), box=$("#nowBox");
   if(!cur&&!next){box.dataset.k="";box.style.cssText="--c:var(--accent);--c-bg:var(--surface-2)";box.innerHTML=`<div class="nc-row" style="padding-bottom:20px"><div class="nc-main"><div class="nc-eye">مفيش مواعيد</div><h2 style="direction:rtl">شغّل الفلاتر عشان تشوف المواعيد</h2></div></div>`;return}
@@ -724,7 +732,7 @@ function renderHero(){
   const key=(cur?"c":"n")+e.c+e.d+e.s;
   if(box.dataset.k!==key){box.dataset.k=key;box.style.cssText=vars(e.c);
     const when=cur?`<span class="livepill"><i class="pulse"></i>شغّال دلوقتي</span>`:`<span>اللي جاي</span> · <b>${dayDiff(at,n)===0?"النهارده":dayDiff(at,n)===1?"بكرة":DAYS[e.d]} ${fmt(e.s)} ${ap(e.s)}</b>`;
-    box.innerHTML=`<div class="nc-row"><div class="cico">${C[e.c].code}</div>
+    box.innerHTML=`<div class="nc-row"><div class="cico">${ico(e.c)}</div>
       <div class="nc-main"><div class="nc-eye">${when}</div><h2>${C[e.c].short}</h2>
         <div class="nc-meta"><span class="mchip c">${TYPE[e.t]}${e.sec?" "+e.sec:""}</span><span class="mchip">${place(e)}</span><span class="mchip">${who(e)}</span></div></div>
       <div class="nc-count"><span class="lbl">${cur?"فاضل على ما تخلص":"فاضل على ما تبدأ"}</span><div class="digits" id="digits"></div></div></div>
@@ -765,7 +773,7 @@ const filtersHTML=()=>`<div class="chips" role="group" aria-label="فلترة">
   <button class="chip" data-f="sc" aria-pressed="${L.filters.sc}"><i class="sw sc"></i>سكاشن</button>
   <button class="chip" data-f="lf" aria-pressed="${L.filters.lf}"><i class="sw lf"></i>حضوري</button>
   <button class="chip" data-f="lo" aria-pressed="${L.filters.lo}"><i class="sw lo"></i>أونلاين</button></div>`;
-const courseOpts=sel=>Object.entries(C).map(([k,c])=>`<option value="${k}"${sel===k?" selected":""}>${c.short} (${c.code})</option>`).join("");
+const courseOpts=sel=>Object.entries(C).map(([k,c])=>`<option value="${k}"${sel===k?" selected":""}>${c.short}</option>`).join("");
 const delBtn=(map,id)=>pend===id?`<span class="confirm">تمسحه؟<button class="yes" data-yes="${map}|${id}">امسح</button><button class="no" data-no>لأ</button></span>`:`<button class="del" data-del="${id}" aria-label="مسح">${ico("trash")}</button>`;
 
 /* ---------- attendance ---------- */
@@ -794,7 +802,7 @@ function slotHTML(e,ds,k,{liveNow,past,started,q}){
   const a=attOf(ds,e);
   return `<div class="slot" style="--i:${k}"><div class="tm"><b class="num">${fmt(e.s)} <small style="font-size:11px;font-weight:500;color:var(--muted)">${ap(e.s)}</small></b><span class="num" style="white-space:nowrap">لحد ${fmt(e.s+1)}</span></div>
    <div class="sbox ${e.t}${liveNow?" live":""}${past?" past":""}${a?" marked":""}" style="${vars(e.c)}">
-    <div class="sq">${C[e.c].code}</div>
+    <div class="sq">${ico(e.c)}</div>
     <div class="inf"><b>${C[e.c].short}</b><span>${place(e)} · ${who(e)}</span></div>
     ${q?`<span class="qflag">${esc(q.type)}</span>`:""}${liveNow?`<span class="livepill"><i class="pulse"></i>دلوقتي</span>`:""}<span class="ttag">${tag(e)}</span>
     ${started?`<div class="ab"><button class="y" data-att="${attKey(ds,e)}" data-v="y" aria-pressed="${a==="y"}" title="حضرت" aria-label="حضرت">✓</button><button class="n" data-att="${attKey(ds,e)}" data-v="n" aria-pressed="${a==="n"}" title="غبت" aria-label="غبت">✕</button></div>`:""}
@@ -810,7 +818,7 @@ function planHTML(ds){
   }
   const done=tasks.filter((_,i)=>{const r=D.pl[ds+"|"+i];return r&&!r.del}).length;
   return `<section class="panel plan"><div class="head"><div><h3>${ico("study")}${label}</h3><p>خلصت ${done} من ${tasks.length}</p></div><div class="progress" style="width:140px;--c:var(--ok)"><i style="width:${done/tasks.length*100}%"></i></div></div>
-   <div class="ptasks">${tasks.map(([c,t],i)=>{const k=ds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<label class="ptask${on?" on":""}" style="${c?vars(c):""}"><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="pc">${c?C[c].code:""}</span><span class="pt"><b class="en">${c?C[c].short:""}</b> ${esc(t)}</span></label>`}).join("")}</div></section>`;
+   <div class="ptasks">${tasks.map(([c,t],i)=>{const k=ds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<label class="ptask${on?" on":""}" style="${c?vars(c):""}"><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="pc">${c?ico(c):""}</span><span class="pt"><b class="en">${c?C[c].short:""}</b> ${esc(t)}</span></label>`}).join("")}</div></section>`;
 }
 function vToday(){
   const n=new Date(), ti=idxOf(n.getDay()); if(selDay===null)selDay=ti<0?6:ti;
@@ -877,20 +885,20 @@ function vStudy(){
   const remain=P?(P.paused||Math.max(0,P.end-Date.now())):60*6e4, total=P?P.dur*6e4:60*6e4, pc=P?P.c:c;
   const mx=Math.max(60,...Object.keys(C).map(x=>pomoMinutes(x)));
   return `<div class="grid2">
-   <section class="panel"><div class="head"><div><h3>مؤقت المذاكرة</h3><p>جلسة مذاكرة وبعدها 5 دقايق راحة، والوقت بيتسجّل للمادة</p></div></div>
+   <section class="panel"><div class="head"><div><h3>مؤقت المذاكرة</h3><p>جلسة مذاكرة وبعدها راحة (10 دقايق بعد الساعة)، والوقت بيتسجّل للمادة</p></div></div>
     <div class="pomo" style="${vars(pc)}">
      <div class="pring"><svg viewBox="0 0 220 220"><circle class="bg" cx="110" cy="110" r="${PR}"/><circle class="fg" id="pfg" cx="110" cy="110" r="${PR}" stroke-dasharray="${PC}" stroke-dashoffset="${PC*(remain/total)}"/></svg>
-      <div class="lbl"><b class="num" id="ptime">${String(Math.floor(remain/6e4)).padStart(2,"0")}:${String(Math.floor(remain%6e4/1e3)).padStart(2,"0")}</b><span>${P?(P.mode==="w"?"مذاكرة · "+C[P.c].code:"راحة"):"جاهز"}</span></div></div>
+      <div class="lbl"><b class="num" id="ptime">${String(Math.floor(remain/6e4)).padStart(2,"0")}:${String(Math.floor(remain%6e4/1e3)).padStart(2,"0")}</b><span>${P?(P.mode==="w"?"مذاكرة · <bdi>"+C[P.c].ab+"</bdi>":"راحة"):"جاهز"}</span></div></div>
      ${P?`<div class="chips"><button class="btn" data-pomo="${P.paused?"resume":"pause"}">${ico(P.paused?"play":"pause")}${P.paused?"كمّل":"إيقاف مؤقت"}</button><button class="btn ghost" data-pomo="stop">${ico("stop")}إنهاء</button></div>`
        :`<div class="field" style="width:100%;max-width:300px"><label for="pc">بذاكر إيه؟</label><select id="pc">${courseOpts(c)}</select></div>
         <div class="chips"><button class="btn" data-pomo="start" data-min="60">${ico("play")}ابدأ ساعة</button><button class="btn ghost" data-pomo="start" data-min="30">نص ساعة</button></div>`}
     </div>
     <div class="head" style="margin:22px 0 10px"><div><h3 style="font-size:16px">ذاكرت قد إيه آخر 7 أيام</h3><p>المجموع: ${hm(pomoMinutes())}</p></div></div>
-    <div class="coursebar">${Object.keys(C).map(k=>{const m=pomoMinutes(k);return `<div class="cb" style="${vars(k)}"><span class="n">${C[k].short}</span><div class="progress"><i style="width:${m/mx*100}%"></i></div><span class="num" style="text-align:left">${hm(m)}</span></div>`}).join("")}</div>
+    <div class="coursebar">${Object.keys(C).map(k=>{const m=pomoMinutes(k);return `<div class="cb" style="${vars(k)}"><span class="n"><bdi>${C[k].ab}</bdi></span><div class="progress"><i style="width:${m/mx*100}%"></i></div><span class="num" style="text-align:left">${hm(m)}</span></div>`}).join("")}</div>
    </section>
    <section class="panel"><div class="head"><div><h3>المحاضرات</h3><p>علّم على اللي خلصته في كل محاضرة</p></div></div>
-    <div class="coursebar" style="margin-bottom:16px">${Object.keys(C).map(k=>`<div class="cb" style="${vars(k)}"><span class="n">${C[k].short}</span><div class="progress"><i style="width:${studyPct(k)}%"></i></div><span class="num" style="text-align:left">${studyPct(k)}%</span></div>`).join("")}</div>
-    <div class="chips" style="margin-bottom:12px">${Object.keys(C).map(k=>`<button class="chip c" style="${vars(k)}" data-sc="${k}" aria-pressed="${k===c}">${C[k].code}</button>`).join("")}</div>
+    <div class="coursebar" style="margin-bottom:16px">${Object.keys(C).map(k=>`<div class="cb" style="${vars(k)}"><span class="n"><bdi>${C[k].ab}</bdi></span><div class="progress"><i style="width:${studyPct(k)}%"></i></div><span class="num" style="text-align:left">${studyPct(k)}%</span></div>`).join("")}</div>
+    <div class="chips" style="margin-bottom:12px">${Object.keys(C).map(k=>`<button class="chip c" style="${vars(k)}" data-sc="${k}" aria-pressed="${k===c}"><bdi>${C[k].ab}</bdi></button>`).join("")}</div>
     <div class="sgrid">${lecs}</div>
    </section></div>`;
 }
@@ -899,8 +907,8 @@ function vCourses(){
   const ev=E.filter(e=>e.c===k).sort((x,y)=>x.d-y.d||x.s-y.s);
   const grades=live(D.gr).filter(g=>g.c===k).sort((x,y)=>(x.u||0)-(y.u||0)), sum=grades.reduce((s,g)=>s+(+g.score||0),0), mx=grades.reduce((s,g)=>s+(+g.max||0),0);
   const links=live(D.ln).filter(l=>l.c===k), nq=upcoming().find(q=>q.c===k), absT=a.sc.n+a.lf.n;
-  return `<div class="chips">${Object.keys(C).map(x=>`<button class="chip c" style="${vars(x)}" data-cc="${x}" aria-pressed="${x===k}">${C[x].code}</button>`).join("")}</div>
-  <section class="chead" style="${vars(k)}"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><h3>${c.name}</h3><span class="en" style="font-family:var(--font-display);font-weight:700">${c.code}</span></div>
+  return `<div class="chips">${Object.keys(C).map(x=>`<button class="chip c" style="${vars(x)}" data-cc="${x}" aria-pressed="${x===k}"><bdi>${C[x].ab}</bdi></button>`).join("")}</div>
+  <section class="chead" style="${vars(k)}"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><h3>${c.name}</h3><span style="color:var(--c);display:grid">${ico(k)}</span></div>
    <div class="meta"><span>الدكتور: <b>${c.dr}</b></span><span>المعيد: <b>${c.ta}</b></span>${nq?`<span>أقرب ${esc(nq.type)}: <b>${dShort(parseD(nq.date))} (${leftText(dayDiff(parseD(nq.date),n))})</b></span>`:""}</div>
    <div class="progress" style="background:color-mix(in srgb,var(--c) 18%,transparent)"><i style="width:${studyPct(k)}%"></i></div><span style="font-size:12.5px;color:var(--ink)">خلصت ${studyPct(k)}% من المذاكرة · ذاكرت ${hm(pomoMinutes(k))} آخر أسبوع</span></section>
   <div class="stats">
@@ -1018,7 +1026,7 @@ function tickPomo(){
   const P=L.pomo, pills=[$("#pomoPill"),$("#pomoPillM")];
   if(!P){pills.forEach(p=>p.hidden=true);return}
   const rem=P.paused||Math.max(0,P.end-Date.now()), txt=`${String(Math.floor(rem/6e4)).padStart(2,"0")}:${String(Math.floor(rem%6e4/1e3)).padStart(2,"0")}`;
-  pills.forEach(p=>{p.hidden=false;p.innerHTML=`<i class="dot"></i><span class="num en">${txt}</span><span style="font-size:12px;color:var(--muted)">${P.mode==="w"?C[P.c].code:"راحة"}</span>`;p.onclick=()=>go("study")});
+  pills.forEach(p=>{p.hidden=false;p.innerHTML=`<i class="dot"></i><span class="num en">${txt}</span><span style="font-size:12px;color:var(--muted)">${P.mode==="w"?C[P.c].ab:"راحة"}</span>`;p.onclick=()=>go("study")});
   const t=$("#ptime"); if(t){t.textContent=txt;const f=$("#pfg");if(f)f.style.strokeDashoffset=PC*(rem/(P.dur*6e4))}
   if(!P.paused&&rem<=0){
     if(P.mode==="w"){put("pm",uid(),{c:P.c,min:P.dur,at:Date.now()});notify("خلصت جلسة مذاكرة 👏",`${P.dur} دقيقة في ${C[P.c].short}. خد ${P.dur>=50?10:5} دقايق راحة`,"pomo");const br=P.dur>=50?10:5;L.pomo={c:P.c,mode:"b",dur:br,end:Date.now()+br*6e4,paused:0}}
