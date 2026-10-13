@@ -462,6 +462,8 @@ ol.howto b{color:var(--ink)}
 
 .qfil{margin-bottom:6px}
 .cbtn{background:var(--c);color:#fff}:root[data-theme="dark"] .cbtn{color:#0A0E18}
+.ptm{font-size:12px;font-weight:600;color:var(--muted);background:var(--surface-2);border-radius:8px;padding:2px 8px;white-space:nowrap;flex:none;font-variant-numeric:tabular-nums}
+.ptm.now{background:var(--ok);color:#fff}
 .pdone{display:flex;align-items:center;gap:8px;margin:12px 0 0;color:var(--ok);font-weight:600}
 .ptask .pc svg.i{width:16px;height:16px;display:block}
 .cico svg.i{width:28px;height:28px}
@@ -681,6 +683,25 @@ function keepUp(ds){
   return out.sort((x,y)=>x[0].localeCompare(y[0])||(x[1].startsWith("سكشن")-y[1].startsWith("سكشن")));
 }
 const planFor=ds=>[...(PLAN[ds]||[]),...keepUp(ds)];
+/* time blocks for the day's study tasks: avoid in-person college sessions (+30m travel), Friday prayer, then pack with 15m breaks */
+const taskMin=t=>/محاضرة \d/.test(t)?120:/سكشن \d/.test(t)?60:/مراجعة|حل/.test(t)?60:45;
+function busyFor(ds){
+  const d=parseD(ds), js=d.getDay(), i=idxOf(js), b=[];
+  if(i>=0&&js!==2) E.filter(e=>e.d===i&&e.t!=="lo").forEach(e=>b.push([e.s*60-30,(e.s+1)*60+30]));
+  if(js===3&&b.length){const lo=Math.min(...b.map(x=>x[0])),hi=Math.max(...b.map(x=>x[1]));b.push([lo,hi])} // Wednesday: whole college day
+  if(js===5)b.push([12*60,13*60+30]); // Friday prayer
+  return b.sort((x,y)=>x[0]-y[0]);
+}
+function slotsFor(ds){
+  const tasks=planFor(ds), busy=busyFor(ds); let cur=(L.sStart||10)*60; const out=[];
+  tasks.forEach(([c,t])=>{const dur=taskMin(t);let st=cur,moved=true;
+    while(moved){moved=false;for(const [a,z] of busy){if(st<z&&st+dur>a){st=z;moved=true}}}
+    out.push([st,st+dur]);cur=st+dur+15});
+  return out;
+}
+const hhmm=m=>`${h12(Math.floor(m/60)%24)}:${String(m%60).padStart(2,"0")}`;
+const rngH=([a,z])=>{const pa=ap(Math.floor(a/60)%24),pz=ap(Math.floor(z/60)%24);return `<bdi>${hhmm(a)}</bdi>${pa===pz?"":" "+pa} – <bdi>${hhmm(z)}</bdi> ${pz}`};
+const rng=([a,z])=>`${hhmm(a)}${ap(Math.floor(a/60)%24)===ap(Math.floor(z/60)%24)?"":" "+ap(Math.floor(a/60)%24)}–${hhmm(z)} ${ap(Math.floor(z/60)%24)}`;
 const DAYS=["السبت","الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس"];
 const DAY7=[...DAYS,"الجمعة"];
 const TYPE={lf:"محاضرة حضوري",lo:"محاضرة أونلاين",sc:"سكشن"};
@@ -689,7 +710,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="6.4";
+const APP_VER="6.5";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -967,8 +988,9 @@ function planHTML(ds){
     const d=parseD(nx); label=`مفيش مذاكرة النهارده ✌️ · خطة ${dayDiff(d,d0)===1?"بكره":d.toLocaleDateString("ar-EG",{weekday:"long"})} ${dShort(d)}`; ds=nx; tasks=planFor(nx);
   }
   const done=tasks.filter((_,i)=>{const r=D.pl[ds+"|"+i];return r&&!r.del}).length;
+  const sl=slotsFor(ds), nowM=new Date().getHours()*60+new Date().getMinutes(), isT=ds===ymd(new Date());
   return `<section class="panel plan"><div class="head"><div><h3>${ico("study")}${label}</h3><p>خلصت ${done} من ${tasks.length}</p></div><div class="progress" style="width:140px;--c:var(--ok)"><i style="width:${done/tasks.length*100}%"></i></div></div>
-   <div class="ptasks">${tasks.map(([c,t],i)=>{const k=ds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<label class="ptask${on?" on":""}" style="${c?vars(c):""}"><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="pc">${c?ico(c):""}</span><span class="pt"><b class="en">${c?C[c].short:""}</b> ${esc(t)}</span></label>`}).join("")}</div>
+   <div class="ptasks">${tasks.map(([c,t],i)=>{const k=ds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<label class="ptask${on?" on":""}" style="${c?vars(c):""}"><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="ptm${isT&&nowM>=sl[i][0]&&nowM<sl[i][1]?" now":""}">${rngH(sl[i])}</span><span class="pc">${c?ico(c):""}</span><span class="pt"><b class="en">${c?C[c].short:""}</b> ${esc(t)}</span></label>`}).join("")}</div>
    ${done===tasks.length&&tasks.length?`<p class="pdone">${ico("check")}خلصت خطة اليوم كلها، برافو عليك</p>`:`<button class="btn ghost sm" data-gostudy style="margin-top:10px">${ico("play")}ابدأ تذاكر بالمؤقت</button>`}</section>`;
 }
 function vToday(){
@@ -1076,7 +1098,7 @@ function vStudy(){
   /* today card */
   let tasks=planFor(today), pds=today, plabel="خطة النهارده";
   if(!tasks.length){for(let k=1;k<=10;k++){const d=new Date(now);d.setDate(now.getDate()+k);const t=planFor(ymd(d));if(t.length){tasks=t;pds=ymd(d);plabel=`مفيش مذاكرة النهارده · خطة ${k===1?"بكره":d.toLocaleDateString("ar-EG",{weekday:"long"})}`;break}}}
-  const pdone=tasks.filter((_,i)=>{const x=D.pl[pds+"|"+i];return x&&!x.del}).length;
+  const pdone=tasks.filter((_,i)=>{const x=D.pl[pds+"|"+i];return x&&!x.del}).length; const psl=slotsFor(pds);
   const gp=Math.min(1,tmin/goal);
   const todayCard=`<section class="panel st-today">
     <div class="st-goal"><div class="gm"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="25" class="bg"/><circle cx="30" cy="30" r="25" class="fg" stroke-dasharray="${2*Math.PI*25}" stroke-dashoffset="${2*Math.PI*25*(1-gp)}"/></svg><b class="num">${Math.round(gp*100)}%</b></div>
@@ -1084,7 +1106,7 @@ function vStudy(){
       <div class="gadj"><span>الهدف</span><button class="btn ghost sm" data-goal="-30" aria-label="قلّل الهدف">−</button><b class="num">${hm(goal)}</b><button class="btn ghost sm" data-goal="30" aria-label="زوّد الهدف">+</button></div></div>
       <div class="streak${sk?" on":""}" title="أيام ورا بعض ذاكرت فيها نص ساعة على الأقل"><span>🔥</span><b class="num">${sk}</b><small>${sk===1?"يوم":"أيام"} ورا بعض</small></div></div>
     <div class="head" style="margin:18px 0 8px"><div><h3 style="font-size:16px">${plabel}</h3><p>${tasks.length?`خلصت ${pdone} من ${tasks.length}`:"مفيش خطة متسجلة"}</p></div></div>
-    <div class="st-tasks">${tasks.map(([tc,t],i)=>{const k=pds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<div class="st-task${on?" on":""}" style="${tc?vars(tc):""}"><label><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="tk"><bdi>${tc?C[tc].ab:""}</bdi> ${esc(t)}</span></label>${tc&&!on&&!P?`<button class="iconbtn sm" data-run="${tc}" title="ابدأ جلسة ${C[tc].ab}" aria-label="ابدأ جلسة ${C[tc].ab}">${ico("play")}</button>`:""}</div>`}).join("")||`<p class="muted" style="margin:0">ضيف خطة أو ذاكر بالمؤقت على طول</p>`}</div>
+    <div class="st-tasks">${tasks.map(([tc,t],i)=>{const k=pds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<div class="st-task${on?" on":""}" style="${tc?vars(tc):""}"><label><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="ptm">${rngH(psl[i])}</span><span class="tk"><bdi>${tc?C[tc].ab:""}</bdi> ${esc(t)}</span></label>${tc&&!on&&!P?`<button class="iconbtn sm" data-run="${tc}" title="ابدأ جلسة ${C[tc].ab}" aria-label="ابدأ جلسة ${C[tc].ab}">${ico("play")}</button>`:""}</div>`}).join("")||`<p class="muted" style="margin:0">ضيف خطة أو ذاكر بالمؤقت على طول</p>`}</div>
    </section>`;
   /* week chart */
   const days=[...Array(7)].map((_,i)=>{const d=new Date(now);d.setDate(now.getDate()-6+i);return d});
@@ -1155,6 +1177,7 @@ function vSettings(){
    <div class="setrow"><div class="t"><b>تجربة</b></div><button class="btn ghost sm" id="nTest">ابعت تنبيه تجريبي</button></div>
   </section>
   <section class="panel"><div class="head"><div><h3>${ico("timer")}المذاكرة</h3><p>إعدادات المؤقت والهدف اليومي</p></div></div>
+   <div class="setrow"><div class="t"><b>بداية المذاكرة</b><div>الخطة بتتقسّم بالساعة من الوقت ده، وبتتخطى مواعيد الكلية</div></div><div class="seg">${[8,9,10,11,12,14].map(h=>`<button data-sstart="${h}" aria-pressed="${(L.sStart||10)===h}">${h12(h)} ${ap(h)}</button>`).join("")}</div></div>
    <div class="setrow"><div class="t"><b>مدة الجلسة الافتراضية</b></div><div class="seg">${[30,60,90,120].map(m=>`<button data-sdur="${m}" aria-pressed="${(L.dur||60)===m}">${durTxt(m)}</button>`).join("")}</div></div>
    <div class="setrow"><div class="t"><b>الهدف اليومي</b><div>الوقت اللي عايز تذاكره كل يوم</div></div><div class="seg">${[60,120,180,240,300].map(m=>`<button data-sgoal="${m}" aria-pressed="${(L.goal||180)===m}">${hm(m)}</button>`).join("")}</div></div>
    <div class="setrow"><div class="t"><b>صوت نهاية الجلسة</b></div>${sw("sSound",L.sound!==false,"صوت نهاية الجلسة")}</div>
@@ -1237,6 +1260,7 @@ function bind(){
   on("syncOff","onclick",()=>{L.token="";L.gistId="";saveL();syncState={s:"off"};renderView();toast("التزامن اتقفل على الجهاز ده")});
   $$("[data-nmin]").forEach(x=>x.onclick=()=>{L.notifyMin=+x.dataset.nmin;saveL();renderView()});
   $$("[data-sdur]").forEach(x=>x.onclick=()=>{L.dur=+x.dataset.sdur;pomoDur=L.dur;saveL();renderView()});
+  $$("[data-sstart]").forEach(x=>x.onclick=()=>{L.sStart=+x.dataset.sstart;saveL();renderView()});
   $$("[data-sgoal]").forEach(x=>x.onclick=()=>{L.goal=+x.dataset.sgoal;saveL();renderView()});
   $$("[data-lecn]").forEach(x=>x.onclick=()=>{L.lec=+x.dataset.lecn;saveL();renderView()});
   on("sSound","onclick",()=>{L.sound=L.sound===false;saveL();renderView();if(L.sound)chime(true)});
@@ -1322,11 +1346,13 @@ function checkNotify(){
     const k=`e|${ds}|${e.c}|${e.t}`, start=e.s*60;
     if(!F[k]&&m>=start-L.notifyMin&&m<start){F[k]=1;notify(`${tag(e)} · ${C[e.c].short}`,`بعد ${start-m} دقيقة · ${place(e)}`,k)}
   });
+  {const tk=planFor(ds),sl=slotsFor(ds);tk.forEach(([c,t],j)=>{const k=`s|${ds}|${j}`,st=sl[j][0],dn=D.pl[ds+"|"+j]&&!D.pl[ds+"|"+j].del;
+    if(!dn&&!F[k]&&m>=st-5&&m<st+10){F[k]=1;notify(`وقت المذاكرة · ${c?C[c].ab:""} ${t}`,`${rng(sl[j])} · افتح المؤقت وابدأ`,k)}})}
   upcoming().forEach(q=>{const dd=dayDiff(parseD(q.date),n),k1=`q1|${q.id}`,k0=`q0|${q.id}`;
     if(dd===1&&n.getHours()>=19&&!F[k1]){F[k1]=1;notify(`${q.type} بكرة`,`${C[q.c].short}${q.time?" · "+q.time:""}`,k1)}
     if(dd===0&&n.getHours()>=7&&!F[k0]){F[k0]=1;notify(`${q.type} النهارده`,`${C[q.c].short}${q.time?" · "+q.time:""}`,k0)}
   });
-  const cut=ymd(new Date(Date.now()-3*864e5)); for(const k in F){const p=k.split("|");if(p[0]==="e"&&p[1]<cut)delete F[k]}
+  const cut=ymd(new Date(Date.now()-3*864e5)); for(const k in F){const p=k.split("|");if((p[0]==="e"||p[0]==="s")&&p[1]<cut)delete F[k]}
   saveL();
 }
 
