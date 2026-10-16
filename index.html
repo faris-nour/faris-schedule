@@ -805,7 +805,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="7.8";
+const APP_VER="7.9";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -1150,7 +1150,7 @@ function pomoMinutes(c,days=7){const from=Date.now()-days*864e5;return live(D.pm
 const hm=m=>m>=60?`${Math.floor(m/60)}س${m%60?" "+m%60+"د":""}`:`${m}د`;
 const PR=95, PC=2*Math.PI*PR;
 /* recorded lectures folder per course */
-const REC={COM:"https://drive.google.com/drive/folders/1S1KKpaZ09vsU75rHCzcFzsooiGUzi3uQ"};
+const REC={COM:"https://drive.google.com/drive/folders/1S1KKpaZ09vsU75rHCzcFzsooiGUzi3uQ",NET:"https://drive.google.com/drive/folders/1vV6xNGAhIVgjMJNDoRWcSt3eL3xg9VJd",GR:"https://drive.google.com/drive/folders/155YzgX_o-qRMBsWikvWoBFAzQoHLK_ia",EMB:"https://drive.google.com/drive/folders/1_yiueek9R1Ds7ak0BYtTR35tRUsiH_wy",SE:"https://drive.google.com/drive/folders/1li-4Ob8IEKKSEv7oYKKq5nTpDXUe_HUW"};
 const NOTION_C={EMB:"https://app.notion.com/p/3f3b7e72261e811aa5cdcc74066cade0"};
 const NOTES={"EMB|1":"https://app.notion.com/p/3f7b7e72261e8153a56de7a7f5c778c9","EMB|2":"https://app.notion.com/p/3f7b7e72261e81dfbd9fc1974adc328c"};
 let pomoDur=null, focusMode=false;
