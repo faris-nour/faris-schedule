@@ -134,6 +134,7 @@ body.settled .reveal{animation:none;opacity:1;transform:none}
 .alert .t{flex:1;min-width:0}
 .alert .t b{font-family:var(--font-display);font-weight:500}
 .alert .t div{font-size:13px;color:var(--muted)}
+.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}.clamp.open{display:block;-webkit-line-clamp:unset}
 .chiptime{font-family:var(--font-display);font-size:12.5px;padding:4px 10px;border-radius:999px;white-space:nowrap;background:var(--surface-2)}
 .chiptime.urgent{background:var(--danger-bg);color:var(--danger)}
 .chiptime.soon{background:var(--warn-bg);color:var(--warn)}
@@ -406,11 +407,11 @@ ol.howto b{color:var(--ink)}
 .streak.on{background:var(--warn-bg);color:var(--warn);filter:none;opacity:1}
 .streak span{font-size:20px;line-height:1}.streak b{font-family:var(--font-display);font-size:22px;line-height:1.2}.streak small{font-size:11px;white-space:nowrap}
 @media (max-width:560px){.st-goal{flex-wrap:wrap}.streak{order:-1;margin-inline-start:auto}}
-.st-tasks{display:grid;gap:6px}
+.st-tasks{display:grid;gap:6px;grid-template-columns:minmax(0,1fr)}
 .st-task{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:14px;padding:8px 10px;background:var(--surface)}
 .st-task label{display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;min-width:0}
 .st-task input{accent-color:var(--c,var(--ok));width:18px;height:18px;flex:none}
-.st-task .tk{font-size:14px}.st-task .tk bdi{font-weight:700;color:var(--c)}
+.st-task .tk{font-size:14px;min-width:0}.st-task .tk bdi{font-weight:700;color:var(--c)}
 .st-task.on{background:var(--surface-2)}.st-task.on .tk{color:var(--faint);text-decoration:line-through}
 .iconbtn.sm{width:34px;height:34px;border-radius:10px;display:inline-grid;place-items:center;flex:none}
 .iconbtn.sm svg.i{width:16px;height:16px}
@@ -466,13 +467,13 @@ ol.howto b{color:var(--ink)}
 .qfil{margin-bottom:6px}
 .cbtn{background:var(--c);color:#fff}:root[data-theme="dark"] .cbtn{color:#0A0E18}
 .ptm{font-size:12px;font-weight:600;color:var(--muted);background:var(--surface-2);border-radius:8px;padding:2px 8px;white-space:nowrap;flex:none;font-variant-numeric:tabular-nums}
-.prec{flex:none;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--c-bg,var(--surface-2));color:var(--c,var(--ink));text-decoration:none}.missed{margin-top:12px;border:1px dashed var(--warn,#d97706);border-radius:14px;padding:10px 12px;background:var(--warn-bg,transparent)}.missed summary{cursor:pointer;font-weight:600;display:flex;gap:8px;align-items:center;color:var(--warn,#b45309)}.missed summary svg{width:16px;height:16px}.missed p{font-size:13px;margin:8px 0}.missed .ptask{background:var(--surface,#fff)}.prec:active{transform:scale(.92)}.ptm.pnow{background:var(--ok);color:#fff}
+.prec{flex:none;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--c-bg,var(--surface-2));color:var(--c,var(--ink));text-decoration:none}.catch{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;padding:10px 12px;margin-bottom:12px;border-radius:12px;background:var(--surface-2)}.catch b{font-size:14px}.catch span{font-size:13px;color:var(--muted)}.catch.ok{color:var(--ok);background:var(--ok-bg);font-weight:600;align-items:center;gap:8px}.catch svg{width:16px;height:16px}.missed{margin-top:12px;border:1px dashed var(--warn,#d97706);border-radius:14px;padding:10px 12px;background:var(--warn-bg,transparent)}.missed summary{cursor:pointer;font-weight:600;display:flex;gap:8px;align-items:center;color:var(--warn,#b45309)}.missed summary svg{width:16px;height:16px}.missed p{font-size:13px;margin:8px 0}.missed .ptask{background:var(--surface,#fff)}.prec:active{transform:scale(.92)}.ptm.pnow{background:var(--ok);color:#fff}
 .pdone{display:flex;align-items:center;gap:8px;margin:12px 0 0;color:var(--ok);font-weight:600}
 .ptask .pc svg.i{width:16px;height:16px;display:block}
 .cico svg.i{width:28px;height:28px}
 .sbox .sq svg.i{width:22px;height:22px}
 .ptask .pc{font-family:var(--font-display);font-weight:700;font-size:11px;padding:3px 8px;border-radius:8px;background:var(--c-bg,var(--surface-2));color:var(--c,var(--muted));direction:ltr;flex:none}
-.ptask .pt{flex:1;min-width:0;font-size:14px}
+.ptask .pbody,.st-task .pbody{flex:1;min-width:0;display:grid;gap:5px}.ptask .pline,.st-task .pline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.st-task .pcn{display:inline-flex;gap:5px;align-items:center;font-weight:600;font-size:13px;color:var(--c,var(--ink))}.st-task .pcn svg{width:14px;height:14px}.st-task .pt{font-size:15px;font-weight:500}.ptask .pcn{display:inline-flex;gap:5px;align-items:center;font-weight:600;font-size:13px;color:var(--c,var(--ink))}.ptask .pcn svg{width:14px;height:14px}.ptask .pt{min-width:0;font-size:15px;font-weight:500}.ptask .pact{display:flex;gap:6px;flex:none}
 .ptask .pt b{font-weight:500;color:var(--c,var(--ink))}
 .ptask.on{background:var(--ok-bg);border-color:transparent}
 .ptask.on .pt{text-decoration:line-through;color:var(--muted)}
@@ -808,7 +809,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="8.1";
+const APP_VER="8.2";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -867,7 +868,7 @@ const weekNo=d=>Math.floor(dayDiff(d,parseD(TERM_START))/7)+1;
 
 /* ---------- state: D is synced (keyed records with u = updated time), L is per-device ---------- */
 let D={q:{},att:{},st:{},gr:{},ln:{},pm:{},pl:{}};
-let L={filters:{sc:true,lf:true,lo:true},theme:"system",view:"today",goal:180,token:"",gistId:"",lastSync:0,notify:false,notifyLo:false,notifyMin:30,fired:{},pomo:null,lec:12};
+let L={filters:{sc:true,lf:false,lo:false},theme:"system",view:"today",goal:180,token:"",gistId:"",lastSync:0,notify:false,notifyLo:false,notifyMin:30,fired:{},pomo:null,lec:12};
 const live=m=>Object.entries(m||{}).filter(([,v])=>v&&!v.del).map(([id,v])=>({...v,id}));
 function put(map,id,rec){D[map][id]={...rec,u:Date.now()};saveD()}
 function del(map,id){D[map][id]={del:1,u:Date.now()};saveD()}
@@ -880,8 +881,12 @@ function migratePl(d){let ch=false;d.pl=d.pl||{};
   for(const [k,v] of Object.entries(d.pl)){const m=k.match(/^(\d{4}-\d\d-\d\d)\|(\d+)$/);if(!m||!v||(v.u||0)>PL_MIGRATE_BEFORE)continue;
     const nk=pk(m[1],+m[2]);if(nk===k)continue;if(!d.pl[nk]){d.pl[nk]={...v};ch=true}}
   return ch}
+function plSteps(d){let ch=false;d.st=d.st||{};
+  for(const [k,v] of Object.entries(d.pl||{})){if(!v||v.del)continue;const m=k.match(/^\d{4}-\d\d-\d\d\|([A-Z]+)\|(محاضرة|سكشن) (\d+)$/);if(!m)continue;
+    const c=m[1],n=+m[3],sk=m[2]==="محاضرة"?`${c}|${n}|w`:`${c}|${n*2}|p`;if(!d.st[sk]){d.st[sk]={v:1,u:v.u||Date.now()};ch=true}}
+  return ch}
 function fixData(d){
-  migratePl(d);
+  migratePl(d); plSteps(d);
   d.pm=d.pm||{}; const day0=new Date(2026,9,12).getTime(), day1=day0+864e5; let ch=false;
   for(const [id,v] of Object.entries(d.pm)){ if(v&&!v.del&&v.c==="NET"&&+v.min===53&&v.at>=day0&&v.at<day1){d.pm[id]={del:1,u:Date.now()};ch=true} }
   if(!d.pm["fix-1012-emb"]){d.pm["fix-1012-emb"]={c:"EMB",min:60,at:new Date(2026,9,12,11,0).getTime(),u:Date.now()};ch=true}
@@ -992,17 +997,47 @@ function findNow(){
     const c=v.filter(e=>e.d===di&&(k>0||e.s*60>m)).sort((a,b)=>a.s-b.s)[0]; if(c){d.setHours(c.s,0,0,0);return {cur,next:c,at:d,m}}}
   return {cur,next:null,at:null,m};
 }
+/* next thing that actually needs him: a section he attends, a planned study block, or an in-person quiz */
+function heroItems(){
+  const n=new Date(), out=[];
+  for(let k=0;k<=8;k++){const d=new Date(n);d.setDate(n.getDate()+k);const ds=ymd(d),i=idxOf(d.getDay());
+    if(i>=0)E.filter(e=>e.d===i&&e.t==="sc").forEach(e=>{const a=new Date(d);a.setHours(e.s,0,0,0);const z=new Date(a);z.setHours(e.s+1);out.push({k:"sc",c:e.c,a,z,e})});
+    const tk=planFor(ds),sl=slotsFor(ds);tk.forEach(([c,t],j)=>{const r=D.pl[pk(ds,j)];if(r&&!r.del)return;const a=new Date(d);a.setHours(0,sl[j][0],0,0);const z=new Date(d);z.setHours(0,sl[j][1],0,0);out.push({k:"st",c,a,z,t})});
+    quizzes().filter(q=>!q.done&&q.date===ds).forEach(q=>{const tm=parseQTime(q.time);const a=new Date(d);tm?a.setHours(tm[0],tm[1],0,0):a.setHours(9,0,0,0);const z=new Date(a.getTime()+60*6e4);out.push({k:"q",c:q.c,a,z,q})});
+  }
+  return out.filter(x=>x.z>n).sort((x,y)=>x.a-y.a);
+}
 function renderHero(){
   const n=new Date(), i=idxOf(n.getDay());
   {const tm=dayMin(n),g=L.goal||180;$("#stToday").textContent=hm(tm);$("#stGoal").textContent=tm>=g?"خلصت هدف النهارده 🎉":`فاضل ${hm(g-tm)} على الهدف`;$("#stTile").classList.toggle("done",tm>=g)}
   $("#todayM").textContent=n.toLocaleDateString("ar-EG",{weekday:"long",day:"numeric",month:"long"});
-  const todays=i<0?[]:E.filter(e=>e.d===i&&vis(e)), m0=n.getHours()*60+n.getMinutes();
+  const todays=i<0?[]:E.filter(e=>e.d===i&&(e.t==="sc"||vis(e))), m0=n.getHours()*60+n.getMinutes();
   $("#todayCount").textContent=todays.length;
   const left=todays.filter(e=>e.s*60>m0).length; $("#todayLeft").textContent=i<0?"الجمعة إجازة":!todays.length?"يوم فاضي":left?`فاضل ${left}`:"خلصوا";
   const u=upcoming()[0], ud=u?dayDiff(parseD(u.date),n):99;
   $("#nextQuiz").innerHTML=u?`<span class="en">${C[u.c].ab}</span>`:"مفيش"; $("#nextQuizW").textContent=u?`${u.type} · ${leftText(ud)}`:"سجّل الكويزات من تابها";
   $("#nqTile").classList.toggle("hot",!!u&&ud<=3);
-  const {cur,next,at,m}=findNow(), box=$("#nowBox");
+  const box=$("#nowBox"), H=heroItems(), hcur=H.find(x=>x.a<=n), hn=hcur||H[0];
+  if(hn){
+    const cur=!!hcur, target=cur?hn.z:hn.a, ms=Math.max(0,target-n), dd=Math.floor(ms/864e5), hh=Math.floor(ms%864e5/36e5), mm=Math.floor(ms%36e5/6e4), ss=Math.floor(ms%6e4/1e3);
+    const frac=cur?(n-hn.a)/(hn.z-hn.a):Math.max(0,1-Math.min(ms/6e4,1440)/1440);
+    const key="h"+hn.k+hn.c+hn.a.getTime()+(cur?"c":"n");
+    if(box.dataset.k!==key){box.dataset.k=key;box.style.cssText=vars(hn.c);
+      const day=dayDiff(hn.a,n)===0?"النهارده":dayDiff(hn.a,n)===1?"بكرة":hn.a.toLocaleDateString("ar-EG",{weekday:"long"});
+      const tm=`${h12(hn.a.getHours())}:${String(hn.a.getMinutes()).padStart(2,"0")} ${ap(hn.a.getHours())}`;
+      const what=hn.k==="sc"?"سكشن حضوري":hn.k==="st"?"مذاكرة":esc(hn.q.type)+" حضوري";
+      const chips=hn.k==="sc"?`<span class="mchip c">سكشن ${hn.e.sec||""}</span><span class="mchip">${place(hn.e)}</span><span class="mchip">${who(hn.e)}</span>`:hn.k==="st"?`<span class="mchip c">${esc(hn.t)}</span><span class="mchip">${rngH([hn.a.getHours()*60+hn.a.getMinutes(),hn.z.getHours()*60+hn.z.getMinutes()])}</span>${recA(hn.c,hn.t)}`:`<span class="mchip c">${esc(hn.q.type)}</span>${hn.q.time?`<span class="mchip">${esc(hn.q.time)}</span>`:""}`;
+      const when=cur?`<span class="livepill"><i class="pulse"></i>${hn.k==="st"?"وقت المذاكرة دلوقتي":"شغّال دلوقتي"}</span>`:`<span>اللي جاي · ${what}</span> · <b>${day} ${tm}</b>`;
+      box.innerHTML=`<div class="nc-row"><div class="cico">${ico(hn.c)}</div>
+        <div class="nc-main"><div class="nc-eye">${when}</div><h2>${C[hn.c].short}</h2><div class="nc-meta">${chips}</div></div>
+        <div class="nc-count"><span class="lbl">${cur?"فاضل على ما تخلص":"فاضل على ما تبدأ"}</span><div class="digits" id="digits"></div></div></div>
+        <div class="nc-bar"><i id="ncbar"></i></div>`}
+    const p2=v=>String(v).padStart(2,"0");
+    $("#digits").innerHTML=(dd?`<b>${dd}</b><i>يوم</i>`:"")+`<b>${p2(hh)}:${p2(mm)}:${p2(ss)}</b>`;
+    $("#ncbar").style.width=Math.round(Math.min(1,Math.max(.01,frac))*1000)/10+"%";
+    return;
+  }
+  const {cur,next,at,m}=findNow();
   if(!cur&&!next){box.dataset.k="";box.style.cssText="--c:var(--accent);--c-bg:var(--surface-2)";box.innerHTML=`<div class="nc-row" style="padding-bottom:20px"><div class="nc-main"><div class="nc-eye">مفيش مواعيد</div><h2 style="direction:rtl">شغّل الفلاتر عشان تشوف المواعيد</h2></div></div>`;return}
   const e=cur||next, target=cur?(()=>{const t=new Date(n);t.setHours(cur.s+1,0,0,0);return t})():at;
   const ms=Math.max(0,target-n), dd=Math.floor(ms/864e5), hh=Math.floor(ms%864e5/36e5), mm=Math.floor(ms%36e5/6e4), ss=Math.floor(ms%6e4/1e3);
@@ -1022,7 +1057,7 @@ function renderHero(){
 function renderAlerts(){
   const n=new Date(), soon=upcoming().filter(q=>dayDiff(parseD(q.date),n)<=3);
   $("#alerts").innerHTML=soon.map(q=>{const dd=dayDiff(parseD(q.date),n);
-    return `<div class="alert" style="${vars(q.c)}"><div class="ic">${esc(q.type[0])}</div><div class="t"><b>${esc(q.type)} <span class="en">${C[q.c].short}</span></b><div>${dShort(parseD(q.date))}${q.time?" · "+esc(q.time):""}${q.note?" · "+esc(q.note):""}</div></div><span class="chiptime ${leftCls(dd)}">${leftText(dd)}</span></div>`}).join("");
+    return `<div class="alert" style="${vars(q.c)}"><div class="ic">${esc(q.type[0])}</div><div class="t"><b>${esc(q.type)} <span class="en">${C[q.c].short}</span></b><div class="clamp">${dShort(parseD(q.date))}${q.time?" · "+esc(q.time):""}${q.note?" · "+esc(q.note):""}</div></div><span class="chiptime ${leftCls(dd)}">${leftText(dd)}</span></div>`}).join("");
 }
 
 /* ---------- navigation ---------- */
@@ -1050,8 +1085,8 @@ function renderView(){
 }
 const filtersHTML=()=>`<div class="chips" role="group" aria-label="فلترة">
   <button class="chip" data-f="sc" aria-pressed="${L.filters.sc}"><i class="sw sc"></i>سكاشن</button>
-  <button class="chip" data-f="lf" aria-pressed="${L.filters.lf}"><i class="sw lf"></i>حضوري</button>
-  <button class="chip" data-f="lo" aria-pressed="${L.filters.lo}"><i class="sw lo"></i>أونلاين</button></div>`;
+  <button class="chip" data-f="lf" aria-pressed="${L.filters.lf}"><i class="sw lf"></i>محاضرات حضوري</button>
+  <button class="chip" data-f="lo" aria-pressed="${L.filters.lo}"><i class="sw lo"></i>محاضرات أونلاين</button></div>`;
 const courseOpts=sel=>Object.entries(C).map(([k,c])=>`<option value="${k}"${sel===k?" selected":""}>${c.short}</option>`).join("");
 const delBtn=(map,id)=>pend===id?`<span class="confirm">تمسحه؟<button class="yes" data-yes="${map}|${id}">امسح</button><button class="no" data-no>لأ</button></span>`:`<button class="del" data-del="${id}" aria-label="مسح">${ico("trash")}</button>`;
 
@@ -1074,7 +1109,7 @@ function cardHTML(e,date,{liveNow,done,q,showAtt}){
 function qItem(q,k){
   const d=parseD(q.date), dd=dayDiff(d,new Date());
   return `<div class="qi${dd<0||q.done?" past":""}${q.done?" done":""}" style="${vars(q.c)};animation-delay:${(k||0)*50}ms"><div class="date"><b class="num">${d.getDate()}</b><span>${MONTHS[d.getMonth()]}</span></div>
-   <div class="info"><b>${esc(q.type)}</b><div class="cn">${C[q.c].short}</div><div class="meta">${d.toLocaleDateString("ar-EG",{weekday:"long"})}${q.time?" · "+esc(q.time):""}${q.note?" · "+esc(q.note):""}</div></div>
+   <div class="info"><b>${esc(q.type)}</b><div class="cn">${C[q.c].short}</div><div class="meta clamp" title="اضغط عشان تشوف الملاحظة كلها">${d.toLocaleDateString("ar-EG",{weekday:"long"})}${q.time?" · "+esc(q.time):""}${q.note?" · "+esc(q.note):""}</div></div>
    <div class="act">${q.done?`<span class="chiptime ok">خلص ✓</span>`:`<span class="chiptime ${leftCls(dd)}">${leftText(dd)}</span>`}<button class="del${q.done?" on":""}" data-qdone="${q.id}" title="${q.done?"رجّعه مش خالص":"علّم إنه خلص"}" aria-label="${q.done?"رجّعه مش خالص":"علّم إنه خلص"}" aria-pressed="${!!q.done}">${ico("check")}</button>${dd>=0&&!q.done?`<button class="del" data-ics="${q.id}" title="ضيفه لتقويم الموبايل" aria-label="ضيفه للتقويم">${ico("week")}</button>`:""}<button class="del" data-editq="${q.id}" title="تعديل" aria-label="تعديل">${ico("edit")}</button>${delBtn("q",q.id)}</div></div>`;
 }
 function slotHTML(e,ds,k,{liveNow,past,started,q}){
@@ -1084,13 +1119,23 @@ function slotHTML(e,ds,k,{liveNow,past,started,q}){
     <div class="sq">${ico(e.c)}</div>
     <div class="inf"><b>${C[e.c].short}</b><span>${place(e)} · ${who(e)}</span></div>
     ${q?`<span class="qflag">${esc(q.type)}</span>`:""}${liveNow?`<span class="livepill"><i class="pulse"></i>دلوقتي</span>`:""}<span class="ttag">${tag(e)}</span>
-    ${started?`<div class="ab"><button class="y" data-att="${attKey(ds,e)}" data-v="y" aria-pressed="${a==="y"}" title="حضرت" aria-label="حضرت">✓</button><button class="n" data-att="${attKey(ds,e)}" data-v="n" aria-pressed="${a==="n"}" title="غبت" aria-label="غبت">✕</button></div>`:""}
+    ${started&&e.t==="sc"?`<div class="ab"><button class="y" data-att="${attKey(ds,e)}" data-v="y" aria-pressed="${a==="y"}" title="حضرت" aria-label="حضرت">✓</button><button class="n" data-att="${attKey(ds,e)}" data-v="n" aria-pressed="${a==="n"}" title="غبت" aria-label="غبت">✕</button></div>`:""}
    </div></div>`;
 }
 const MISSED_FROM="2026-10-16";
+/* when was lecture/section n of course c released (from the weekly timetable) */
+function relDate(c,t){const m=String(t).match(/(محاضرة|سكشن) (\d+)/);if(!m)return null;const n=+m[2],isS=m[1]==="سكشن";
+  const lec=E.filter(e=>e.c===c&&e.t!=="sc").map(e=>e.d).sort((a,b)=>a-b),sc=E.find(e=>e.c===c&&e.t==="sc");
+  const w=isS?n:Math.ceil(n/2),di=isS?(sc?sc.d:0):lec[(n-1)%2]??lec[0];const d=parseD(TERM_START);d.setDate(d.getDate()+(w-1)*7+di);return d}
+function catchUp(){const t=new Date(),ts=ymd(t);let n=0,last=null;
+  for(let k=0;k<70;k++){const d=new Date(t);d.setDate(t.getDate()+k);const ds=ymd(d);
+    planFor(ds).forEach(([c,tt],i)=>{const r=D.pl[pk(ds,i)];if(r&&!r.del)return;const rd=relDate(c,tt);if(!rd)return;const lag=dayDiff(d,rd),lim=/سكشن/.test(tt)?(c==="COM"||c==="GR"?1:0):1;if(lag>lim){n++;last=d}})}
+  return {n:n+missedTasks().length,last}}
+function catchHTML(){const {n,last}=catchUp();if(!n)return `<div class="catch ok">${ico("check")}إنت ماشي أول بأول 👏</div>`;
+  return `<div class="catch"><b>فاضلك ${n} ${n<=10?"حاجات":"حاجة"} متأخرة</b><span>${last?`هتلحق يوم ${last.toLocaleDateString("ar-EG",{weekday:"long"})} ${dShort(last)} لو مشيت على الجدول`:"علّم على اللي ذاكرته من الأيام اللي فاتت"}</span></div>`}
 function missedTasks(){const out=[],t=new Date();for(let k=7;k>=1;k--){const d=new Date(t);d.setDate(t.getDate()-k);const ds=ymd(d);if(ds<MISSED_FROM)continue;planFor(ds).forEach(([c,tt],i)=>{const r=D.pl[pk(ds,i)];if(!(r&&!r.del))out.push({ds,i,c,t:tt})})}return out}
 function missedHTML(){const m=missedTasks();if(!m.length)return "";
-  return `<details class="missed"><summary>${ico("info")}فاتك ${m.length} ${m.length===1?"مهمة":m.length<=10?"مهام":"مهمة"} من الأيام اللي فاتت</summary><p class="muted">لو كنت ذاكرتها علّم عليها. لو لأ، ابعتلي وأنا أوزّعها في الجدول من غير ما أكسر الترتيب.</p><div class="ptasks">${m.map(x=>`<label class="ptask" style="${x.c?vars(x.c):""}"><input type="checkbox" data-pl="${pk(x.ds,x.i)}"><span class="ptm">${dShort(parseD(x.ds))}</span><span class="pt"><b class="en">${x.c?C[x.c].ab:""}</b> ${esc(x.t)}</span>${recA(x.c,x.t)}</label>`).join("")}</div></details>`}
+  return `<details class="missed"><summary>${ico("info")}فاتك ${m.length} ${m.length===1?"مهمة":m.length<=10?"مهام":"مهمة"} من الأيام اللي فاتت</summary><p class="muted">لو كنت ذاكرتها علّم عليها. لو لأ، ابعتلي وأنا أوزّعها في الجدول من غير ما أكسر الترتيب.</p><div class="ptasks">${m.map(x=>`<label class="ptask" style="${x.c?vars(x.c):""}"><input type="checkbox" data-pl="${pk(x.ds,x.i)}"><span class="pbody"><span class="pline"><span class="ptm">${dShort(parseD(x.ds))}</span>${x.c?`<span class="pcn">${ico(x.c)}<bdi>${C[x.c].ab}</bdi></span>`:""}</span><span class="pt">${esc(x.t)}</span></span><span class="pact">${notionA(x.c,x.t)}${recA(x.c,x.t)}</span></label>`).join("")}</div></details>`}
 function planHTML(ds){
   let label="خطة المذاكرة", tasks=planFor(ds);
   if(!tasks.length){
@@ -1102,7 +1147,8 @@ function planHTML(ds){
   const done=tasks.filter((_,i)=>{const r=D.pl[pk(ds,i)];return r&&!r.del}).length;
   const sl=slotsFor(ds), nowM=new Date().getHours()*60+new Date().getMinutes(), isT=ds===ymd(new Date());
   return `<section class="panel plan"><div class="head"><div><h3>${ico("study")}${label}</h3><p>خلصت ${done} من ${tasks.length}</p></div><div class="progress" style="width:140px;--c:var(--ok)"><i style="width:${done/tasks.length*100}%"></i></div></div>
-   <div class="ptasks">${tasks.map(([c,t],i)=>{const k=pk(ds,i),on=!!(D.pl[k]&&!D.pl[k].del);return `<label class="ptask${on?" on":""}" style="${c?vars(c):""}"><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="ptm${isT&&nowM>=sl[i][0]&&nowM<sl[i][1]?" pnow":""}">${rngH(sl[i])}</span><span class="pc">${c?ico(c):""}</span><span class="pt"><b class="en">${c?C[c].ab:""}</b> ${esc(t)}</span>${recA(c,t)}</label>`}).join("")}</div>
+   ${isT||label!=="خطة المذاكرة"?catchHTML():""}
+   <div class="ptasks">${tasks.map(([c,t],i)=>{const k=pk(ds,i),on=!!(D.pl[k]&&!D.pl[k].del);return `<label class="ptask${on?" on":""}" style="${c?vars(c):""}"><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="pbody"><span class="pline"><span class="ptm${isT&&nowM>=sl[i][0]&&nowM<sl[i][1]?" pnow":""}">${rngH(sl[i])}</span>${c?`<span class="pcn">${ico(c)}<bdi>${C[c].ab}</bdi></span>`:""}</span><span class="pt">${esc(t)}</span></span><span class="pact">${notionA(c,t)}${recA(c,t)}</span></label>`}).join("")}</div>
    ${isT?missedHTML():""}
    ${done===tasks.length&&tasks.length?`<p class="pdone">${ico("check")}خلصت خطة اليوم كلها، برافو عليك</p>`:`<button class="btn ghost sm" data-gostudy style="margin-top:10px">${ico("play")}ابدأ تذاكر بالمؤقت</button>`}</section>`;
 }
@@ -1124,7 +1170,7 @@ function vToday(){
    <div class="dstrip" role="tablist">${days}</div>
    <div style="margin-bottom:14px">${filtersHTML()}</div>
    ${list.length?`<div class="slots">${tl}</div>`:`<div class="empty"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg><h4>${selDay===6?"الجمعة إجازة من الكلية":"يوم فاضي"}</h4>${selDay===6?"مفيش محاضرات، بس شوف خطة المذاكرة تحت.":"مفيش مواعيد في اليوم ده مع الفلاتر الحالية."}</div>`}
-   ${qs.length?`<div class="list" style="margin-top:14px">${qs.map((q,i)=>qItem(q,i)).join("")}</div>`:""}</section>${planHTML(ds)}`;
+   ${(()=>{const sh=dd===0?qs.filter(q=>q.done):qs;return sh.length?`<div class="list" style="margin-top:14px">${sh.map((q,i)=>qItem(q,i)).join("")}</div>`:""})()}</section>${planHTML(ds)}`;
 }
 function vWeek(){
   const n=new Date(), wd=weekDates(wkOff), hours=[8,9,10,11,12,13,14,15,16,17];
@@ -1170,10 +1216,15 @@ const PR=95, PC=2*Math.PI*PR;
 /* recorded lectures folder per course */
 const recA=(c,t)=>c&&REC[c]&&/محاضرة/.test(t)?`<a class="prec" href="${REC[c]}" target="_blank" rel="noopener" title="افتح التسجيلات" aria-label="افتح تسجيلات ${C[c].ab}"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="13" height="12" rx="2"/><path d="m15 10 6-3v10l-6-3z"/></svg></a>`:"";
 const REC={COM:"https://drive.google.com/drive/folders/1S1KKpaZ09vsU75rHCzcFzsooiGUzi3uQ",NET:"https://drive.google.com/drive/folders/1vV6xNGAhIVgjMJNDoRWcSt3eL3xg9VJd",GR:"https://drive.google.com/drive/folders/155YzgX_o-qRMBsWikvWoBFAzQoHLK_ia",EMB:"https://drive.google.com/drive/folders/1_yiueek9R1Ds7ak0BYtTR35tRUsiH_wy",SE:"https://drive.google.com/drive/folders/1li-4Ob8IEKKSEv7oYKKq5nTpDXUe_HUW"};
-const NOTION_C={EMB:"https://app.notion.com/p/3f3b7e72261e811aa5cdcc74066cade0"};
-const NOTES={"EMB|1":"https://app.notion.com/p/3f7b7e72261e8153a56de7a7f5c778c9","EMB|2":"https://app.notion.com/p/3f7b7e72261e81dfbd9fc1974adc328c"};
+const NOTION_C={EMB:"https://app.notion.com/p/3f3b7e72261e811aa5cdcc74066cade0",COM:"https://app.notion.com/p/3f3b7e72261e81f4aa1fe1a1868a756b",GR:"https://app.notion.com/p/3f3b7e72261e813bbd04f5496684ea71",NET:"https://app.notion.com/p/3f3b7e72261e81fc9f34deec2ffdcaec"};
+const NOTES={"EMB|1":"https://app.notion.com/p/3f7b7e72261e8153a56de7a7f5c778c9","EMB|2":"https://app.notion.com/p/3f7b7e72261e81dfbd9fc1974adc328c","COM|S1":"https://app.notion.com/p/3f9b7e72261e812197d9db57aa591557","COM|S2":"https://app.notion.com/p/3f3b7e72261e81a1a44ccd60aee6d6d9","COM|S3":"https://app.notion.com/p/3f3b7e72261e8108bd99ca4fb7d0201f","COM|S4":"https://app.notion.com/p/3f3b7e72261e81f1b7f9e4e0073027b3","COM|S5":"https://app.notion.com/p/3f3b7e72261e817f82d2fda4c4533af4","COM|S6":"https://app.notion.com/p/3f3b7e72261e8185bf7dfdd345064d18","COM|S7":"https://app.notion.com/p/3f3b7e72261e81318e3ad6e5b3ae3be3","COM|S8":"https://app.notion.com/p/3f3b7e72261e8148bb45e476c8ee00da","COM|S9":"https://app.notion.com/p/3f3b7e72261e816c81bff71799f744a3","GR|S1":"https://app.notion.com/p/3f3b7e72261e81d7b115f8ab4d8ca8b3","GR|S2":"https://app.notion.com/p/3f9b7e72261e8130a9bffa16c5d3620d","NET|S1":"https://app.notion.com/p/3f3b7e72261e813983dad24ae3502c88"};
+const NOTION_ICO='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10l4 4v12H5z"/><path d="M9 9l6 7M9 16V9M15 16V9"/></svg>';
+const noteKey=(c,t)=>{const m=String(t).match(/(محاضرة|سكشن) (\d+)/);return m?(m[1]==="سكشن"?`${c}|S${m[2]}`:`${c}|${m[2]}`):""};
+const notionA=(c,t)=>{const u=c&&NOTES[noteKey(c,t)];return u?`<a class="prec" href="${u}" target="_blank" rel="noopener" title="صفحة الشرح في Notion" aria-label="صفحة الشرح في Notion">${NOTION_ICO}</a>`:""};
 let pomoDur=null, focusMode=false;
-const dayMin=(d,c)=>{const a=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),z=a+864e5;return live(D.pm).filter(p=>p.at>=a&&p.at<z&&(!c||p.c===c)).reduce((s,p)=>s+(+p.min||0),0)};
+const planMin=(d,c)=>{const ds=ymd(d);return planFor(ds).reduce((s,[tc,t],i)=>{const r=D.pl[pk(ds,i)];return s+(r&&!r.del&&(!c||tc===c)?taskMin(t):0)},0)};
+const timerMin=(d,c)=>{const a=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),z=a+864e5;return live(D.pm).filter(p=>p.at>=a&&p.at<z&&(!c||p.c===c)).reduce((s,p)=>s+(+p.min||0),0)};
+const dayMin=(d,c)=>Math.max(timerMin(d,c),planMin(d,c));
 function streak(){const t=new Date();let d=new Date(t),n=0;if(dayMin(d)<30)d.setDate(d.getDate()-1);for(let k=0;k<400;k++){if(dayMin(d)>=30){n++;d.setDate(d.getDate()-1)}else break}return n}
 const mmss=ms=>`${String(Math.floor(ms/6e4)).padStart(2,"0")}:${String(Math.floor(ms%6e4/1e3)).padStart(2,"0")}`;
 const durTxt=m=>m===60?"ساعة":m===30?"نص ساعة":m===90?"ساعة ونص":m===120?"ساعتين":m+" دقيقة";
@@ -1222,7 +1273,7 @@ function vStudy(){
       <div class="gadj"><span>الهدف</span><button class="btn ghost sm" data-goal="-30" aria-label="قلّل الهدف">−</button><b class="num">${hm(goal)}</b><button class="btn ghost sm" data-goal="30" aria-label="زوّد الهدف">+</button></div></div>
       <div class="streak${sk?" on":""}" title="أيام ورا بعض ذاكرت فيها نص ساعة على الأقل"><span>🔥</span><b class="num">${sk}</b><small>${sk===1?"يوم":"أيام"} ورا بعض</small></div></div>
     <div class="head" style="margin:18px 0 8px"><div><h3 style="font-size:16px">${plabel}</h3><p>${tasks.length?`خلصت ${pdone} من ${tasks.length}`:"مفيش خطة متسجلة"}</p></div></div>
-    <div class="st-tasks">${tasks.map(([tc,t],i)=>{const k=pk(pds,i),on=!!(D.pl[k]&&!D.pl[k].del);return `<div class="st-task${on?" on":""}" style="${tc?vars(tc):""}"><label><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="ptm">${rngH(psl[i])}</span><span class="tk"><bdi>${tc?C[tc].ab:""}</bdi> ${esc(t)}</span></label>${tc&&!on&&!P?`<button class="iconbtn sm" data-run="${tc}" title="ابدأ جلسة ${C[tc].ab}" aria-label="ابدأ جلسة ${C[tc].ab}">${ico("play")}</button>`:""}${recA(tc,t)}</div>`}).join("")||`<p class="muted" style="margin:0">ضيف خطة أو ذاكر بالمؤقت على طول</p>`}</div>
+    <div class="st-tasks">${tasks.map(([tc,t],i)=>{const k=pk(pds,i),on=!!(D.pl[k]&&!D.pl[k].del);return `<div class="st-task${on?" on":""}" style="${tc?vars(tc):""}"><label><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="pbody"><span class="pline"><span class="ptm">${rngH(psl[i])}</span>${tc?`<span class="pcn">${ico(tc)}<bdi>${C[tc].ab}</bdi></span>`:""}</span><span class="pt tk">${esc(t)}</span></span></label>${tc&&!on&&!P?`<button class="iconbtn sm" data-run="${tc}" title="ابدأ جلسة ${C[tc].ab}" aria-label="ابدأ جلسة ${C[tc].ab}">${ico("play")}</button>`:""}${notionA(tc,t)}${recA(tc,t)}</div>`}).join("")||`<p class="muted" style="margin:0">ضيف خطة أو ذاكر بالمؤقت على طول</p>`}</div>
    </section>`;
   /* week chart */
   const days=[...Array(7)].map((_,i)=>{const d=new Date(now);d.setDate(now.getDate()-6+i);return d});
@@ -1288,7 +1339,7 @@ function vSettings(){
   </section>
   <section class="panel"><div class="head"><div><h3>${ico("bell")}التنبيهات</h3><p>${perm==="denied"?"التنبيهات مقفولة من إعدادات الجهاز، هتظهر جوه البرنامج بس":perm==="unsupported"?"الجهاز ده مش بيدعم التنبيهات، هتظهر جوه البرنامج بس":"قبل المواعيد، وقبل الكويز بيوم ويوم الكويز الصبح"}</p></div></div>
    <div class="setrow"><div class="t"><b>تنبيهات المواعيد والكويزات</b></div>${sw("nToggle",L.notify,"تنبيهات المواعيد والكويزات")}</div>
-   <div class="setrow${L.notify?"":" dim"}"><div class="t"><b>المحاضرات الأونلاين</b><div>تنبيه قبل محاضرات الـ VCR كمان</div></div>${sw("nLo",L.notifyLo,"تنبيه المحاضرات الأونلاين")}</div>
+   <div class="setrow${L.notify?"":" dim"}"><div class="t"><b>المحاضرات كمان</b><div>السكاشن والكويزات والمذاكرة بيتنبّه عليها دايمًا. فعّل ده لو عايز تنبيه قبل المحاضرات</div></div>${sw("nLo",L.notifyLo,"تنبيه قبل المحاضرات")}</div>
    <div class="setrow${L.notify?"":" dim"}"><div class="t"><b>وقت التنبيه</b></div><div class="seg">${[10,15,30,60].map(x=>`<button data-nmin="${x}" aria-pressed="${L.notifyMin===x}">${x===60?"ساعة":x+" د"}</button>`).join("")}</div></div>
    <div class="setrow"><div class="t"><b>تجربة</b></div><button class="btn ghost sm" id="nTest">ابعت تنبيه تجريبي</button></div>
   </section>
@@ -1327,7 +1378,7 @@ function bind(){
   $$("[data-addq]").forEach(x=>x.onclick=()=>{prefill={c:x.dataset.addq};go("quiz");setTimeout(()=>$("#qd")?.focus(),80)});
   $$("[data-cc]").forEach(x=>x.onclick=()=>{selCourse=x.dataset.cc;pend=null;renderView()});
   $$("[data-sc]").forEach(x=>x.onclick=()=>{studyCourse=x.dataset.sc;renderView()});
-  $$("[data-pl]").forEach(x=>x.onchange=()=>{const k=x.dataset.pl;if(x.checked){put("pl",k,{v:1});toast("برافو ✓")}else del("pl",k);renderView()});
+  $$("[data-pl]").forEach(x=>x.onchange=()=>{const k=x.dataset.pl;if(x.checked){put("pl",k,{v:1});if(plSteps(D))saveD();toast("برافو ✓")}else del("pl",k);renderView()});
   $$("[data-st]").forEach(x=>x.onchange=()=>{const k=x.dataset.st;if(x.checked)put("st",k,{v:1});else del("st",k);renderView()});
   $$("[data-pomo]").forEach(x=>x.onclick=()=>pomoAct(x.dataset.pomo,+x.dataset.min));
   $$("[data-pc]").forEach(x=>x.onclick=()=>{studyCourse=x.dataset.pc;renderView()});
@@ -1351,6 +1402,7 @@ function bind(){
     put("q",eid||uid(),{...(eid&&D.q[eid]&&!D.q[eid].del?D.q[eid]:{}),c:$("#qc").value,type:$('input[name="qtype"]:checked').value,date,time:$("#qt").value?$("#qtv").textContent:"",note:$("#qn").value.trim()});renderAll();updateBadge();toast(eid?"اتعدّل المعاد ✓":"اتحفظ المعاد ✓")});
   on("qcancel","onclick",()=>renderView());
   $$("[data-qf]").forEach(x=>x.onclick=()=>{qFilter=x.dataset.qf;renderView()});
+  $$(".clamp").forEach(x=>x.onclick=()=>x.classList.toggle("open"));
   $$("[data-qdone]").forEach(x=>x.onclick=()=>{const id=x.dataset.qdone,q=D.q[id];if(!q||q.del)return;put("q",id,{...q,done:q.done?0:1});renderAll();updateBadge();toast(q.done?"رجع في المواعيد الجاية":"اتعلّم إنه خلص ✓")});
   $$("[data-editq]").forEach(x=>x.onclick=()=>{const q=D.q[x.dataset.editq];if(!q)return;prefill={...q,id:x.dataset.editq};renderView();window.scrollTo({top:0,behavior:"smooth"});setTimeout(()=>$("#qd")&&$("#qd").dispatchEvent(new Event("change")),30);setTimeout(()=>$("#qt")&&$("#qt").value&&$("#qt").dispatchEvent(new Event("change")),40)});
   $$("[data-ics]").forEach(x=>x.onclick=()=>{const q={...D.q[x.dataset.ics],id:x.dataset.ics};download(`${q.type}-${C[q.c].ab}-${q.date}.ics`.replace(/\s+/g,"-"),icsFor(q),"text/calendar");toast("افتح الملف عشان يتضاف للتقويم")});
@@ -1459,7 +1511,7 @@ async function notify(title,body,tagId){
 function checkNotify(){
   if(!L.notify)return;
   const n=new Date(), i=idxOf(n.getDay()), m=n.getHours()*60+n.getMinutes(), ds=ymd(n), F=L.fired;
-  if(i>=0)E.filter(e=>e.d===i&&(e.t!=="lo"||L.notifyLo)).forEach(e=>{
+  if(i>=0)E.filter(e=>e.d===i&&(e.t==="sc"||L.notifyLo)).forEach(e=>{
     const k=`e|${ds}|${e.c}|${e.t}`, start=e.s*60;
     if(!F[k]&&m>=start-L.notifyMin&&m<start){F[k]=1;notify(`${tag(e)} · ${C[e.c].short}`,`بعد ${start-m} دقيقة · ${place(e)}`,k)}
   });
@@ -1478,7 +1530,8 @@ function renderAll(){renderHero();renderAlerts();renderView()}
 (async function(){
   $("#logo1").innerHTML=LOGO;$("#logo2").innerHTML=LOGO;
   const savedL=LS.get("fs-local",null);
-  L=Object.assign(L,savedL||{}); L.filters=Object.assign({sc:true,lf:true,lo:true},L.filters||{}); L.fired=L.fired||{};
+  L=Object.assign(L,savedL||{}); L.filters=Object.assign({sc:true,lf:false,lo:false},L.filters||{}); L.fired=L.fired||{};
+  if(!L.v8f){L.filters.lf=false;L.filters.lo=false;L.v8f=1;saveL()} // he watches lectures recorded: show sections by default
   if(!savedL){const old=LS.get("fs-data",null);if(old){if(old.theme)L.theme=old.theme;if(old.filters)L.filters=Object.assign(L.filters,old.filters)}}
   {const hv=location.hash.slice(1);if(TITLES[hv])L.view=hv}
   if(!TITLES[L.view])L.view="today";
