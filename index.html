@@ -333,7 +333,7 @@ details.box summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:
   .panel{padding:16px;border-radius:20px}
 }
 /*v31*/.plan .head h3 svg.i{color:var(--ok)}
-.ptasks{display:grid;gap:8px}
+.ptasks{display:grid;gap:8px;grid-template-columns:minmax(0,1fr)}
 .ptask{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:background .2s,border-color .2s}
 .ptask:hover{border-color:var(--c,var(--ink))}
 .ptask input{width:20px;height:20px;accent-color:var(--ok);flex:none}
@@ -463,7 +463,7 @@ ol.howto b{color:var(--ink)}
 .qfil{margin-bottom:6px}
 .cbtn{background:var(--c);color:#fff}:root[data-theme="dark"] .cbtn{color:#0A0E18}
 .ptm{font-size:12px;font-weight:600;color:var(--muted);background:var(--surface-2);border-radius:8px;padding:2px 8px;white-space:nowrap;flex:none;font-variant-numeric:tabular-nums}
-.ptm.now{background:var(--ok);color:#fff}
+.prec{flex:none;margin-inline-start:auto;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);color:var(--accent,#2563eb);text-decoration:none;font-size:13px}.prec:active{transform:scale(.92)}.ptm.pnow{background:var(--ok);color:#fff}
 .pdone{display:flex;align-items:center;gap:8px;margin:12px 0 0;color:var(--ok);font-weight:600}
 .ptask .pc svg.i{width:16px;height:16px;display:block}
 .cico svg.i{width:28px;height:28px}
@@ -805,7 +805,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="7.7";
+const APP_VER="7.8";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -1085,7 +1085,7 @@ function planHTML(ds){
   const done=tasks.filter((_,i)=>{const r=D.pl[ds+"|"+i];return r&&!r.del}).length;
   const sl=slotsFor(ds), nowM=new Date().getHours()*60+new Date().getMinutes(), isT=ds===ymd(new Date());
   return `<section class="panel plan"><div class="head"><div><h3>${ico("study")}${label}</h3><p>خلصت ${done} من ${tasks.length}</p></div><div class="progress" style="width:140px;--c:var(--ok)"><i style="width:${done/tasks.length*100}%"></i></div></div>
-   <div class="ptasks">${tasks.map(([c,t],i)=>{const k=ds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<label class="ptask${on?" on":""}" style="${c?vars(c):""}"><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="ptm${isT&&nowM>=sl[i][0]&&nowM<sl[i][1]?" now":""}">${rngH(sl[i])}</span><span class="pc">${c?ico(c):""}</span><span class="pt"><b class="en">${c?C[c].short:""}</b> ${esc(t)}</span></label>`}).join("")}</div>
+   <div class="ptasks">${tasks.map(([c,t],i)=>{const k=ds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<label class="ptask${on?" on":""}" style="${c?vars(c):""}"><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="ptm${isT&&nowM>=sl[i][0]&&nowM<sl[i][1]?" pnow":""}">${rngH(sl[i])}</span><span class="pc">${c?ico(c):""}</span><span class="pt"><b class="en">${c?C[c].short:""}</b> ${esc(t)}</span>${c&&REC[c]&&/محاضرة/.test(t)?`<a class="prec" href="${REC[c]}" target="_blank" rel="noopener" title="التسجيلات">▶</a>`:""}</label>`}).join("")}</div>
    ${done===tasks.length&&tasks.length?`<p class="pdone">${ico("check")}خلصت خطة اليوم كلها، برافو عليك</p>`:`<button class="btn ghost sm" data-gostudy style="margin-top:10px">${ico("play")}ابدأ تذاكر بالمؤقت</button>`}</section>`;
 }
 function vToday(){
@@ -1149,6 +1149,8 @@ function studyPct(c){let t=0,d=0;for(let l=1;l<=L.lec;l++)for(const [s] of STEPS
 function pomoMinutes(c,days=7){const from=Date.now()-days*864e5;return live(D.pm).filter(p=>(!c||p.c===c)&&p.at>=from).reduce((a,p)=>a+(+p.min||0),0)}
 const hm=m=>m>=60?`${Math.floor(m/60)}س${m%60?" "+m%60+"د":""}`:`${m}د`;
 const PR=95, PC=2*Math.PI*PR;
+/* recorded lectures folder per course */
+const REC={COM:"https://drive.google.com/drive/folders/1S1KKpaZ09vsU75rHCzcFzsooiGUzi3uQ"};
 const NOTION_C={EMB:"https://app.notion.com/p/3f3b7e72261e811aa5cdcc74066cade0"};
 const NOTES={"EMB|1":"https://app.notion.com/p/3f7b7e72261e8153a56de7a7f5c778c9","EMB|2":"https://app.notion.com/p/3f7b7e72261e81dfbd9fc1974adc328c"};
 let pomoDur=null, focusMode=false;
@@ -1201,7 +1203,7 @@ function vStudy(){
       <div class="gadj"><span>الهدف</span><button class="btn ghost sm" data-goal="-30" aria-label="قلّل الهدف">−</button><b class="num">${hm(goal)}</b><button class="btn ghost sm" data-goal="30" aria-label="زوّد الهدف">+</button></div></div>
       <div class="streak${sk?" on":""}" title="أيام ورا بعض ذاكرت فيها نص ساعة على الأقل"><span>🔥</span><b class="num">${sk}</b><small>${sk===1?"يوم":"أيام"} ورا بعض</small></div></div>
     <div class="head" style="margin:18px 0 8px"><div><h3 style="font-size:16px">${plabel}</h3><p>${tasks.length?`خلصت ${pdone} من ${tasks.length}`:"مفيش خطة متسجلة"}</p></div></div>
-    <div class="st-tasks">${tasks.map(([tc,t],i)=>{const k=pds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<div class="st-task${on?" on":""}" style="${tc?vars(tc):""}"><label><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="ptm">${rngH(psl[i])}</span><span class="tk"><bdi>${tc?C[tc].ab:""}</bdi> ${esc(t)}</span></label>${tc&&!on&&!P?`<button class="iconbtn sm" data-run="${tc}" title="ابدأ جلسة ${C[tc].ab}" aria-label="ابدأ جلسة ${C[tc].ab}">${ico("play")}</button>`:""}</div>`}).join("")||`<p class="muted" style="margin:0">ضيف خطة أو ذاكر بالمؤقت على طول</p>`}</div>
+    <div class="st-tasks">${tasks.map(([tc,t],i)=>{const k=pds+"|"+i,on=!!(D.pl[k]&&!D.pl[k].del);return `<div class="st-task${on?" on":""}" style="${tc?vars(tc):""}"><label><input type="checkbox" data-pl="${k}" ${on?"checked":""}><span class="ptm">${rngH(psl[i])}</span><span class="tk"><bdi>${tc?C[tc].ab:""}</bdi> ${esc(t)}</span></label>${tc&&!on&&!P?`<button class="iconbtn sm" data-run="${tc}" title="ابدأ جلسة ${C[tc].ab}" aria-label="ابدأ جلسة ${C[tc].ab}">${ico("play")}</button>`:""}${tc&&REC[tc]&&/محاضرة/.test(t)?`<a class="prec" href="${REC[tc]}" target="_blank" rel="noopener" title="التسجيلات">▶</a>`:""}</div>`}).join("")||`<p class="muted" style="margin:0">ضيف خطة أو ذاكر بالمؤقت على طول</p>`}</div>
    </section>`;
   /* week chart */
   const days=[...Array(7)].map((_,i)=>{const d=new Date(now);d.setDate(now.getDate()-6+i);return d});
@@ -1234,7 +1236,7 @@ function vCourses(){
   <section class="chead" style="${vars(k)}"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><h3>${c.name}</h3><span style="color:var(--c);display:grid">${ico(k)}</span></div>
    <div class="meta"><span>الدكتور: <b>${c.dr}</b></span><span>المعيد: <b>${c.ta}</b></span>${nq?`<span>أقرب ${esc(nq.type)}: <b>${dShort(parseD(nq.date))} (${leftText(dayDiff(parseD(nq.date),n))})</b></span>`:""}</div>
    <div class="progress" style="background:color-mix(in srgb,var(--c) 18%,transparent)"><i style="width:${studyPct(k)}%"></i></div><span style="font-size:12.5px;color:var(--ink)">خلصت ${studyPct(k)}% من المذاكرة · ذاكرت ${hm(pomoMinutes(k))} آخر أسبوع</span>
-   <div class="chips" style="margin-top:4px"><button class="btn sm cbtn" data-studyc="${k}">${ico("play")}ذاكر المادة دي</button>${NOTION_C[k]?`<a class="btn ghost sm" href="${NOTION_C[k]}" target="_blank" rel="noopener">${ico("link")}صفحة المادة في Notion</a>`:""}</div></section>
+   <div class="chips" style="margin-top:4px"><button class="btn sm cbtn" data-studyc="${k}">${ico("play")}ذاكر المادة دي</button>${REC[k]?`<a class="btn ghost sm" href="${REC[k]}" target="_blank" rel="noopener">▶️ التسجيلات</a>`:""}${NOTION_C[k]?`<a class="btn ghost sm" href="${NOTION_C[k]}" target="_blank" rel="noopener">${ico("link")}صفحة المادة في Notion</a>`:""}</div></section>
   <div class="stats">
    <div class="stat"><b class="num">${a.sc.y}<small style="font-size:13px;color:var(--muted)"> / ${a.sc.y+a.sc.n}</small></b><span>حضرت سكشن</span></div>
    <div class="stat"><b class="num">${a.lf.y}<small style="font-size:13px;color:var(--muted)"> / ${a.lf.y+a.lf.n}</small></b><span>حضرت محاضرة حضوري</span></div>
