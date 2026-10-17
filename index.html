@@ -740,7 +740,7 @@ const PLAN={ // catch-up phase (hand-made). Tuesday: off. Wednesday: light (coll
  "2027-01-14":[["GR","سكشن 15"],["COM","محاضرة 30"],["EMB","محاضرة 30"],["COM","سكشن 15"],["NET","سكشن 15"]],
  "2027-01-15":[["SE","محاضرة 30"]]
 };
-const KEEPUP_FROM="2027-01-16"; // from here on: study every lecture/section soon after it's given
+const KEEPUP_FROM="2099-01-01"; // from here on: study every lecture/section soon after it's given
 // day it was given (0=Sat..5=Thu) -> day to study it. Tuesday & Wednesday stay free.
 function studyIdxFor(e){
   if(e.d===3)return 6;                         // Tuesday lectures -> Friday
@@ -809,7 +809,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="8.4";
+const APP_VER="8.5";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -1288,7 +1288,8 @@ function vStudy(){
     </details></section>`;
   /* lectures */
   let nextL=0; for(let l=1;l<=L.lec;l++){if(!STEPS.every(([s])=>stOn(c,l,s))){nextL=l;break}}
-  const rows=Array.from({length:L.lec},(_,i)=>i+1).map(l=>{const n=STEPS.filter(([s])=>stOn(c,l,s)).length,all=n===STEPS.length,nt=NOTES[c+"|"+l];
+  const relN=(()=>{let n=0;const t=new Date();for(let k=1;k<=40;k++){const r=relDate(c,"محاضرة "+k);if(r&&r<=t)n=k;else break}return n})();
+  const rows=Array.from({length:Math.max(L.lec,relN)},(_,i)=>i+1).map(l=>{const n=STEPS.filter(([s])=>stOn(c,l,s)).length,all=n===STEPS.length,nt=NOTES[c+"|"+l];
     return `<div class="lrow${all?" full":""}${l===nextL?" next":""}"><div class="ln"><b>محاضرة ${l}</b>${l===nextL?`<span class="nx">اللي عليك</span>`:""}${all?`<span class="ok">${ico("check")}</span>`:""}</div>
      <div class="lsteps">${STEPS.map(([s,t])=>`<label class="stp${stOn(c,l,s)?" on":""}"><input type="checkbox" data-st="${c}|${l}|${s}" ${stOn(c,l,s)?"checked":""}>${t}</label>`).join("")}</div>
      ${nt?`<a class="iconbtn sm" href="${nt}" target="_blank" rel="noopener" title="صفحة المحاضرة في Notion" aria-label="صفحة المحاضرة في Notion">${ico("link")}</a>`:`<span class="lsp"></span>`}</div>`}).join("");
@@ -1539,7 +1540,8 @@ function renderAll(){renderHero();renderAlerts();renderView()}
   syncState={s:L.token?"busy":"off"};
   await loadD();
   applyTheme(); renderAll(); tickPomo();
-  setInterval(()=>{renderHero();tickPomo()},1000);
+  let curDay=ymd(new Date());
+  setInterval(()=>{const d=ymd(new Date());if(d!==curDay){curDay=d;selDay=null;wkOff=0;renderAll();updateBadge()}renderHero();tickPomo()},1000);
   setInterval(()=>{renderAlerts();checkNotify();renderSync()},30000);
   setTimeout(checkNotify,3000);
   setInterval(()=>sync(),90000); setTimeout(()=>sync(),1200);
