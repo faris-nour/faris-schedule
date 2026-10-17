@@ -316,6 +316,22 @@ details.box summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:
 .linkrow a{color:var(--c);font-weight:600;text-decoration:none;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .linkrow a:hover{text-decoration:underline}
 
+#wg{display:none}
+body.wmode .shell,body.wmode .tabbar{display:none!important}
+body.wmode #wg{display:flex;flex-direction:column;gap:10px;padding:12px;min-height:100vh;box-sizing:border-box}
+.wg-h{display:flex;align-items:center;gap:8px}.wg-h b{font-family:'Readex Pro',sans-serif;font-size:15px;flex:1}
+.wg-h .iconbtn{width:32px;height:32px;border-radius:10px}
+.wg-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.wg-k{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:6px;margin-bottom:6px}
+.wg-next{border-inline-start:4px solid var(--c,var(--btn));}
+.wg-next b{display:block;font-size:14px}.wg-next small{color:var(--muted);font-size:12px}
+.wg-t{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-top:1px solid var(--line);font-size:13px;cursor:pointer}
+.wg-t:first-of-type{border-top:0}.wg-t input{margin-top:3px;accent-color:var(--c,var(--btn))}
+.wg-t .tm{color:var(--faint);font-size:11.5px;white-space:nowrap}.wg-t.on .tx{text-decoration:line-through;color:var(--faint)}
+.wg-t .tx{flex:1;min-width:0}.wg-t .cn{color:var(--c);font-weight:600;margin-inline-end:4px}
+.wg-bar{height:6px;border-radius:9px;background:var(--surface-3);overflow:hidden}.wg-bar i{display:block;height:100%;background:var(--btn);border-radius:9px}
+.wg-row{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:3px 0}.wg-row span:last-child{color:var(--muted)}
+.wg-hot{color:#DC2626;font-weight:600}
 .setrow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--line)}
 .setrow:last-child{border-bottom:0}
 .setrow .t b{font-family:var(--font-display);font-weight:500}
@@ -616,6 +632,7 @@ ol.howto b{color:var(--ink)}
   </div>
 </div>
 <nav class="tabbar" id="tabbar" aria-label="الأقسام"></nav>
+<div id="wg" dir="rtl" aria-label="ويدجت جدول فارس"></div>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
@@ -809,7 +826,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="8.5";
+const APP_VER="8.6";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -1342,7 +1359,14 @@ function vSettings(){
    <div class="setrow"><div class="t"><b>تنبيهات المواعيد والكويزات</b></div>${sw("nToggle",L.notify,"تنبيهات المواعيد والكويزات")}</div>
    <div class="setrow${L.notify?"":" dim"}"><div class="t"><b>المحاضرات كمان</b><div>السكاشن والكويزات والمذاكرة بيتنبّه عليها دايمًا. فعّل ده لو عايز تنبيه قبل المحاضرات</div></div>${sw("nLo",L.notifyLo,"تنبيه قبل المحاضرات")}</div>
    <div class="setrow${L.notify?"":" dim"}"><div class="t"><b>وقت التنبيه</b></div><div class="seg">${[10,15,30,60].map(x=>`<button data-nmin="${x}" aria-pressed="${L.notifyMin===x}">${x===60?"ساعة":x+" د"}</button>`).join("")}</div></div>
-   <div class="setrow"><div class="t"><b>تجربة</b></div><button class="btn ghost sm" id="nTest">ابعت تنبيه تجريبي</button></div>
+   <div class="setrow${L.notify?"":" dim"}"><div class="t"><b>ملخص الصبح</b><div>تنبيه واحد الصبح فيه سكاشن ومذاكرة النهارده والكويزات القريبة${window.nativeNotify?"":". على الموبايل بيوصل أول ما تفتح التطبيق بعد المعاد"}</div></div>${sw("nMorn",L.morn!==false,"ملخص الصبح")}</div>
+   <div class="setrow${L.notify&&L.morn!==false?"":" dim"}"><div class="t"><b>معاد ملخص الصبح</b></div><div class="seg">${[7,8,9,10].map(h=>`<button data-mornh="${h}" aria-pressed="${(L.mornH||8)===h}">${h12(h)} ${ap(h)}</button>`).join("")}</div></div>
+   <div class="setrow"><div class="t"><b>تجربة</b></div><div class="chips"><button class="btn ghost sm" id="nTest">ابعت تنبيه تجريبي</button><button class="btn ghost sm" id="nMornT">جرّب ملخص الصبح</button></div></div>
+  </section>
+  ${window.nativeWidget?`<section class="panel"><div class="head"><div><h3>${ico("expand")}الويدجت</h3><p>شباك صغير فوق كل البرامج في ركن الشاشة، فيه اللي جاي ومهام النهارده</p></div></div>
+   <div class="setrow"><div class="t"><b>افتح الويدجت</b><div>تقدر ترجع للبرنامج الكامل من الزرار اللي فوق الويدجت، أو بزرار W</div></div><button class="btn sm" id="wgOpen">افتح الويدجت</button></div>
+   <div class="setrow"><div class="t"><b>يفتح مع الويندوز</b><div>أول ما تفتح اللاب يظهر الويدجت لوحده، وكده ملخص الصبح يوصلك من غير ما تفتح البرنامج</div></div>${sw("wgAuto",L.wgAuto,"يفتح مع الويندوز")}</div>
+  </section>`:""}
   </section>
   <section class="panel"><div class="head"><div><h3>${ico("timer")}المذاكرة</h3><p>إعدادات المؤقت والهدف اليومي</p></div></div>
    <div class="setrow"><div class="t"><b>بداية المذاكرة</b><div>الخطة بتتقسّم بالساعة من الوقت ده، وبتتخطى مواعيد الكلية</div></div><div class="seg">${[8,9,10,11,12,14].map(h=>`<button data-sstart="${h}" aria-pressed="${(L.sStart||10)===h}">${h12(h)} ${ap(h)}</button>`).join("")}</div></div>
@@ -1442,6 +1466,11 @@ function bind(){
     if("Notification" in window&&Notification.permission==="default"){try{await Notification.requestPermission()}catch(e){}}
     L.notify=true;saveL();renderView();toast("التنبيهات اشتغلت ✓")});
   on("nLo","onclick",()=>{L.notifyLo=!L.notifyLo;saveL();renderView()});
+  on("nMorn","onclick",()=>{L.morn=L.morn===false;saveL();renderView()});
+  $$("[data-mornh]").forEach(x=>x.onclick=()=>{L.mornH=+x.dataset.mornh;saveL();renderView()});
+  on("nMornT","onclick",()=>notify("صباح الخير يا فارس ☀️",mornText(new Date()),"mt"+Date.now()));
+  on("wgOpen","onclick",()=>setWidget(true));
+  on("wgAuto","onclick",async()=>{const v=!L.wgAuto;try{await window.nativeAutostart(v);L.wgAuto=v;saveL();toast(v?"هيفتح مع الويندوز ✓":"مش هيفتح مع الويندوز")}catch(e){toast("معرفتش أغيّر الإعداد ده")}renderView()});
   on("nTest","onclick",async()=>{if("Notification" in window&&Notification.permission==="default"){try{await Notification.requestPermission()}catch(e){}}notify("جدول فارس","التنبيهات شغّالة ✓","test"+Date.now())});
   on("bkCopy","onclick",async()=>{const t=$("#bk");t.value=JSON.stringify(D);try{await navigator.clipboard.writeText(t.value);toast("اتنسخت ✓")}catch(e){t.select();toast("البيانات ظاهرة في المربع، انسخها")}});
   on("bkLoad","onclick",()=>{try{const r=JSON.parse($("#bk").value);if(!r||typeof r!=="object"||!r.q)throw 0;D=merge(D,r);saveD();renderAll();toast("اترجعت البيانات ✓")}catch(e){$("#bkErr").textContent="الكلام الملصوق مش نسخة بيانات صحيحة"}});
@@ -1455,6 +1484,8 @@ window.addEventListener("appinstalled",()=>{installEv=null;toast("البرنام
 function updateBadge(){try{const n=new Date(),k=upcoming().filter(q=>dayDiff(parseD(q.date),n)<=3).length;if("setAppBadge" in navigator){k?navigator.setAppBadge(k):navigator.clearAppBadge()}}catch(e){}}
 document.addEventListener("keydown",e=>{
   if(e.ctrlKey||e.metaKey||e.altKey)return; const tg=e.target; if(tg&&/INPUT|TEXTAREA|SELECT/.test(tg.tagName))return;
+  if(window.nativeWidget&&/^[wWص]$/.test(e.key)){setWidget(!wmode);e.preventDefault();return}
+  if(wmode)return;
   const map={"1":"today","2":"week","3":"quiz","4":"study","5":"courses","6":"settings"};
   if(map[e.key]){go(map[e.key]);e.preventDefault();return}
   if(e.key===" "&&L.view==="study"){const P=L.pomo;pomoAct(!P?"start":P.paused?"resume":P.mode==="w"?"pause":"stop");e.preventDefault()}
@@ -1498,6 +1529,41 @@ function tickPomo(){
   }
 }
 
+/* ---------- desktop widget (exe only) ---------- */
+let wmode=false;
+function wgHTML(){
+  const n=new Date(),ds=ymd(n),i=idxOf(n.getDay()),tasks=planFor(ds),sl=slotsFor(ds),m0=n.getHours()*60+n.getMinutes();
+  const done=tasks.filter((_,j)=>{const r=D.pl[pk(ds,j)];return r&&!r.del}).length;
+  const H=heroItems(),cur=H.find(x=>x.a<=n),hn=cur||H[0];
+  let next="";
+  if(hn){const day=dayDiff(hn.a,n)===0?"النهارده":dayDiff(hn.a,n)===1?"بكرة":hn.a.toLocaleDateString("ar-EG",{weekday:"long"});
+    const tm=`${h12(hn.a.getHours())}:${String(hn.a.getMinutes()).padStart(2,"0")} ${ap(hn.a.getHours())}`;
+    const what=hn.k==="sc"?`سكشن <bdi>${C[hn.c].ab}</bdi>`:hn.k==="st"?`${C[hn.c]?`<bdi>${C[hn.c].ab}</bdi> · `:""}${esc(hn.t)}`:`${esc(hn.q.type)} <bdi>${C[hn.c].ab}</bdi>`;
+    const sub=cur?"دلوقتي":`${day} ${tm}`+(hn.k==="sc"?` · ${place(hn.e)}`:"");
+    next=`<div class="wg-card wg-next" style="${hn.c?vars(hn.c):""}"><div class="wg-k"><span>${cur?"شغّال دلوقتي":"اللي جاي"}</span></div><b>${what}</b><small>${sub}</small></div>`}
+  const tl=tasks.map(([c,t],j)=>{const k=pk(ds,j),on=!!(D.pl[k]&&!D.pl[k].del);return `<label class="wg-t${on?" on":""}" style="${c?vars(c):""}"><input type="checkbox" data-wpl="${k}" ${on?"checked":""}><span class="tx">${c?`<span class="cn"><bdi>${C[c].ab}</bdi></span>`:""}${esc(t)}</span><span class="tm">${rngH(sl[j])}</span></label>`}).join("");
+  const scs=i<0?[]:E.filter(e=>e.d===i&&e.t==="sc"&&e.s*60+60>m0);
+  const qs=upcoming().slice(0,3);
+  const tmn=dayMin(n),g=L.goal||180;
+  return `<div class="wg-h"><b>${n.toLocaleDateString("ar-EG",{weekday:"long",day:"numeric",month:"long"})}</b><button class="iconbtn" id="wgSync" title="زامن" aria-label="زامن">${ico("sync")}</button><button class="iconbtn" id="wgFull" title="افتح البرنامج كامل" aria-label="افتح البرنامج كامل">${ico("expand")}</button></div>
+  ${next}
+  <div class="wg-card"><div class="wg-k"><span>مذاكرة النهارده</span><span>${tasks.length?`${done} من ${tasks.length}`:""} · ${hm(tmn)} / ${hm(g)}</span></div><div class="wg-bar"><i style="width:${Math.min(100,Math.round(tmn/g*100))}%"></i></div>
+   ${tl||`<p class="muted" style="margin:8px 0 0;font-size:13px">مفيش مذاكرة النهارده ✌️</p>`}</div>
+  ${scs.length?`<div class="wg-card"><div class="wg-k"><span>سكاشن النهارده</span></div>${scs.map(e=>`<div class="wg-row"><span><bdi>${C[e.c].ab}</bdi></span><span>${fmt(e.s)} ${ap(e.s)} · ${place(e)}</span></div>`).join("")}</div>`:""}
+  ${qs.length?`<div class="wg-card"><div class="wg-k"><span>الكويزات الجاية</span></div>${qs.map(q=>{const dd=dayDiff(parseD(q.date),n);return `<div class="wg-row"><span>${esc(q.type)} <bdi>${C[q.c].ab}</bdi></span><span class="${dd<=2?"wg-hot":""}">${leftText(dd)}${q.time?" · "+esc(q.time):""}</span></div>`}).join("")}</div>`:""}`;
+}
+function renderWidget(){
+  if(!wmode)return; const el=$("#wg"); if(el.contains(document.activeElement)&&document.activeElement.tagName==="INPUT")return;
+  el.innerHTML=wgHTML();
+  $$("[data-wpl]").forEach(x=>x.onchange=()=>{const k=x.dataset.wpl;if(x.checked){put("pl",k,{v:1});if(plSteps(D))saveD();toast("برافو ✓")}else del("pl",k);x.blur();renderWidget()});
+  $("#wgFull").onclick=()=>setWidget(false); $("#wgSync").onclick=()=>{sync();toast("بيزامن…")};
+}
+async function setWidget(v){
+  wmode=v; document.body.classList.toggle("wmode",v);
+  try{window.nativeWidget&&await window.nativeWidget(v)}catch(e){}
+  if(v)renderWidget(); else renderAll();
+}
+
 /* ---------- notifications ---------- */
 let swReg=null;
 async function notify(title,body,tagId){
@@ -1509,6 +1575,17 @@ async function notify(title,body,tagId){
   try{if(swReg&&swReg.showNotification){await swReg.showNotification(title,o);return}}catch(e){}
   try{new Notification(title,o)}catch(e){}
 }
+function mornText(n){
+  const ds=ymd(n),i=idxOf(n.getDay()),tk=planFor(ds),sl=slotsFor(ds),out=[];
+  const scs=i<0?[]:E.filter(e=>e.d===i&&e.t==="sc");
+  if(scs.length)out.push("سكاشن: "+scs.map(e=>`${C[e.c].ab} ${fmt(e.s)}${ap(e.s)}`).join("، "));
+  const left=tk.map((t,j)=>[t,j]).filter(([t,j])=>{const r=D.pl[pk(ds,j)];return !(r&&!r.del)});
+  if(left.length){const [[c,t],j]=left[0];out.push(`${left.length} ${left.length===1?"مهمة":left.length<=10?"مهام":"مهمة"} مذاكرة، أولها ${h12(Math.floor(sl[j][0]/60))}:${String(sl[j][0]%60).padStart(2,"0")} ${ap(Math.floor(sl[j][0]/60))}: ${c?C[c].ab+" ":""}${t}`)}
+  else out.push("مفيش مذاكرة النهارده ✌️");
+  const q=upcoming().filter(q=>dayDiff(parseD(q.date),n)<=3);
+  if(q.length)out.push(q.map(q=>`${q.type} ${C[q.c].ab} ${leftText(dayDiff(parseD(q.date),n))}`).join("، "));
+  return out.join(" · ");
+}
 function checkNotify(){
   if(!L.notify)return;
   const n=new Date(), i=idxOf(n.getDay()), m=n.getHours()*60+n.getMinutes(), ds=ymd(n), F=L.fired;
@@ -1518,16 +1595,18 @@ function checkNotify(){
   });
   {const tk=planFor(ds),sl=slotsFor(ds);tk.forEach(([c,t],j)=>{const k=`s|${ds}|${j}`,st=sl[j][0],dn=D.pl[pk(ds,j)]&&!D.pl[pk(ds,j)].del;
     if(!dn&&!F[k]&&m>=st-5&&m<st+10){F[k]=1;notify(`وقت المذاكرة · ${c?C[c].ab:""} ${t}`,`${rng(sl[j])} · افتح المؤقت وابدأ`,k)}})}
+  if(L.morn!==false){const mh=L.mornH||8,km=`m|${ds}`;
+    if(!F[km]&&n.getHours()>=mh&&n.getHours()<14){F[km]=1;notify("صباح الخير يا فارس ☀️",mornText(n),km)}}
   upcoming().forEach(q=>{const dd=dayDiff(parseD(q.date),n),k1=`q1|${q.id}`,k0=`q0|${q.id}`;
     if(dd===1&&n.getHours()>=19&&!F[k1]){F[k1]=1;notify(`${q.type} بكرة`,`${C[q.c].short}${q.time?" · "+q.time:""}`,k1)}
     if(dd===0&&n.getHours()>=7&&!F[k0]){F[k0]=1;notify(`${q.type} النهارده`,`${C[q.c].short}${q.time?" · "+q.time:""}`,k0)}
   });
-  const cut=ymd(new Date(Date.now()-3*864e5)); for(const k in F){const p=k.split("|");if((p[0]==="e"||p[0]==="s")&&p[1]<cut)delete F[k]}
+  const cut=ymd(new Date(Date.now()-3*864e5)); for(const k in F){const p=k.split("|");if((p[0]==="e"||p[0]==="s"||p[0]==="m")&&p[1]<cut)delete F[k]}
   saveL();
 }
 
 /* ---------- boot ---------- */
-function renderAll(){renderHero();renderAlerts();renderView()}
+function renderAll(){renderHero();renderAlerts();renderView();renderWidget()}
 (async function(){
   $("#logo1").innerHTML=LOGO;$("#logo2").innerHTML=LOGO;
   const savedL=LS.get("fs-local",null);
@@ -1542,13 +1621,16 @@ function renderAll(){renderHero();renderAlerts();renderView()}
   applyTheme(); renderAll(); tickPomo();
   let curDay=ymd(new Date());
   setInterval(()=>{const d=ymd(new Date());if(d!==curDay){curDay=d;selDay=null;wkOff=0;renderAll();updateBadge()}renderHero();tickPomo()},1000);
-  setInterval(()=>{renderAlerts();checkNotify();renderSync()},30000);
+  setInterval(()=>{renderAlerts();checkNotify();renderSync();renderWidget()},30000);
   setTimeout(checkNotify,3000);
   setInterval(()=>sync(),90000); setTimeout(()=>sync(),1200);
   document.addEventListener("visibilitychange",()=>{if(!document.hidden){sync();renderAll();if(L.pomo&&!L.pomo.paused)wake(true)}});
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&focusMode){focusMode=false;renderView()}});
   window.addEventListener("online",()=>sync());
   if("serviceWorker" in navigator&&location.protocol==="https:"){try{swReg=await navigator.serviceWorker.register("sw.js");swReg.update()}catch(e){}}
+  if(window.nativeWidget){const b=document.createElement("button");b.className="iconbtn";b.id="wgBtn";b.title="ويدجت (W)";b.setAttribute("aria-label","افتح الويدجت");b.innerHTML=ico("expand");b.onclick=()=>setWidget(true);$(".topbar .tools").prepend(b);
+    try{window.nativeAutostartGet().then(v=>{L.wgAuto=!!v;saveL()})}catch(e){}}
+  if(window.__wg)setWidget(true);
   setTimeout(()=>document.body.classList.add("settled"),2600);
   const sp=$("#splash"), reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
   const done=()=>{sp.classList.add("out");document.body.classList.add("ready")};
