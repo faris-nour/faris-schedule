@@ -593,6 +593,8 @@ ol.howto b{color:var(--ink)}
 .brand h1.en{font-family:'GV Brand',cursive;font-weight:400;font-size:30px;line-height:1.05;letter-spacing:.3px}
 .mobilehead .brand h1.en{font-size:28px}
 .brand small.en{margin-top:2px}
+#nextQuiz{white-space:normal;line-height:1.15;font-size:clamp(14px,4vw,20px)}#alerts[hidden]{display:none}
+.qi .qiq{grid-column:1/-1;justify-self:start;margin-top:2px}
 .lg{--o:cubic-bezier(.34,1.56,.64,1);--e2:cubic-bezier(.2,.8,.2,1);display:grid;justify-items:center;text-align:center}
 .lg-av{position:relative;width:246px;height:328px;margin-bottom:-14px}
 .lg-fl{position:absolute;inset:0;animation:lg-float 4.5s 2.40s ease-in-out infinite}
@@ -949,7 +951,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="9.10";
+const APP_VER="9.11";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -1262,7 +1264,7 @@ let qFilter="all", selDay=null, wkOff=0, pend=null, prefill=null, selCourse="NET
 function renderView(){
   renderNav();
   $("#vtitle").textContent=TITLES[L.view][0]; $("#vsub").textContent=TITLES[L.view][1];
-  $("#hero").hidden=!["today","week"].includes(L.view);
+  $("#hero").hidden=!["today","week"].includes(L.view);$("#alerts").hidden=L.view!=="today";document.body.dataset.view=L.view;
   $("#main").innerHTML=`<div class="view">${({today:vToday,week:vWeek,quiz:vQuiz,study:vStudy,courses:vCourses,settings:vSettings})[L.view]()}</div>`;
   bind(); renderFocus(); updateBadge();
   const sd=$(".dstrip .day[aria-selected=\"true\"]"), st=$(".dstrip"); if(sd&&st){const r=sd.getBoundingClientRect(),q=st.getBoundingClientRect();st.scrollLeft+=(r.left+r.width/2)-(q.left+q.width/2)}
@@ -1294,7 +1296,7 @@ function qItem(q,k){
   const d=parseD(q.date), dd=dayDiff(d,new Date());
   return `<div class="qi${dd<0||q.done?" past":""}${q.done?" done":""}" style="${vars(q.c)};animation-delay:${(k||0)*50}ms"><div class="date"><b class="num">${d.getDate()}</b><span>${MONTHS[d.getMonth()]}</span></div>
    <div class="info"><b>${esc(q.type)}</b><div class="cn">${C[q.c].short}</div><div class="meta clamp" title="اضغط عشان تشوف الملاحظة كلها">${d.toLocaleDateString("ar-EG",{weekday:"long"})}${q.time?" · "+esc(q.time):""}${q.note?" · "+esc(q.note):""}</div></div>
-   <div class="act">${q.done?`<span class="chiptime ok">خلص ✓</span>`:`<span class="chiptime ${leftCls(dd)}">${leftText(dd)}</span>`}<button class="del${q.done?" on":""}" data-qdone="${q.id}" title="${q.done?"رجّعه مش خالص":"علّم إنه خلص"}" aria-label="${q.done?"رجّعه مش خالص":"علّم إنه خلص"}" aria-pressed="${!!q.done}">${ico("check")}</button>${dd>=0&&!q.done?`<button class="del" data-ics="${q.id}" title="ضيفه لتقويم الموبايل" aria-label="ضيفه للتقويم">${ico("week")}</button>`:""}<button class="del" data-editq="${q.id}" title="تعديل" aria-label="تعديل">${ico("edit")}</button>${delBtn("q",q.id)}</div></div>`;
+   <div class="act">${q.done?`<span class="chiptime ok">خلص ✓</span>`:`<span class="chiptime ${leftCls(dd)}">${leftText(dd)}</span>`}<button class="del${q.done?" on":""}" data-qdone="${q.id}" title="${q.done?"رجّعه مش خالص":"علّم إنه خلص"}" aria-label="${q.done?"رجّعه مش خالص":"علّم إنه خلص"}" aria-pressed="${!!q.done}">${ico("check")}</button>${dd>=0&&!q.done?`<button class="del" data-ics="${q.id}" title="ضيفه لتقويم الموبايل" aria-label="ضيفه للتقويم">${ico("week")}</button>`:""}<button class="del" data-editq="${q.id}" title="تعديل" aria-label="تعديل">${ico("edit")}</button>${delBtn("q",q.id)}</div>${dd>=0&&!q.done&&qCount(q.c)?`<button class="btn ghost sm qzgo qiq" data-qz="${q.c}">⚡ اختبر نفسك</button>`:""}</div>`;
 }
 function slotHTML(e,ds,k,{liveNow,past,started,q}){
   const a=attOf(ds,e);
@@ -1316,7 +1318,7 @@ function catchUp(){const t=new Date(),ts=ymd(t);let n=0,last=null;
     planFor(ds).forEach(([c,tt],i)=>{const r=D.pl[pk(ds,i)];if(r&&!r.del)return;const rd=relDate(c,tt);if(!rd)return;const lag=dayDiff(d,rd),lim=/سكشن/.test(tt)?(c==="COM"||c==="GR"?1:0):1;if(lag>lim){n++;last=d}})}
   return {n:n+missedTasks().length,last}}
 function catchHTML(){const {n,last}=catchUp();if(!n)return `<div class="catch ok">${ico("check")}إنت ماشي أول بأول 👏</div>`;
-  return `<div class="catch"><b>فاضلك ${n} ${n<=10?"حاجات":"حاجة"} متأخرة</b><span>${last?`هتلحق يوم ${last.toLocaleDateString("ar-EG",{weekday:"long"})} ${dShort(last)} لو مشيت على الجدول`:"علّم على اللي ذاكرته من الأيام اللي فاتت"}</span></div>`}
+  return `<div class="catch"><b>قدامك ${n} ${n<=10?"حاجات":"حاجة"} عشان تلحق المنهج</b><span>${last?`هتلحق يوم ${last.toLocaleDateString("ar-EG",{weekday:"long"})} ${dShort(last)} لو مشيت على الجدول`:"علّم على اللي ذاكرته من الأيام اللي فاتت"}</span></div>`}
 function missedTasks(){const out=[],t=new Date();for(let k=7;k>=1;k--){const d=new Date(t);d.setDate(t.getDate()-k);const ds=ymd(d);if(ds<MISSED_FROM)continue;planFor(ds).forEach(([c,tt],i)=>{const r=D.pl[pk(ds,i)];if(!(r&&!r.del))out.push({ds,i,c,t:tt})})}return out}
 let rdPrev=null;
 const showPrev=()=>setTimeout(()=>{const e=document.querySelector(".rdprev");if(e){e.scrollIntoView({behavior:"smooth",block:"center"});e.classList.add("flash")}},60);
@@ -1503,7 +1505,7 @@ function vStudy(){
   return `<div class="st-grid">${focus}${todayCard}${week}${lecs}</div>`;
 }
 function gradesOverview(){const g=live(D.gr);if(!g.length)return "";
-  return `<section class="panel gov"><div class="head"><div><h3>🎯 درجاتك لحد دلوقتي</h3></div></div><div class="govr">${Object.keys(C).map(c=>{const a=g.filter(x=>x.c===c);if(!a.length)return "";const s=a.reduce((t,x)=>t+(+x.score||0),0),m=a.reduce((t,x)=>t+(+x.max||0),0);return `<div class="govc" style="${vars(c)}"><bdi>${C[c].ab}</bdi><b class="num">${s} / ${m}</b><small>${m?Math.round(s/m*100):0}%</small></div>`}).join("")}</div></section>`}
+  return `<section class="panel gov"><div class="head"><div><h3>🎯 درجاتك لحد دلوقتي</h3></div></div><div class="govr">${Object.keys(C).map(c=>{const a=g.filter(x=>x.c===c);if(!a.length)return "";const s=a.reduce((t,x)=>t+(+x.score||0),0),m=a.reduce((t,x)=>t+(+x.max||0),0);return `<div class="govc" style="${vars(c)}"><bdi>${C[c].ab}</bdi><b class="num" dir="ltr">${s} / ${m}</b><small>${m?Math.round(s/m*100):0}%</small></div>`}).join("")}</div></section>`}
 let gradeQ=null;
 function vCourses(){
   const k=selCourse, c=C[k], n=new Date(), a=attStats(k);
@@ -1607,6 +1609,7 @@ function bind(){
   $$("form input, form select").forEach(el=>el.addEventListener("input",()=>$$(".err").forEach(e=>e.textContent="")));
   const on=(id,ev,f)=>{const el=$("#"+id);if(el)el[ev]=f};
   $$("[data-qz2]").forEach(x=>x.onclick=()=>startQz(x.dataset.qz2));
+  $$("#main [data-qz]").forEach(x=>x.onclick=()=>startQz(x.dataset.qz));
   $$("[data-qzm]").forEach(x=>x.onclick=()=>startQz(x.dataset.qzm,true));
   $$("[data-grq]").forEach(x=>x.onclick=()=>{const q=D.q[x.dataset.grq];if(!q)return;gradeQ=x.dataset.grq;selCourse=q.c;L.view="courses";saveL();renderAll();setTimeout(()=>{const gl=$("#gl");if(gl){gl.value=`${q.type} · ${dShort(parseD(q.date))}`;gl.scrollIntoView({block:"center"});const gs=$("#gs");if(gs)gs.focus()}},80)});
   on("bdGo","onclick",()=>{try{const t=ymd(new Date()),d=new Date();d.setDate(d.getDate()+1);const from=ymd(d);
