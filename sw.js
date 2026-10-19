@@ -1,4 +1,4 @@
-const V='fs-v9.7';
+const V='fs-v9.8';
 const CORE=['./','index.html','manifest.webmanifest','icon-192-v2.png','icon-512-v2.png','apple-touch-icon-v2.png',
 'fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2','fonts/ibm-plex-sans-arabic-arabic-500-normal.woff2','fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2',
 'fonts/ibm-plex-sans-arabic-latin-400-normal.woff2','fonts/ibm-plex-sans-arabic-latin-500-normal.woff2','fonts/ibm-plex-sans-arabic-latin-600-normal.woff2',

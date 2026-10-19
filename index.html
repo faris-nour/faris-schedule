@@ -944,7 +944,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="9.7";
+const APP_VER="9.8";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -1220,7 +1220,7 @@ function startQz(c,onlyMk){
 }
 function drawQz(){
   let f=$("#qzLayer");if(!QZ){if(f)f.remove();return}
-  if(!f){f=document.createElement("div");f.id="qzLayer";document.body.appendChild(f)}
+  if(!f){f=document.createElement("div");f.id="qzLayer";f.dir="rtl";document.body.appendChild(f)}
   const {c,list,i}=QZ,done=i>=list.length,x=list[i];
   f.innerHTML=`<div class="qzbox" style="${vars(c)}" role="dialog" aria-label="اختبر نفسك"><div class="qzh"><b>⚡ اختبر نفسك · <bdi>${C[c].ab}</bdi></b><span class="num">${done?"":(i+1)+" / "+list.length}</span><button class="iconbtn" id="qzX" aria-label="قفل">${ico("close")}</button></div>
    ${done?`<div class="qzend"><div class="big num">${QZ.right} / ${list.length}</div><p>${QZ.right===list.length?"ممتاز، إنت جاهز 🔥":QZ.right>=list.length*.7?"كويس جداً، راجع اللي غلطت فيهم":"محتاج تراجع الملخصات 🧸 تاني"}</p>
@@ -1316,7 +1316,7 @@ function missedTasks(){const out=[],t=new Date();for(let k=7;k>=1;k--){const d=n
 let rdPrev=null;
 const dayName=ds=>{const d=parseD(ds),k=dayDiff(d,new Date());return k===0?"النهارده":k===1?"بكرة":`${d.toLocaleDateString("ar-EG",{weekday:"long"})} ${dShort(d)}`};
 function rdPrevHTML(){return `<div class="rdprev">${rdPrev.stay&&rdPrev.stay.length?`<small class="rdw">⚠️ دول كويزهم قبل أي يوم جاي، فمش هينفع يتأجلوا: ${rdPrev.stay.map(r=>`<bdi>${C[r.c].ab}</bdi> ${esc(r.t)}`).join("، ")}. اقرأ ملخصاتهم 🧸 بسرعة النهارده.</small>`:""}<b>${ico("week")}${rdPrev.length?"هتتنقل كده:":"مفيش حاجة ينفع تتأجل."}</b>${rdPrev.map(r=>`<div class="rdrow" style="${vars(r.c)}"><span class="pcn">${ico(r.c)}<bdi>${C[r.c].ab}</bdi></span><span class="pt">${esc(r.t)}</span><span class="rdto">← ${dayName(r.to)}</span>${r.warn?`<small class="rdw">⚠️ ${esc(r.warn)}</small>`:""}</div>`).join("")}
-     ${Object.entries(rdPrev.heavy||{}).map(([d,e])=>`<small class="rdw">⚠️ ${dayName(d)} هيخلص حوالي الساعة ${hhmm(e)} ${ap(Math.floor(e/60)%24)}، يعني تقيل. ابدأ بدري واقرأ ملخص 🧸 قبل كل محاضرة عشان تمشي أسرع.</small>`).join("")}<div class="rdbtns"><button class="btn sm" id="rdOk">${ico("check")}تمام، انقلهم</button><button class="btn ghost sm" id="rdNo">إلغاء</button></div></div>`}
+     ${Object.entries(rdPrev.heavy||{}).map(([d,e])=>`<small class="rdw">⚠️ ${dayName(d)} ${e>=1440?`هيعدّي نص الليل ويخلص حوالي ${hhmm(e)} ${ap(Math.floor(e/60)%24)}${e>=1440+5*60?" من اليوم اللي بعده":""}`:`هيخلص حوالي الساعة ${hhmm(e)} ${ap(Math.floor(e/60)%24)}`}، يعني تقيل. ابدأ بدري واقرأ ملخص 🧸 قبل كل محاضرة عشان تمشي أسرع.</small>`).join("")}<div class="rdbtns"><button class="btn sm" id="rdOk">${ico("check")}تمام، انقلهم</button><button class="btn ghost sm" id="rdNo">إلغاء</button></div></div>`}
 function missedHTML(){const m=missedTasks();if(!m.length){rdPrev=null;return ""}
   const row=x=>`<label class="ptask" style="${x.c?vars(x.c):""}"><input type="checkbox" data-pl="${pk(x.ds,x.i)}"><span class="pbody"><span class="pline"><span class="ptm">${dShort(parseD(x.ds))}</span>${x.c?`<span class="pcn">${ico(x.c)}<bdi>${C[x.c].ab}</bdi></span>`:""}</span><span class="pt">${esc(x.t)}</span></span><span class="pact">${sumA(x.c,x.t)}${notionA(x.c,x.t)}${recA(x.c,x.t)}</span></label>`;
   const prev=rdPrev&&rdPrev.mode==="missed"?rdPrevHTML()
