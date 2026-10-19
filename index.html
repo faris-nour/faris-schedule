@@ -588,6 +588,7 @@ ol.howto b{color:var(--ink)}
 .gov .govr{display:flex;flex-wrap:wrap;gap:10px}.govc{flex:1 1 120px;padding:10px 12px;border-radius:12px;background:var(--c-bg,var(--surface-2));display:grid;gap:2px}.govc bdi{color:var(--c);font-weight:600;font-size:13px}.govc b{font-size:20px}.govc small{color:var(--muted)}
 .grq{margin:4px 0 10px}.bdbtn{margin-top:10px}
 .winsight{display:grid;gap:4px;font-size:13px;margin:-4px 0 12px;padding:10px 12px;border-radius:12px;background:var(--surface-2)}
+.rdprev.flash{animation:rdflash 1.2s ease}@keyframes rdflash{0%,40%{box-shadow:0 0 0 3px var(--warn,#d97706)}100%{box-shadow:none}}
 .lg{--o:cubic-bezier(.34,1.56,.64,1);--e2:cubic-bezier(.2,.8,.2,1);display:grid;justify-items:center;text-align:center}
 .lg-av{position:relative;width:246px;height:328px;margin-bottom:-14px}
 .lg-fl{position:absolute;inset:0;animation:lg-float 4.5s 2.40s ease-in-out infinite}
@@ -900,7 +901,7 @@ function rePlan(missed,opt={}){
   out.heavy=heavy;
   return out.sort((a,b)=>a.to.localeCompare(b.to)||a.c.localeCompare(b.c)||tSeq(a.c,a.t)-tSeq(b.c,b.t));
 }
-function applyPlan(rows){rows.forEach(r=>{const own=mvList().find(m=>m.to===r.ds&&m.c===r.c&&m.t===r.t);const id=own?own.id:`${r.ds}|${r.c}|${r.t}`;D.mv[id]={to:r.to,u:Date.now()}});saveD()}
+function applyPlan(rows){D.mv=D.mv||{};rows.forEach(r=>{const own=mvList().find(m=>m.to===r.ds&&m.c===r.c&&m.t===r.t);const id=own?own.id:`${r.ds}|${r.c}|${r.t}`;D.mv[id]={to:r.to,u:Date.now()}});saveD()}
 /* time blocks for the day's study tasks: avoid in-person college sessions (+30m travel), Friday prayer, then pack with 15m breaks */
 const taskMin=t=>/محاضرة \d/.test(t)?120:/سكشن \d/.test(t)?90:/مراجعة|حل/.test(t)?60:45;
 function busyFor(ds){
@@ -944,7 +945,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="9.8";
+const APP_VER="9.9";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -1004,8 +1005,8 @@ const weekNo=d=>Math.floor(dayDiff(d,parseD(TERM_START))/7)+1;
 let D={q:{},att:{},st:{},gr:{},ln:{},pm:{},pl:{},mv:{},mk:{}};
 let L={filters:{sc:true,lf:false,lo:false},theme:"system",view:"today",goal:180,token:"",gistId:"",lastSync:0,notify:false,notifyLo:false,notifyMin:30,fired:{},pomo:null,lec:12};
 const live=m=>Object.entries(m||{}).filter(([,v])=>v&&!v.del).map(([id,v])=>({...v,id}));
-function put(map,id,rec){D[map][id]={...rec,u:Date.now()};saveD()}
-function del(map,id){D[map][id]={del:1,u:Date.now()};saveD()}
+function put(map,id,rec){(D[map]=D[map]||{})[id]={...rec,u:Date.now()};saveD()}
+function del(map,id){(D[map]=D[map]||{})[id]={del:1,u:Date.now()};saveD()}
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 function fromOld(o){const r={q:{}};(o.quizzes||[]).forEach(q=>r.q[q.id]={...q,u:Date.now()});(o.dismissed||[]).forEach(id=>r.q[id]={del:1,u:Date.now()});return r}
 /* plan check-offs are keyed by day + course + task (not position), so re-planning never moves a tick to another task */
@@ -1314,10 +1315,11 @@ function catchHTML(){const {n,last}=catchUp();if(!n)return `<div class="catch ok
   return `<div class="catch"><b>فاضلك ${n} ${n<=10?"حاجات":"حاجة"} متأخرة</b><span>${last?`هتلحق يوم ${last.toLocaleDateString("ar-EG",{weekday:"long"})} ${dShort(last)} لو مشيت على الجدول`:"علّم على اللي ذاكرته من الأيام اللي فاتت"}</span></div>`}
 function missedTasks(){const out=[],t=new Date();for(let k=7;k>=1;k--){const d=new Date(t);d.setDate(t.getDate()-k);const ds=ymd(d);if(ds<MISSED_FROM)continue;planFor(ds).forEach(([c,tt],i)=>{const r=D.pl[pk(ds,i)];if(!(r&&!r.del))out.push({ds,i,c,t:tt})})}return out}
 let rdPrev=null;
+const showPrev=()=>setTimeout(()=>{const e=document.querySelector(".rdprev");if(e){e.scrollIntoView({behavior:"smooth",block:"center"});e.classList.add("flash")}},60);
 const dayName=ds=>{const d=parseD(ds),k=dayDiff(d,new Date());return k===0?"النهارده":k===1?"بكرة":`${d.toLocaleDateString("ar-EG",{weekday:"long"})} ${dShort(d)}`};
 function rdPrevHTML(){return `<div class="rdprev">${rdPrev.stay&&rdPrev.stay.length?`<small class="rdw">⚠️ دول كويزهم قبل أي يوم جاي، فمش هينفع يتأجلوا: ${rdPrev.stay.map(r=>`<bdi>${C[r.c].ab}</bdi> ${esc(r.t)}`).join("، ")}. اقرأ ملخصاتهم 🧸 بسرعة النهارده.</small>`:""}<b>${ico("week")}${rdPrev.length?"هتتنقل كده:":"مفيش حاجة ينفع تتأجل."}</b>${rdPrev.map(r=>`<div class="rdrow" style="${vars(r.c)}"><span class="pcn">${ico(r.c)}<bdi>${C[r.c].ab}</bdi></span><span class="pt">${esc(r.t)}</span><span class="rdto">← ${dayName(r.to)}</span>${r.warn?`<small class="rdw">⚠️ ${esc(r.warn)}</small>`:""}</div>`).join("")}
      ${Object.entries(rdPrev.heavy||{}).map(([d,e])=>`<small class="rdw">⚠️ ${dayName(d)} ${e>=1440?`هيعدّي نص الليل ويخلص حوالي ${hhmm(e)} ${ap(Math.floor(e/60)%24)}${e>=1440+5*60?" من اليوم اللي بعده":""}`:`هيخلص حوالي الساعة ${hhmm(e)} ${ap(Math.floor(e/60)%24)}`}، يعني تقيل. ابدأ بدري واقرأ ملخص 🧸 قبل كل محاضرة عشان تمشي أسرع.</small>`).join("")}<div class="rdbtns"><button class="btn sm" id="rdOk">${ico("check")}تمام، انقلهم</button><button class="btn ghost sm" id="rdNo">إلغاء</button></div></div>`}
-function missedHTML(){const m=missedTasks();if(!m.length){rdPrev=null;return ""}
+function missedHTML(){const m=missedTasks();if(!m.length){if(rdPrev&&rdPrev.mode==="missed")rdPrev=null;return ""}
   const row=x=>`<label class="ptask" style="${x.c?vars(x.c):""}"><input type="checkbox" data-pl="${pk(x.ds,x.i)}"><span class="pbody"><span class="pline"><span class="ptm">${dShort(parseD(x.ds))}</span>${x.c?`<span class="pcn">${ico(x.c)}<bdi>${C[x.c].ab}</bdi></span>`:""}</span><span class="pt">${esc(x.t)}</span></span><span class="pact">${sumA(x.c,x.t)}${notionA(x.c,x.t)}${recA(x.c,x.t)}</span></label>`;
   const prev=rdPrev&&rdPrev.mode==="missed"?rdPrevHTML()
    :`<div class="rdbtns"><button class="btn sm" id="rdAuto">${ico("week")}وزّعهم على الأيام الجاية</button><button class="btn ghost sm" id="rdToday">هذاكرهم النهارده</button></div>`;
@@ -1603,9 +1605,12 @@ function bind(){
   $$("[data-qz2]").forEach(x=>x.onclick=()=>startQz(x.dataset.qz2));
   $$("[data-qzm]").forEach(x=>x.onclick=()=>startQz(x.dataset.qzm,true));
   $$("[data-grq]").forEach(x=>x.onclick=()=>{const q=D.q[x.dataset.grq];if(!q)return;gradeQ=x.dataset.grq;selCourse=q.c;L.view="courses";saveL();renderAll();setTimeout(()=>{const gl=$("#gl");if(gl){gl.value=`${q.type} · ${dShort(parseD(q.date))}`;gl.scrollIntoView({block:"center"});const gs=$("#gs");if(gs)gs.focus()}},80)});
-  on("bdGo","onclick",()=>{const t=ymd(new Date()),d=new Date();d.setDate(d.getDate()+1);const from=ymd(d);const left=planFor(t).map(([c,tt],i)=>({ds:t,i,c,t:tt})).filter(x=>{const r=D.pl[pk(t,x.i)];return !(r&&!r.del)&&x.c});
-    if(!left.length){toast("مفيش حاجة فاضلة النهارده");return}const r0=rePlan(left,{from}),h=r0.heavy;const stay=r0.filter(x=>x.warn),r=r0.filter(x=>!x.warn);rdPrev=r;rdPrev.heavy=h;rdPrev.stay=stay;rdPrev.mode="bad";renderView()});
-  on("rdAuto","onclick",()=>{const r=rePlan(missedTasks());const h=r.heavy;rdPrev=r;rdPrev.heavy=h;rdPrev.mode="missed";renderView()});
+  on("bdGo","onclick",()=>{try{const t=ymd(new Date()),d=new Date();d.setDate(d.getDate()+1);const from=ymd(d);
+    const left=planFor(t).map(([c,tt],i)=>({ds:t,i,c,t:tt})).filter(x=>{const r=D.pl[pk(t,x.i)];return !(r&&!r.del)&&x.c});
+    if(!left.length){toast("مفيش حاجة فاضلة النهارده");return}
+    const r0=rePlan(left,{from}),h=r0.heavy;const stay=r0.filter(x=>x.warn),r=r0.filter(x=>!x.warn);rdPrev=r;rdPrev.heavy=h;rdPrev.stay=stay;rdPrev.mode="bad";renderView();showPrev()}
+    catch(e){console.error(e);toast("حصلت مشكلة: "+(e&&e.message||e))}});
+  on("rdAuto","onclick",()=>{try{const r=rePlan(missedTasks());const h=r.heavy;rdPrev=r;rdPrev.heavy=h;rdPrev.mode="missed";renderView();showPrev()}catch(e){console.error(e);toast("حصلت مشكلة: "+(e&&e.message||e))}});
   on("rdNo","onclick",()=>{rdPrev=null;renderView()});
   on("rdOk","onclick",()=>{if(!rdPrev)return;applyPlan(rdPrev);const n=rdPrev.length;rdPrev=null;renderAll();toast(`اتنقلوا ${n} ✓`)});
   on("rdToday","onclick",()=>{const t=ymd(new Date()),rows=missedTasks().map(x=>({...x,to:t}));applyPlan(rows);rdPrev=null;renderAll();toast("اتحطوا في خطة النهارده ✓")});
