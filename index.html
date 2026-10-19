@@ -884,7 +884,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="9.3";
+const APP_VER="9.4";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -1628,7 +1628,7 @@ async function notify(title,body,tagId){
   try{window.nativeFlash&&window.nativeFlash()}catch(e){}
   try{if(window.nativeNotify){await window.nativeNotify(title,body);return}}catch(e){}
   if(!("Notification" in window)||Notification.permission!=="granted")return;
-  const o={body,icon:"icon-192.png",badge:"icon-192.png",lang:"ar",dir:"rtl",tag:tagId,renotify:true};
+  const o={body,icon:"icon-192-v2.png",badge:"icon-192-v2.png",lang:"ar",dir:"rtl",tag:tagId,renotify:true};
   try{if(swReg&&swReg.showNotification){await swReg.showNotification(title,o);return}}catch(e){}
   try{new Notification(title,o)}catch(e){}
 }
