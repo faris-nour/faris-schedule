@@ -951,7 +951,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="9.11";
+const APP_VER="9.12";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -1453,8 +1453,8 @@ function weekInsight(){
   if(tot)out.push(`🏆 أكتر مادة ذاكرتها: <bdi>${C[top[0]].ab}</bdi> (${hm(top[1])})`);
   if(prev)out.push(tot>=prev?`📈 ذاكرت أكتر من الأسبوع اللي فات بـ ${hm(tot-prev)}`:`📉 أقل من الأسبوع اللي فات بـ ${hm(prev-tot)}`);
   upcoming().filter(q=>dayDiff(parseD(q.date),new Date())<=10).forEach(q=>{const mm=pomoMinutes(q.c);if(mm<120&&!out.some(x=>x.includes(C[q.c].ab+"</bdi> قرّب")))out.push(`⚠️ كويز <bdi>${C[q.c].ab}</bdi> قرّب (${leftText(dayDiff(parseD(q.date),new Date()))}) وذاكرتها ${mm?hm(mm):"ولا دقيقة"} بس الأسبوع ده`)});
-  const zero=m.filter(x=>!x[1]).map(x=>C[x[0]].ab);if(zero.length&&zero.length<5)out.push(`💤 مادة مذاكرتهاش خالص: ${zero.map(z=>`<bdi>${z}</bdi>`).join("، ")}`);
-  return out.length?`<div class="winsight">${out.map(x=>`<div>${x}</div>`).join("")}</div>`:""}
+  const zero=m.filter(x=>!x[1]).map(x=>C[x[0]].ab);if(zero.length&&zero.length<5)out.push(`💤 مذاكرتهاش خالص الأسبوع ده: ${zero.map(z=>`<bdi>${z}</bdi>`).join(" · ")}`);
+  return out.length?`<div class="winsight">${out.slice(0,4).map(x=>`<div>${x}</div>`).join("")}</div>`:""}
 function vStudy(){
   if(pomoDur==null)pomoDur=L.dur||60;
   const c=studyCourse, P=L.pomo;
