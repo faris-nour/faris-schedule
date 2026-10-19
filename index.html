@@ -575,6 +575,7 @@ ol.howto b{color:var(--ink)}
   *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}
   .reveal,.item,.qi,.slot{opacity:1;transform:none}
 }
+.rdbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.rdprev{margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--surface,#fff);display:grid;gap:6px}.rdprev>b{display:flex;gap:6px;align-items:center;font-size:14px}.rdprev>b svg{width:16px;height:16px}.rdrow{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}.rdrow:last-of-type{border:0}.rdto{margin-inline-start:auto;font-weight:600;color:var(--ok)}.rdw{flex-basis:100%;color:var(--warn,#b45309)}
 .lg{--o:cubic-bezier(.34,1.56,.64,1);--e2:cubic-bezier(.2,.8,.2,1);display:grid;justify-items:center;text-align:center}
 .lg-av{position:relative;width:246px;height:328px;margin-bottom:-14px}
 .lg-fl{position:absolute;inset:0;animation:lg-float 4.5s 2.40s ease-in-out infinite}
@@ -840,7 +841,54 @@ function keepUp(ds){
   // lectures before sections, grouped by course
   return out.sort((x,y)=>x[0].localeCompare(y[0])||(x[1].startsWith("سكشن")-y[1].startsWith("سكشن")));
 }
-const planFor=ds=>[...(PLAN[ds]||[]),...keepUp(ds)];
+const basePlan=ds=>[...(PLAN[ds]||[]),...keepUp(ds)];
+/* ---------- moved tasks (auto re-planning). D.mv[original "date|course|task"] = {to:"YYYY-MM-DD"} ---------- */
+const tSeq=(c,t)=>{const m=String(t).match(/(محاضرة|سكشن) (\d+)/);return m?(m[1]==="محاضرة"?+m[2]*10:+m[2]*20+5):1e6};
+const mvList=()=>Object.entries(D.mv||{}).filter(([,v])=>v&&!v.del&&v.to).map(([id,v])=>{const [src,c,...r]=id.split("|");return {id,src,c,t:r.join("|"),to:v.to}});
+function planFor(ds){
+  const mv=mvList(); if(!mv.length)return basePlan(ds);
+  const away=new Set(mv.filter(m=>m.src===ds&&m.to!==ds).map(m=>m.c+"|"+m.t));
+  let list=basePlan(ds).filter(([c,t])=>!away.has(c+"|"+t));
+  const have=new Set(list.map(([c,t])=>c+"|"+t));
+  const inc=mv.filter(m=>m.to===ds&&m.src!==ds&&!have.has(m.c+"|"+m.t)).sort((a,b)=>a.src.localeCompare(b.src)||tSeq(a.c,a.t)-tSeq(b.c,b.t)).map(m=>[m.c,m.t]);
+  if(!inc.length)return list;
+  list=[...inc,...list];
+  // keep every course in lecture/section order inside the day
+  for(const c of new Set(list.map(x=>x[0]))){const pos=[],its=[];list.forEach((x,i)=>{if(x[0]===c){pos.push(i);its.push(x)}});its.sort((a,b)=>tSeq(a[0],a[1])-tSeq(b[0],b[1]));pos.forEach((p,j)=>list[p]=its[j])}
+  return list;
+}
+/* where would each missed task go? keeps course order, lands before that course's next quiz, avoids overloaded days */
+function rePlan(missed){
+  const today=ymd(new Date()),nowM=new Date().getHours()*60+new Date().getMinutes(),LIMIT=25*60;
+  const addD=(ds,k)=>{const d=parseD(ds);d.setDate(d.getDate()+k);return ymd(d)};
+  const done=(ds,c,t)=>{const r=D.pl[`${ds}|${c}|${t}`];return r&&!r.del};
+  const endOf=(ds,tasks)=>{const busy=busyFor(ds);let cur=Math.max((L.sStart||10)*60,homeFrom(ds),ds===today?nowM:0),end=cur;
+    tasks.forEach(([c,t])=>{const dur=taskMin(t);let st=Math.max(cur,releaseMin(ds,c,t)),mv=true;while(mv){mv=false;for(const [a,z] of busy){if(st<z&&st+dur>a){st=z;mv=true}}}end=st+dur;cur=end+15});return end};
+  // the late tasks + the not-yet-done upcoming tasks of the same courses (so a whole course can slide forward in order)
+  const qOf=c=>upcoming().find(q=>q.c===c&&q.date>=today);
+  const cands=missed.map(x=>({ds:x.ds,c:x.c,t:x.t,late:1}));
+  for(const c of new Set(missed.map(x=>x.c))){const q=qOf(c),end=q?addD(q.date,-1):addD(today,14);
+    for(let ds=today;ds<=end;ds=addD(ds,1))planFor(ds).forEach(([tc,t])=>{if(tc===c&&!done(ds,tc,t))cands.push({ds,c:tc,t})})}
+  const isC=(ds,c,t)=>cands.some(x=>x.ds===ds&&x.c===c&&x.t===t);
+  const extra={},dayTasks=ds=>[...planFor(ds).filter(([c,t])=>!isC(ds,c,t)),...(extra[ds]||[])];
+  const lastFor={},out=[];
+  cands.sort((a,b)=>{const qa=qOf(a.c),qb=qOf(b.c);return (qa?qa.date:"9999").localeCompare(qb?qb.date:"9999")||a.c.localeCompare(b.c)||tSeq(a.c,a.t)-tSeq(b.c,b.t)}).forEach(it=>{
+    const q=qOf(it.c),hi=q?addD(q.date,-1):addD(today,21),lo=lastFor[it.c]&&lastFor[it.c]>today?lastFor[it.c]:today;
+    let pick=null,warn="";
+    if(hi<lo){pick=lo;if(it.late)warn=`مش هتلحقها قبل كويز ${C[it.c].ab}، اقرأ ملخص 🧸 بتاعها بدل الفيديو`}
+    else{const fits=ds=>endOf(ds,[...dayTasks(ds),[it.c,it.t]])<=LIMIT;
+      if(!it.late&&it.ds>=lo&&it.ds<=hi&&fits(it.ds))pick=it.ds;
+      for(let ds=lo;!pick&&ds<=hi;ds=addD(ds,1))if(fits(ds))pick=ds;
+      if(!pick){let best=lo,be=1e9;for(let ds=lo;ds<=hi;ds=addD(ds,1)){const e=endOf(ds,[...dayTasks(ds),[it.c,it.t]]);if(e<be){be=e;best=ds}}pick=it.late||it.ds<lo||it.ds>hi?best:it.ds}}
+    (extra[pick]=extra[pick]||[]).push([it.c,it.t]);lastFor[it.c]=pick;
+    if(pick!==it.ds)out.push({...it,to:pick,warn});
+  });
+  // heavy days after the move
+  const heavy={};for(const ds of new Set(out.map(r=>r.to))){const e=endOf(ds,planFor(ds).filter(([c,t])=>!out.some(r=>r.ds===ds&&r.c===c&&r.t===t)).concat(out.filter(r=>r.to===ds).map(r=>[r.c,r.t])));if(e>LIMIT)heavy[ds]=e}
+  out.heavy=heavy;
+  return out.sort((a,b)=>a.to.localeCompare(b.to)||a.c.localeCompare(b.c)||tSeq(a.c,a.t)-tSeq(b.c,b.t));
+}
+function applyPlan(rows){rows.forEach(r=>{const own=mvList().find(m=>m.to===r.ds&&m.c===r.c&&m.t===r.t);const id=own?own.id:`${r.ds}|${r.c}|${r.t}`;D.mv[id]={to:r.to,u:Date.now()}});saveD()}
 /* time blocks for the day's study tasks: avoid in-person college sessions (+30m travel), Friday prayer, then pack with 15m breaks */
 const taskMin=t=>/محاضرة \d/.test(t)?120:/سكشن \d/.test(t)?90:/مراجعة|حل/.test(t)?60:45;
 function busyFor(ds){
@@ -884,7 +932,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="9.4";
+const APP_VER="9.5";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -941,7 +989,7 @@ function weekDates(off=0,withFri=false){const t=sod(new Date()),i=idxOf(t.getDay
 const weekNo=d=>Math.floor(dayDiff(d,parseD(TERM_START))/7)+1;
 
 /* ---------- state: D is synced (keyed records with u = updated time), L is per-device ---------- */
-let D={q:{},att:{},st:{},gr:{},ln:{},pm:{},pl:{}};
+let D={q:{},att:{},st:{},gr:{},ln:{},pm:{},pl:{},mv:{}};
 let L={filters:{sc:true,lf:false,lo:false},theme:"system",view:"today",goal:180,token:"",gistId:"",lastSync:0,notify:false,notifyLo:false,notifyMin:30,fired:{},pomo:null,lec:12};
 const live=m=>Object.entries(m||{}).filter(([,v])=>v&&!v.del).map(([id,v])=>({...v,id}));
 function put(map,id,rec){D[map][id]={...rec,u:Date.now()};saveD()}
@@ -972,7 +1020,7 @@ async function loadD(){
   if(!raw) raw=LS.get("fs-data3",null);
   if(!raw){ const old=LS.get("fs-data",null); if(old&&Array.isArray(old.quizzes))raw=fromOld(old) }
   if(raw&&Array.isArray(raw.quizzes)) raw=fromOld(raw);
-  D=Object.assign({q:{},att:{},st:{},gr:{},ln:{},pm:{},pl:{}},raw||{});
+  D=Object.assign({q:{},att:{},st:{},gr:{},ln:{},pm:{},pl:{},mv:{}},raw||{});
   SEED.forEach(q=>{const x=D.q[q.id];if(!x||(x.u||0)<(q.u||1))D.q[q.id]={...q,u:q.u||1}});
   if(fixData(D))LS.set("fs-data3",D);
 }
@@ -1208,8 +1256,14 @@ function catchUp(){const t=new Date(),ts=ymd(t);let n=0,last=null;
 function catchHTML(){const {n,last}=catchUp();if(!n)return `<div class="catch ok">${ico("check")}إنت ماشي أول بأول 👏</div>`;
   return `<div class="catch"><b>فاضلك ${n} ${n<=10?"حاجات":"حاجة"} متأخرة</b><span>${last?`هتلحق يوم ${last.toLocaleDateString("ar-EG",{weekday:"long"})} ${dShort(last)} لو مشيت على الجدول`:"علّم على اللي ذاكرته من الأيام اللي فاتت"}</span></div>`}
 function missedTasks(){const out=[],t=new Date();for(let k=7;k>=1;k--){const d=new Date(t);d.setDate(t.getDate()-k);const ds=ymd(d);if(ds<MISSED_FROM)continue;planFor(ds).forEach(([c,tt],i)=>{const r=D.pl[pk(ds,i)];if(!(r&&!r.del))out.push({ds,i,c,t:tt})})}return out}
-function missedHTML(){const m=missedTasks();if(!m.length)return "";
-  return `<details class="missed"><summary>${ico("info")}فاتك ${m.length} ${m.length===1?"مهمة":m.length<=10?"مهام":"مهمة"} من الأيام اللي فاتت</summary><p class="muted">لو كنت ذاكرتها علّم عليها. لو لأ، ابعتلي وأنا أوزّعها في الجدول من غير ما أكسر الترتيب.</p><div class="ptasks">${m.map(x=>`<label class="ptask" style="${x.c?vars(x.c):""}"><input type="checkbox" data-pl="${pk(x.ds,x.i)}"><span class="pbody"><span class="pline"><span class="ptm">${dShort(parseD(x.ds))}</span>${x.c?`<span class="pcn">${ico(x.c)}<bdi>${C[x.c].ab}</bdi></span>`:""}</span><span class="pt">${esc(x.t)}</span></span><span class="pact">${notionA(x.c,x.t)}${recA(x.c,x.t)}</span></label>`).join("")}</div></details>`}
+let rdPrev=null;
+const dayName=ds=>{const d=parseD(ds),k=dayDiff(d,new Date());return k===0?"النهارده":k===1?"بكرة":`${d.toLocaleDateString("ar-EG",{weekday:"long"})} ${dShort(d)}`};
+function missedHTML(){const m=missedTasks();if(!m.length){rdPrev=null;return ""}
+  const row=x=>`<label class="ptask" style="${x.c?vars(x.c):""}"><input type="checkbox" data-pl="${pk(x.ds,x.i)}"><span class="pbody"><span class="pline"><span class="ptm">${dShort(parseD(x.ds))}</span>${x.c?`<span class="pcn">${ico(x.c)}<bdi>${C[x.c].ab}</bdi></span>`:""}</span><span class="pt">${esc(x.t)}</span></span><span class="pact">${notionA(x.c,x.t)}${recA(x.c,x.t)}</span></label>`;
+  const prev=rdPrev?`<div class="rdprev"><b>${ico("week")}هتتنقل كده:</b>${rdPrev.map(r=>`<div class="rdrow" style="${vars(r.c)}"><span class="pcn">${ico(r.c)}<bdi>${C[r.c].ab}</bdi></span><span class="pt">${esc(r.t)}</span><span class="rdto">← ${dayName(r.to)}</span>${r.warn?`<small class="rdw">⚠️ ${esc(r.warn)}</small>`:""}</div>`).join("")}
+     ${Object.entries(rdPrev.heavy||{}).map(([d,e])=>`<small class="rdw">⚠️ ${dayName(d)} هيخلص حوالي الساعة ${hhmm(e)} ${ap(Math.floor(e/60)%24)}، يعني تقيل. ابدأ بدري واقرأ ملخص 🧸 قبل كل محاضرة عشان تمشي أسرع.</small>`).join("")}<div class="rdbtns"><button class="btn sm" id="rdOk">${ico("check")}تمام، انقلهم</button><button class="btn ghost sm" id="rdNo">إلغاء</button></div></div>`
+   :`<div class="rdbtns"><button class="btn sm" id="rdAuto">${ico("week")}وزّعهم على الأيام الجاية</button><button class="btn ghost sm" id="rdToday">هذاكرهم النهارده</button></div>`;
+  return `<details class="missed" open><summary>${ico("info")}فاتك ${m.length} ${m.length===1?"مهمة":m.length<=10?"مهام":"مهمة"} من الأيام اللي فاتت</summary><p class="muted">لو ذاكرت حاجة منهم علّم عليها. الباقي البرنامج يوزّعه بالترتيب، وقبل كويز كل مادة.</p><div class="ptasks">${m.map(row).join("")}</div>${prev}</details>`}
 function planHTML(ds){
   let label="خطة المذاكرة", tasks=planFor(ds);
   if(!tasks.length){
@@ -1472,6 +1526,10 @@ function bind(){
   $$("[data-th]").forEach(x=>x.onclick=()=>{L.theme=x.dataset.th;saveL();applyTheme();renderView()});
   $$("form input, form select").forEach(el=>el.addEventListener("input",()=>$$(".err").forEach(e=>e.textContent="")));
   const on=(id,ev,f)=>{const el=$("#"+id);if(el)el[ev]=f};
+  on("rdAuto","onclick",()=>{const r=rePlan(missedTasks());const h=r.heavy;rdPrev=r;rdPrev.heavy=h;renderView()});
+  on("rdNo","onclick",()=>{rdPrev=null;renderView()});
+  on("rdOk","onclick",()=>{if(!rdPrev)return;applyPlan(rdPrev);const n=rdPrev.length;rdPrev=null;renderAll();toast(`اتنقلوا ${n} ✓`)});
+  on("rdToday","onclick",()=>{const t=ymd(new Date()),rows=missedTasks().map(x=>({...x,to:t}));applyPlan(rows);rdPrev=null;renderAll();toast("اتحطوا في خطة النهارده ✓")});
   const qd=$("#qd"),qt=$("#qt");
   if(qd){qd.addEventListener("change",()=>{const v=qd.value,el=$("#qdv");if(v){const d=parseD(v);el.textContent=`${d.toLocaleDateString("ar-EG",{weekday:"long"})} ${dShort(d)} ${d.getFullYear()}`;el.classList.add("set")}else{el.textContent="اختار التاريخ";el.classList.remove("set")}});
     qd.addEventListener("click",()=>{try{qd.showPicker&&qd.showPicker()}catch(e){}})}
