@@ -954,7 +954,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="9.20";
+const APP_VER="9.21";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -1431,8 +1431,12 @@ const pdfSet=(k,v)=>pdfReq("readwrite",st=>v?st.put(v,k):st.delete(k));
 let PDFL=new Set();
 const pdfScan=()=>pdfReq("readonly",st=>st.getAllKeys()).then(k=>{PDFL=new Set(k||[])}).catch(()=>{});
 const pdfLink=k=>{const r=(D.pdf||{})[k];return r&&!r.del&&r.url?r.url:""};
+// PDFs that ship with the app (hosted next to it on GitHub Pages)
+const PDFB={"COM|1":"COM-L1.pdf","COM|2":"COM-L2.pdf","COM|3":"COM-L3.pdf","COM|4":"COM-L4.pdf","COM|5":"COM-L5.pdf","COM|6":"COM-L6.pdf","COM|7":"COM-L7.pdf","COM|8":"COM-L8.pdf","EMB|1":"EMB-L1.pdf","EMB|2":"EMB-L2.pdf","EMB|3":"EMB-L3.pdf","EMB|4":"EMB-L4.pdf","EMB|5":"EMB-L5.pdf","EMB|6":"EMB-L6.pdf","EMB|7":"EMB-L7.pdf","EMB|S2":"EMB-S2.pdf","GR|1":"GR-L1.pdf","GR|2":"GR-L2.pdf","GR|3":"GR-L3.pdf","GR|4":"GR-L4.pdf","GR|5":"GR-L5.pdf","GR|6":"GR-L6.pdf","GR|7":"GR-L7.pdf","GR|S3":"GR-S3.pdf","NET|1":"NET-L1.pdf","NET|2":"NET-L2.pdf","NET|3":"NET-L3.pdf","NET|4":"NET-L4.pdf","NET|5":"NET-L5.pdf","NET|6":"NET-L6.pdf","NET|7":"NET-L7.pdf","NET|8":"NET-L8.pdf","NET|S1":"NET-S1.pdf","NET|S2":"NET-S2.pdf","NET|S3":"NET-S3.pdf","SE|S1":"SE-S1.pdf","SE|S2":"SE-S2.pdf","SE|S3":"SE-S3.pdf","SE|S4":"SE-S4.pdf"};
+const PDF_BASE="https://faris-nour.github.io/faris-schedule/pdf/";
+const pdfUrl=k=>pdfLink(k)||(PDFB[k]?PDF_BASE+PDFB[k]:"");
 const pdfName=k=>{const [c,n]=k.split("|");return `${C[c]?C[c].ab:c} · ${n[0]==="S"?"سكشن "+n.slice(1):"محاضرة "+n}`};
-const pdfA=(c,t)=>{const k=c&&noteKey(c,t);if(!k)return "";const has=PDFL.has(k)||!!pdfLink(k);
+const pdfA=(c,t)=>{const k=c&&noteKey(c,t);if(!k)return "";const has=PDFL.has(k)||!!pdfUrl(k);
   return `<button type="button" class="prec pdf${has?" on":""}" data-pdf="${k}" title="${has?"افتح الـ PDF":"ضيف الـ PDF"}" aria-label="${has?"افتح":"ضيف"} PDF ${esc(pdfName(k))}">${has?PDF_ICO:CLIP_ICO}</button>`};
 const PDF_ICO=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>`;
 const CLIP_ICO=`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 11-8.5 8.5a5 5 0 0 1-7-7L14 4a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L15 7"/></svg>`;
@@ -1443,7 +1447,7 @@ async function pdfOpen(k){
       else{const f2=document.createElement("div");f2.id="pdfView";f2.dir="rtl";f2.innerHTML=`<div class="pvbar"><b><bdi>${esc(pdfName(k))}</bdi></b><span><a class="btn ghost sm" href="${u}" download="${esc(f.name||"file.pdf")}">${ico("download")}نزّله</a><button class="iconbtn" id="pvX" aria-label="قفل">${ico("close")}</button></span></div><iframe src="${u}" title="PDF"></iframe>`;
         document.body.appendChild(f2);const cl=()=>{f2.remove();URL.revokeObjectURL(u);document.removeEventListener("keydown",esk)},esk=e=>{if(e.key==="Escape")cl()};f2.querySelector("#pvX").onclick=cl;document.addEventListener("keydown",esk);return true}
       setTimeout(()=>URL.revokeObjectURL(u),6e4);return true}}
-  const l=pdfLink(k);if(l){window.open(l,"_blank","noopener");return true}
+  const l=pdfUrl(k);if(l){window.open(l,"_blank","noopener");return true}
   return false}
 // file names like "COM L1.pdf", "EMB_S2.pdf", "GR-L10.pdf" are matched to their lecture/section
 const pdfKeyOf=name=>{const m=String(name).toUpperCase().match(/\b(NET|GR|SE|COM|EMB)[\s_.-]*(L|S)[\s_.-]*0*(\d{1,2})\b/);return m?`${m[1]}|${m[2]==="S"?"S":""}${+m[3]}`:""};
@@ -1452,9 +1456,9 @@ async function pdfStore(k,file){if(!file)return;if(file.type&&file.type!=="appli
 function pdfSheet(k){
   const f=document.createElement("div");f.id="pdfLayer";f.dir="rtl";const [c]=k.split("|");const loc=PDFL.has(k),l=pdfLink(k);
   f.innerHTML=`<div class="qzbox" style="${vars(c)}" role="dialog" aria-label="PDF"><div class="qzh"><b>${PDF_ICO} <bdi>${esc(pdfName(k))}</bdi></b><button class="iconbtn" id="pfX" aria-label="قفل">${ico("close")}</button></div>
-   ${loc||l?`<button class="btn" id="pfOpen" style="width:100%;margin-bottom:12px">${PDF_ICO} افتح الـ PDF</button>`:`<p class="muted" style="margin:0 0 12px">مفيش PDF متحط للحاجة دي لسه.</p>`}
+   ${loc||l||PDFB[k]?`<button class="btn" id="pfOpen" style="width:100%;margin-bottom:12px">${PDF_ICO} افتح الـ PDF</button>`:`<p class="muted" style="margin:0 0 12px">مفيش PDF متحط للحاجة دي لسه.</p>`}
    <div class="pfrow"><label class="btn ghost sm" for="pfIn">📱 ${loc?"غيّر الملف":"اختار ملف من الجهاز"}</label><input id="pfIn" type="file" accept="application/pdf,.pdf" hidden>${loc?`<button class="btn ghost sm" id="pfDelL">شيل الملف</button>`:""}</div>
-   <p class="muted pfnote">الملف بيتحفظ على الجهاز ده بس، ويفتح من غير نت. على الجهاز التاني اختاره تاني.</p>
+   ${PDFB[k]&&!loc&&!l?`<p class="muted pfnote">✅ الـ PDF ده موجود جاهز في البرنامج وبيفتح على الجهازين. لو عايز نسخة تانية حطها هنا.</p>`:""}<p class="muted pfnote">الملف بيتحفظ على الجهاز ده بس، ويفتح من غير نت. على الجهاز التاني اختاره تاني.</p>
    <div class="field"><label for="pfUrl">أو حط لينك (Drive مثلاً)، وده بيتزامن على الجهازين</label><input id="pfUrl" dir="ltr" placeholder="https://drive.google.com/…" value="${esc(l)}"></div>
    <div class="rdbtns"><button class="btn sm" id="pfSave">حفظ اللينك</button>${l?`<button class="btn ghost sm" id="pfDelU">شيل اللينك</button>`:""}</div></div>`;
   const close=()=>{f.remove();renderView()};f.onclick=e=>{if(e.target===f)close()};
@@ -1467,7 +1471,7 @@ function pdfSheet(k){
   on("pfDelU",()=>{del("pdf",k);toast("اتشال");close()});
 }
 document.addEventListener("click",async e=>{const b=e.target.closest("[data-pdf]");if(!b)return;e.preventDefault();e.stopPropagation();const k=b.dataset.pdf;
-  if(PDFL.has(k)||pdfLink(k)){if(!e.altKey&&!b.classList.contains("mng")){await pdfOpen(k);return}}pdfSheet(k)},true);
+  if(PDFL.has(k)||pdfUrl(k)){if(!e.altKey&&!b.classList.contains("mng")){await pdfOpen(k);return}}pdfSheet(k)},true);
 async function pdfBulk(files){let ok=0,bad=[];for(const f of files){const k=pdfKeyOf(f.name);if(!k){bad.push(f.name);continue}if(await pdfStore(k,f))ok++}
   toast(`اتحفظ ${ok} ${ok>2&&ok<11?"ملفات":"ملف"}${bad.length?` · ${bad.length} اسمهم مش واضح`:""}`);renderView()}
 const pdfPanel=()=>{const keys=[...new Set([...PDFL,...Object.keys(D.pdf||{}).filter(pdfLink)])].sort((a,b)=>a.localeCompare(b,"en",{numeric:true}));

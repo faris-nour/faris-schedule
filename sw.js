@@ -1,12 +1,14 @@
-const V='fs-v9.20';
+const V='fs-v9.21';
 const CORE=['./','index.html','manifest.webmanifest','icon-192-v2.png','icon-512-v2.png','apple-touch-icon-v2.png',
 'fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2','fonts/ibm-plex-sans-arabic-arabic-500-normal.woff2','fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2',
 'fonts/ibm-plex-sans-arabic-latin-400-normal.woff2','fonts/ibm-plex-sans-arabic-latin-500-normal.woff2','fonts/ibm-plex-sans-arabic-latin-600-normal.woff2',
 'fonts/readex-pro-arabic-500-normal.woff2','fonts/readex-pro-arabic-700-normal.woff2','fonts/readex-pro-latin-500-normal.woff2','fonts/readex-pro-latin-700-normal.woff2'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
-self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V&&k!=='fs-pdf').map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{
   const r=e.request; if(r.method!=='GET')return;
+  if(/\.pdf(\?|$)/i.test(r.url)){ // course PDFs: network first, keep a copy for offline
+    e.respondWith(fetch(r).then(res=>{if(res.ok){const c=res.clone();caches.open('fs-pdf').then(x=>x.put(r.url,c))}return res}).catch(()=>caches.open('fs-pdf').then(x=>x.match(r.url))));return}
   const isPage=r.mode==='navigate'||r.url.endsWith('index.html');
   if(isPage){ // network first: new versions arrive as soon as there's internet
     e.respondWith(fetch(r).then(res=>{const c=res.clone();caches.open(V).then(x=>x.put('index.html',c));return res}).catch(()=>caches.match('index.html')));
