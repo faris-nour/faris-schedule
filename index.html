@@ -362,7 +362,7 @@ body.wmode #wg{display:flex;flex-direction:column;gap:10px;padding:12px;min-heig
 .setrow.dim{opacity:.5}
 .switch{position:relative;width:46px;height:28px;border-radius:999px;border:0;background:var(--surface-3);flex:none;transition:background .2s;padding:0}
 .switch i{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s var(--ease)}
-.switch[aria-checked="true"]{background:var(--ok)}
+.switch:not([aria-checked="true"]){box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ink) 22%,transparent)}.switch[aria-checked="true"]{background:var(--ok)}
 .switch[aria-checked="true"] i{transform:translateX(-18px)}
 .seg{display:inline-flex;flex-wrap:wrap;gap:2px;background:var(--surface-2);border-radius:12px;padding:3px}
 .seg button{border:0;background:transparent;border-radius:9px;padding:6px 11px;font-size:13px;color:var(--muted);white-space:nowrap}
@@ -737,7 +737,7 @@ const SEED=[
  {id:"seed-gr-q1",inp:1,c:"GR",type:"كويز",date:"2026-10-27",time:"10:00 ص",note:"Quiz 1 حضوري في الجامعة 10–11 ص · 📚 المطلوب: Lecture 1 → Lecture 4 (لحد Bresenham\'s Algorithm)",u:1792069199489},
  {id:"seed-se-q1",inp:1,c:"SE",type:"كويز",date:"2026-10-22",time:"4:00 م",note:"Quiz 1 حضوري في مكان المحاضرة · 📚 المطلوب (بعد التعديل): أول 4 محاضرات بس · السكاشن مش داخلة",u:1792001265877}
 ];
-const PLAN={ // re-planned 23 Oct: 5 tasks a day (Wed 2); NET+GR first (quiz Tue 27), backlog by release order, each course in order; after catch-up (~9 Nov) every new lecture/section the same or next day
+const PLAN={ // re-planned 23 Oct: 5 tasks a day (Wed 2); NET+GR first (quiz Tue 27), backlog in the order things were given, each course in order; after catch-up (~10 Nov) every new lecture/section the same or next day
  "2026-10-12":[["EMB", "محاضرة 1"], ["EMB", "سكشن 1 (Lab 1: تسطيب Keil)"]],
  "2026-10-13":[],
  "2026-10-14":[],
@@ -749,91 +749,90 @@ const PLAN={ // re-planned 23 Oct: 5 tasks a day (Wed 2); NET+GR first (quiz Tue
  "2026-10-20":[["COM", "محاضرة 5"], ["COM", "محاضرة 6"], ["COM", "سكشن 2"], ["EMB", "محاضرة 4"], ["EMB", "حل مسائل NRE و Manufacturing Cost"], ["SE", "محاضرة 2"], ["COM", "مراجعة سريعة قبل الكويز"], ["EMB", "مراجعة سريعة قبل الكويز"]],
  "2026-10-21":[["SE", "محاضرة 3"], ["SE", "محاضرة 4"], ["SE", "مراجعة قبل الكويز"]],
  "2026-10-22":[],
- "2026-10-23":[["GR", "محاضرة 1"], ["NET", "محاضرة 1"], ["GR", "محاضرة 2"], ["NET", "محاضرة 2"], ["EMB", "محاضرة 1"]],
- "2026-10-24":[["GR", "محاضرة 3"], ["NET", "محاضرة 3"], ["NET", "محاضرة 4"], ["EMB", "محاضرة 2"], ["EMB", "سكشن 1 (Lab 1: تسطيب Keil)"]],
- "2026-10-25":[["GR", "محاضرة 4"], ["NET", "محاضرة 5"], ["NET", "محاضرة 6"], ["EMB", "محاضرة 3"], ["EMB", "محاضرة 4"]],
- "2026-10-26":[["NET", "محاضرة 7"], ["GR", "سكشن 1"], ["NET", "سكشن 1"], ["GR", "مراجعة قبل الكويز"], ["NET", "مراجعة قبل الكويز"]],
- "2026-10-27":[["EMB", "حل مسائل NRE و Manufacturing Cost"], ["SE", "محاضرة 1"], ["COM", "محاضرة 2"], ["COM", "سكشن 1"], ["SE", "محاضرة 2"]],
- "2026-10-28":[["SE", "سكشن 1"], ["COM", "محاضرة 3"]],
- "2026-10-29":[["SE", "محاضرة 3"], ["EMB", "سكشن 2"], ["COM", "محاضرة 4"], ["COM", "سكشن 2"], ["GR", "سكشن 2"]],
- "2026-10-30":[["EMB", "حل الـ Assignment"], ["SE", "محاضرة 4"], ["SE", "سكشن 2"], ["NET", "سكشن 2"], ["GR", "محاضرة 5"]],
- "2026-10-31":[["EMB", "اطبع الـ Assignment"], ["EMB", "محاضرة 5"], ["COM", "محاضرة 5"], ["SE", "محاضرة 5"], ["GR", "محاضرة 6"]],
- "2026-11-01":[["EMB", "محاضرة 6"], ["EMB", "سكشن 3"], ["COM", "محاضرة 6"], ["COM", "سكشن 3"], ["GR", "سكشن 3"]],
- "2026-11-02":[["SE", "محاضرة 6"], ["SE", "سكشن 3"], ["NET", "سكشن 3"], ["GR", "محاضرة 7"], ["EMB", "محاضرة 7"]],
- "2026-11-03":[["COM", "محاضرة 7"], ["SE", "محاضرة 7"], ["GR", "محاضرة 8"], ["NET", "محاضرة 8"], ["EMB", "محاضرة 8"]],
- "2026-11-04":[["EMB", "سكشن 4"], ["COM", "محاضرة 8"]],
- "2026-11-05":[["COM", "سكشن 4"], ["GR", "سكشن 4"], ["SE", "محاضرة 8"], ["SE", "سكشن 4"], ["NET", "سكشن 4"]],
- "2026-11-06":[["GR", "محاضرة 9"], ["NET", "محاضرة 9"], ["EMB", "محاضرة 9"], ["COM", "محاضرة 9"], ["SE", "محاضرة 9"]],
- "2026-11-07":[["GR", "محاضرة 10"], ["NET", "محاضرة 10"], ["EMB", "محاضرة 10"], ["EMB", "سكشن 5"], ["COM", "محاضرة 10"]],
- "2026-11-08":[["COM", "سكشن 5"], ["GR", "سكشن 5"], ["SE", "محاضرة 10"], ["SE", "سكشن 5"], ["NET", "سكشن 5"]],
- "2026-11-09":[["GR", "محاضرة 11"], ["NET", "محاضرة 11"], ["EMB", "محاضرة 11"], ["COM", "محاضرة 11"], ["SE", "محاضرة 11"]],
- "2026-11-10":[["GR", "محاضرة 12"], ["NET", "محاضرة 12"]],
- "2026-11-11":[["EMB", "محاضرة 12"], ["EMB", "سكشن 6"]],
- "2026-11-12":[["COM", "محاضرة 12"], ["COM", "سكشن 6"], ["GR", "سكشن 6"], ["SE", "محاضرة 12"], ["SE", "سكشن 6"]],
- "2026-11-13":[["NET", "سكشن 6"]],
- "2026-11-14":[["GR", "محاضرة 13"], ["NET", "محاضرة 13"]],
- "2026-11-15":[["EMB", "محاضرة 13"], ["COM", "محاضرة 13"]],
+ "2026-10-23":[["GR", "محاضرة 1"], ["NET", "محاضرة 1"], ["GR", "محاضرة 2"], ["NET", "محاضرة 2"], ["GR", "سكشن 1"]],
+ "2026-10-24":[["NET", "سكشن 1"], ["GR", "محاضرة 3"], ["NET", "محاضرة 3"], ["GR", "محاضرة 4"], ["NET", "محاضرة 4"]],
+ "2026-10-25":[["GR", "سكشن 2"], ["NET", "سكشن 2"], ["NET", "محاضرة 5"], ["NET", "محاضرة 6"], ["NET", "سكشن 3"]],
+ "2026-10-26":[["NET", "محاضرة 7"], ["GR", "مراجعة قبل الكويز"], ["NET", "مراجعة قبل الكويز"], ["EMB", "محاضرة 1"], ["EMB", "سكشن 1 (Lab 1: تسطيب Keil)"]],
+ "2026-10-27":[["EMB", "محاضرة 2"], ["EMB", "محاضرة 3"], ["EMB", "محاضرة 4"], ["EMB", "حل مسائل NRE و Manufacturing Cost"], ["SE", "سكشن 1"]],
+ "2026-10-28":[["SE", "محاضرة 1"], ["COM", "محاضرة 2"]],
+ "2026-10-29":[["COM", "سكشن 1"], ["SE", "محاضرة 2"], ["SE", "سكشن 2"], ["EMB", "سكشن 2"], ["COM", "محاضرة 3"]],
+ "2026-10-30":[["EMB", "حل الـ Assignment"], ["SE", "محاضرة 3"], ["COM", "محاضرة 4"], ["COM", "سكشن 2"], ["SE", "محاضرة 4"]],
+ "2026-10-31":[["EMB", "اطبع الـ Assignment"], ["SE", "سكشن 3"], ["GR", "محاضرة 5"], ["EMB", "محاضرة 5"], ["EMB", "سكشن 3"]],
+ "2026-11-01":[["COM", "محاضرة 5"], ["SE", "محاضرة 5"], ["GR", "محاضرة 6"], ["EMB", "محاضرة 6"], ["COM", "محاضرة 6"]],
+ "2026-11-02":[["COM", "سكشن 3"], ["GR", "سكشن 3"], ["SE", "محاضرة 6"], ["SE", "سكشن 4"], ["GR", "محاضرة 7"]],
+ "2026-11-03":[["EMB", "محاضرة 7"], ["EMB", "سكشن 4"], ["COM", "محاضرة 7"], ["SE", "محاضرة 7"], ["GR", "محاضرة 8"]],
+ "2026-11-04":[["NET", "محاضرة 8"], ["EMB", "محاضرة 8"]],
+ "2026-11-05":[["COM", "محاضرة 8"], ["COM", "سكشن 4"], ["GR", "سكشن 4"], ["SE", "محاضرة 8"], ["NET", "سكشن 4"]],
+ "2026-11-06":[["SE", "سكشن 5"], ["GR", "محاضرة 9"], ["NET", "محاضرة 9"], ["EMB", "محاضرة 9"], ["EMB", "سكشن 5"]],
+ "2026-11-07":[["COM", "محاضرة 9"], ["SE", "محاضرة 9"], ["GR", "محاضرة 10"], ["NET", "محاضرة 10"], ["EMB", "محاضرة 10"]],
+ "2026-11-08":[["COM", "محاضرة 10"], ["COM", "سكشن 5"], ["GR", "سكشن 5"], ["SE", "محاضرة 10"], ["NET", "سكشن 5"]],
+ "2026-11-09":[["SE", "سكشن 6"], ["GR", "محاضرة 11"], ["NET", "محاضرة 11"], ["EMB", "محاضرة 11"], ["EMB", "سكشن 6"]],
+ "2026-11-10":[["COM", "محاضرة 11"], ["SE", "محاضرة 11"], ["GR", "محاضرة 12"], ["NET", "محاضرة 12"]],
+ "2026-11-11":[["EMB", "محاضرة 12"], ["COM", "محاضرة 12"]],
+ "2026-11-12":[["COM", "سكشن 6"], ["GR", "سكشن 6"], ["SE", "محاضرة 12"], ["NET", "سكشن 6"]],
+ "2026-11-13":[],
+ "2026-11-14":[["SE", "سكشن 7"], ["GR", "محاضرة 13"], ["NET", "محاضرة 13"]],
+ "2026-11-15":[["EMB", "محاضرة 13"], ["EMB", "سكشن 7"], ["COM", "محاضرة 13"]],
  "2026-11-16":[["SE", "محاضرة 13"]],
  "2026-11-17":[["GR", "محاضرة 14"], ["NET", "محاضرة 14"]],
- "2026-11-18":[["EMB", "محاضرة 14"], ["EMB", "سكشن 7"]],
- "2026-11-19":[["COM", "محاضرة 14"], ["COM", "سكشن 7"], ["GR", "سكشن 7"], ["SE", "محاضرة 14"], ["SE", "سكشن 7"]],
- "2026-11-20":[["NET", "سكشن 7"]],
- "2026-11-21":[["GR", "محاضرة 15"], ["NET", "محاضرة 15"]],
- "2026-11-22":[["EMB", "محاضرة 15"], ["COM", "محاضرة 15"]],
+ "2026-11-18":[["EMB", "محاضرة 14"], ["COM", "محاضرة 14"]],
+ "2026-11-19":[["COM", "سكشن 7"], ["GR", "سكشن 7"], ["SE", "محاضرة 14"], ["NET", "سكشن 7"]],
+ "2026-11-20":[],
+ "2026-11-21":[["SE", "سكشن 8"], ["GR", "محاضرة 15"], ["NET", "محاضرة 15"]],
+ "2026-11-22":[["EMB", "محاضرة 15"], ["EMB", "سكشن 8"], ["COM", "محاضرة 15"]],
  "2026-11-23":[["SE", "محاضرة 15"]],
  "2026-11-24":[["GR", "محاضرة 16"], ["NET", "محاضرة 16"]],
- "2026-11-25":[["EMB", "محاضرة 16"], ["EMB", "سكشن 8"]],
- "2026-11-26":[["COM", "محاضرة 16"], ["COM", "سكشن 8"], ["GR", "سكشن 8"], ["SE", "محاضرة 16"], ["SE", "سكشن 8"]],
- "2026-11-27":[["NET", "سكشن 8"]],
- "2026-11-28":[["GR", "محاضرة 17"], ["NET", "محاضرة 17"]],
- "2026-11-29":[["EMB", "محاضرة 17"], ["COM", "محاضرة 17"]],
+ "2026-11-25":[["EMB", "محاضرة 16"], ["COM", "محاضرة 16"]],
+ "2026-11-26":[["COM", "سكشن 8"], ["GR", "سكشن 8"], ["SE", "محاضرة 16"], ["NET", "سكشن 8"]],
+ "2026-11-27":[],
+ "2026-11-28":[["SE", "سكشن 9"], ["GR", "محاضرة 17"], ["NET", "محاضرة 17"]],
+ "2026-11-29":[["EMB", "محاضرة 17"], ["EMB", "سكشن 9"], ["COM", "محاضرة 17"]],
  "2026-11-30":[["SE", "محاضرة 17"]],
  "2026-12-01":[["GR", "محاضرة 18"], ["NET", "محاضرة 18"]],
- "2026-12-02":[["EMB", "محاضرة 18"], ["EMB", "سكشن 9"]],
- "2026-12-03":[["COM", "محاضرة 18"], ["COM", "سكشن 9"], ["GR", "سكشن 9"], ["SE", "محاضرة 18"], ["SE", "سكشن 9"]],
- "2026-12-04":[["NET", "سكشن 9"]],
- "2026-12-05":[["GR", "محاضرة 19"], ["NET", "محاضرة 19"]],
- "2026-12-06":[["EMB", "محاضرة 19"], ["COM", "محاضرة 19"]],
+ "2026-12-02":[["EMB", "محاضرة 18"], ["COM", "محاضرة 18"]],
+ "2026-12-03":[["COM", "سكشن 9"], ["GR", "سكشن 9"], ["SE", "محاضرة 18"], ["NET", "سكشن 9"]],
+ "2026-12-04":[],
+ "2026-12-05":[["SE", "سكشن 10"], ["GR", "محاضرة 19"], ["NET", "محاضرة 19"]],
+ "2026-12-06":[["EMB", "محاضرة 19"], ["EMB", "سكشن 10"], ["COM", "محاضرة 19"]],
  "2026-12-07":[["SE", "محاضرة 19"]],
  "2026-12-08":[["GR", "محاضرة 20"], ["NET", "محاضرة 20"]],
- "2026-12-09":[["EMB", "محاضرة 20"], ["EMB", "سكشن 10"]],
- "2026-12-10":[["COM", "محاضرة 20"], ["COM", "سكشن 10"], ["GR", "سكشن 10"], ["SE", "محاضرة 20"], ["SE", "سكشن 10"]],
- "2026-12-11":[["NET", "سكشن 10"]],
- "2026-12-12":[["GR", "محاضرة 21"], ["NET", "محاضرة 21"]],
- "2026-12-13":[["EMB", "محاضرة 21"], ["COM", "محاضرة 21"]],
+ "2026-12-09":[["EMB", "محاضرة 20"], ["COM", "محاضرة 20"]],
+ "2026-12-10":[["COM", "سكشن 10"], ["GR", "سكشن 10"], ["SE", "محاضرة 20"], ["NET", "سكشن 10"]],
+ "2026-12-11":[],
+ "2026-12-12":[["SE", "سكشن 11"], ["GR", "محاضرة 21"], ["NET", "محاضرة 21"]],
+ "2026-12-13":[["EMB", "محاضرة 21"], ["EMB", "سكشن 11"], ["COM", "محاضرة 21"]],
  "2026-12-14":[["SE", "محاضرة 21"]],
  "2026-12-15":[["GR", "محاضرة 22"], ["NET", "محاضرة 22"]],
- "2026-12-16":[["EMB", "محاضرة 22"], ["EMB", "سكشن 11"]],
- "2026-12-17":[["COM", "محاضرة 22"], ["COM", "سكشن 11"], ["GR", "سكشن 11"], ["SE", "محاضرة 22"], ["SE", "سكشن 11"]],
- "2026-12-18":[["NET", "سكشن 11"]],
- "2026-12-19":[["GR", "محاضرة 23"], ["NET", "محاضرة 23"]],
- "2026-12-20":[["EMB", "محاضرة 23"], ["COM", "محاضرة 23"]],
+ "2026-12-16":[["EMB", "محاضرة 22"], ["COM", "محاضرة 22"]],
+ "2026-12-17":[["COM", "سكشن 11"], ["GR", "سكشن 11"], ["SE", "محاضرة 22"], ["NET", "سكشن 11"]],
+ "2026-12-18":[],
+ "2026-12-19":[["SE", "سكشن 12"], ["GR", "محاضرة 23"], ["NET", "محاضرة 23"]],
+ "2026-12-20":[["EMB", "محاضرة 23"], ["EMB", "سكشن 12"], ["COM", "محاضرة 23"]],
  "2026-12-21":[["SE", "محاضرة 23"]],
  "2026-12-22":[["GR", "محاضرة 24"], ["NET", "محاضرة 24"]],
- "2026-12-23":[["EMB", "محاضرة 24"], ["EMB", "سكشن 12"]],
- "2026-12-24":[["COM", "محاضرة 24"], ["COM", "سكشن 12"], ["GR", "سكشن 12"], ["SE", "محاضرة 24"], ["SE", "سكشن 12"]],
- "2026-12-25":[["NET", "سكشن 12"]],
- "2026-12-26":[["GR", "محاضرة 25"], ["NET", "محاضرة 25"]],
- "2026-12-27":[["EMB", "محاضرة 25"], ["COM", "محاضرة 25"]],
+ "2026-12-23":[["EMB", "محاضرة 24"], ["COM", "محاضرة 24"]],
+ "2026-12-24":[["COM", "سكشن 12"], ["GR", "سكشن 12"], ["SE", "محاضرة 24"], ["NET", "سكشن 12"]],
+ "2026-12-25":[],
+ "2026-12-26":[["SE", "سكشن 13"], ["GR", "محاضرة 25"], ["NET", "محاضرة 25"]],
+ "2026-12-27":[["EMB", "محاضرة 25"], ["EMB", "سكشن 13"], ["COM", "محاضرة 25"]],
  "2026-12-28":[["SE", "محاضرة 25"]],
  "2026-12-29":[["GR", "محاضرة 26"], ["NET", "محاضرة 26"]],
- "2026-12-30":[["EMB", "محاضرة 26"], ["EMB", "سكشن 13"]],
- "2026-12-31":[["COM", "محاضرة 26"], ["COM", "سكشن 13"], ["GR", "سكشن 13"], ["SE", "محاضرة 26"], ["SE", "سكشن 13"]],
- "2027-01-01":[["NET", "سكشن 13"]],
- "2027-01-02":[["GR", "محاضرة 27"], ["NET", "محاضرة 27"]],
- "2027-01-03":[["EMB", "محاضرة 27"], ["COM", "محاضرة 27"]],
+ "2026-12-30":[["EMB", "محاضرة 26"], ["COM", "محاضرة 26"]],
+ "2026-12-31":[["COM", "سكشن 13"], ["GR", "سكشن 13"], ["SE", "محاضرة 26"], ["NET", "سكشن 13"]],
+ "2027-01-01":[],
+ "2027-01-02":[["SE", "سكشن 14"], ["GR", "محاضرة 27"], ["NET", "محاضرة 27"]],
+ "2027-01-03":[["EMB", "محاضرة 27"], ["EMB", "سكشن 14"], ["COM", "محاضرة 27"]],
  "2027-01-04":[["SE", "محاضرة 27"]],
  "2027-01-05":[["GR", "محاضرة 28"], ["NET", "محاضرة 28"]],
- "2027-01-06":[["EMB", "محاضرة 28"], ["EMB", "سكشن 14"]],
- "2027-01-07":[["COM", "محاضرة 28"], ["COM", "سكشن 14"], ["GR", "سكشن 14"], ["SE", "محاضرة 28"], ["SE", "سكشن 14"]],
- "2027-01-08":[["NET", "سكشن 14"]],
- "2027-01-09":[["GR", "محاضرة 29"], ["NET", "محاضرة 29"]],
- "2027-01-10":[["EMB", "محاضرة 29"], ["COM", "محاضرة 29"]],
+ "2027-01-06":[["EMB", "محاضرة 28"], ["COM", "محاضرة 28"]],
+ "2027-01-07":[["COM", "سكشن 14"], ["GR", "سكشن 14"], ["SE", "محاضرة 28"], ["NET", "سكشن 14"]],
+ "2027-01-08":[],
+ "2027-01-09":[["SE", "سكشن 15"], ["GR", "محاضرة 29"], ["NET", "محاضرة 29"]],
+ "2027-01-10":[["EMB", "محاضرة 29"], ["EMB", "سكشن 15"], ["COM", "محاضرة 29"]],
  "2027-01-11":[["SE", "محاضرة 29"]],
  "2027-01-12":[["GR", "محاضرة 30"], ["NET", "محاضرة 30"]],
- "2027-01-13":[["EMB", "محاضرة 30"], ["EMB", "سكشن 15"]],
- "2027-01-14":[["COM", "محاضرة 30"], ["COM", "سكشن 15"], ["GR", "سكشن 15"], ["SE", "محاضرة 30"], ["SE", "سكشن 15"]],
- "2027-01-15":[["NET", "سكشن 15"]]
+ "2027-01-13":[["EMB", "محاضرة 30"], ["COM", "محاضرة 30"]],
+ "2027-01-14":[["COM", "سكشن 15"], ["GR", "سكشن 15"], ["SE", "محاضرة 30"], ["NET", "سكشن 15"]]
 };
 const KEEPUP_FROM="2099-01-01"; // from here on: study every lecture/section soon after it's given
 // day it was given (0=Sat..5=Thu) -> day to study it. Tuesday & Wednesday stay free.
@@ -954,7 +953,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="9.16";
+const APP_VER="9.17";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -1214,7 +1213,7 @@ function renderAlerts(){
   const n=new Date(), soon=upcoming().filter(q=>dayDiff(parseD(q.date),n)<=3);
   $("#alerts").innerHTML=soon.map(q=>{const dd=dayDiff(parseD(q.date),n),pr=prepFor(q),qn=qCount(q.c);
     const prep=pr.left?`<div class="prep ${pr.ok?"ok":"bad"}">${pr.ok?"✅":"⚠️"} فاضلك <b>${pr.left}</b> ${pr.left<=10?"حاجات":"حاجة"} (~${hm(pr.need)}) قبله · ${pr.ok?"الوقت يكفي لو مشيت على الجدول":"الوقت مش هيكفي كل حاجة، ابدأ بالمادة دي واقرا الملخصات 🧸"}</div>`:(dd>0?`<div class="prep ok">✅ خلصت كل المطلوب، فاضل المراجعة</div>`:"");
-    return `<div class="alert" style="${vars(q.c)}"><div class="ic">${esc(q.type[0])}</div><div class="t"><b>${esc(q.type)} <span class="en">${C[q.c].short}</span></b><div class="clamp">${dShort(parseD(q.date))}${q.time?" · "+esc(q.time):""}${q.note?" · "+esc(q.note):""}</div>${prep}${qn?`<button class="btn ghost sm qzgo" data-qz="${q.c}">⚡ اختبر نفسك (${Math.min(10,qn)} أسئلة)</button>`:""}</div><span class="chiptime ${leftCls(dd)}">${leftText(dd)}</span></div>`}).join("");
+    return `<div class="alert" style="${vars(q.c)}"><div class="ic">${esc(q.type[0])}</div><div class="t"><b>${esc(q.type)} <span class="en">${C[q.c].short}</span></b><div class="clamp">${dShort(parseD(q.date))}${q.time?" · "+esc(q.time):""}${q.note?" · "+esc(q.note):""}</div>${prep}${qn&&q.type!=="تسليم"?`<button class="btn ghost sm qzgo" data-qz="${q.c}">⚡ اختبر نفسك (${Math.min(10,qn)} أسئلة)</button>`:""}</div><span class="chiptime ${leftCls(dd)}">${leftText(dd)}</span></div>`}).join("");
   $$("[data-qz]").forEach(b=>b.onclick=()=>startQz(b.dataset.qz));
 }
 /* ---------- quick self-test (with a mistakes list) ---------- */
@@ -1246,7 +1245,7 @@ function drawQz(){
   on("qzNo",()=>{const id=mkId(x),old=D.mk[id];put("mk",id,{c:x[0],t:x[1],q:x[2],a:x[3],n:((old&&!old.del&&old.n)||0)+1});QZ.wrongs.push(x);QZ.i++;QZ.show=false;drawQz()});
 }
 function mkHTML(c){const ids=new Set(QB.map(mkId)),m=Object.entries(D.mk||{}).filter(([k,x])=>x&&!x.del&&x.c===c&&ids.has(k)).map(([k,x])=>x);const qn=qCount(c);if(!qn&&!m.length)return "";
-  return `<section class="panel"><div class="head"><div><h3>⚡ اختبر نفسك</h3><p>${qn} سؤال من الملخصات${m.length?` · ${m.length} في أخطائي`:""}</p></div><div class="chips"><button class="btn sm" data-qz2="${c}">ابدأ 10 أسئلة</button>${m.length?`<button class="btn ghost sm" data-qzm="${c}">راجع أخطائي (${m.length})</button>`:""}</div></div>
+  return `<section class="panel"><div class="head"><div><h3>⚡ اختبر نفسك</h3><p>${qn} سؤال بكلام المحاضرات${m.length?` · ${m.length} في أخطائي`:""}</p></div><div class="chips"><button class="btn sm" data-qz2="${c}">ابدأ 10 أسئلة</button>${m.length?`<button class="btn ghost sm" data-qzm="${c}">راجع أخطائي (${m.length})</button>`:""}</div></div>
    ${m.length?`<details class="box"><summary>📕 أخطائي (${m.length})</summary><div class="list" style="margin-top:8px">${m.sort((a,b)=>(b.n||0)-(a.n||0)).map(x=>`<div class="mkrow"><span class="muted">${esc(x.t)}${x.n>1?` · غلطت ${x.n} مرات`:""}</span><div dir="ltr">${esc(x.q)}</div><b dir="ltr">${esc(x.a)}</b></div>`).join("")}</div></details>`:""}</section>`}
 
 /* ---------- navigation ---------- */
@@ -1299,7 +1298,7 @@ function qItem(q,k){
   const d=parseD(q.date), dd=dayDiff(d,new Date());
   return `<div class="qi${dd<0||q.done?" past":""}${q.done?" done":""}" style="${vars(q.c)};animation-delay:${(k||0)*50}ms"><div class="date"><b class="num">${d.getDate()}</b><span>${MONTHS[d.getMonth()]}</span></div>
    <div class="info"><b>${esc(q.type)}</b><div class="cn">${C[q.c].short}</div><div class="meta clamp" title="اضغط عشان تشوف الملاحظة كلها">${d.toLocaleDateString("ar-EG",{weekday:"long"})}${q.time?" · "+esc(q.time):""}${q.note?" · "+esc(q.note):""}</div></div>
-   <div class="act">${q.done?`<span class="chiptime ok">خلص ✓</span>`:`<span class="chiptime ${leftCls(dd)}">${leftText(dd)}</span>`}<button class="del${q.done?" on":""}" data-qdone="${q.id}" title="${q.done?"رجّعه مش خالص":"علّم إنه خلص"}" aria-label="${q.done?"رجّعه مش خالص":"علّم إنه خلص"}" aria-pressed="${!!q.done}">${ico("check")}</button>${dd>=0&&!q.done?`<button class="del" data-ics="${q.id}" title="ضيفه لتقويم الموبايل" aria-label="ضيفه للتقويم">${ico("week")}</button>`:""}<button class="del" data-editq="${q.id}" title="تعديل" aria-label="تعديل">${ico("edit")}</button>${delBtn("q",q.id)}</div>${dd>=0&&!q.done&&qCount(q.c)?`<button class="btn ghost sm qzgo qiq" data-qz="${q.c}">⚡ اختبر نفسك</button>`:""}</div>`;
+   <div class="act">${q.done?`<span class="chiptime ok">خلص ✓</span>`:`<span class="chiptime ${leftCls(dd)}">${leftText(dd)}</span>`}<button class="del${q.done?" on":""}" data-qdone="${q.id}" title="${q.done?"رجّعه مش خالص":"علّم إنه خلص"}" aria-label="${q.done?"رجّعه مش خالص":"علّم إنه خلص"}" aria-pressed="${!!q.done}">${ico("check")}</button>${dd>=0&&!q.done?`<button class="del" data-ics="${q.id}" title="ضيفه لتقويم الموبايل" aria-label="ضيفه للتقويم">${ico("week")}</button>`:""}<button class="del" data-editq="${q.id}" title="تعديل" aria-label="تعديل">${ico("edit")}</button>${delBtn("q",q.id)}</div>${dd>=0&&!q.done&&q.type!=="تسليم"&&qCount(q.c)?`<button class="btn ghost sm qzgo qiq" data-qz="${q.c}">⚡ اختبر نفسك</button>`:""}</div>`;
 }
 function slotHTML(e,ds,k,{liveNow,past,started,q}){
   const a=attOf(ds,e);
@@ -1371,7 +1370,7 @@ function vToday(){
    ${(()=>{const sh=dd===0?qs.filter(q=>q.done):qs;return sh.length?`<div class="list" style="margin-top:14px">${sh.map((q,i)=>qItem(q,i)).join("")}</div>`:""})()}</section>${planHTML(ds)}`;
 }
 function vWeek(){
-  const n=new Date(), wd=weekDates(wkOff), hours=[8,9,10,11,12,13,14,15,16,17];
+  const n=new Date(), fri=n.getDay()===5, wd=weekDates(wkOff+(fri?1:0)), hours=[8,9,10,11,12,13,14,15,16,17]; // Friday: the week is over, show the coming one
   let h=`<thead><tr><th>الوقت</th>${DAYS.map((d,i)=>{const qn=quizzes().filter(q=>q.date===ymd(wd[i])).length;
     return `<th class="${ymd(wd[i])===ymd(n)?"today":""}">${d}<small class="num">${dShort(wd[i])}</small>${qn?`<span class="qb">${qn} كويز</span>`:""}</th>`}).join("")}</tr></thead><tbody>`;
   hours.forEach(s=>{h+=`<tr class="${!wkOff&&idxOf(n.getDay())>=0&&n.getHours()===s?"nowrow":""}"><td class="tm num">${fmt(s)} ${ap(s)}</td>`;
@@ -1379,7 +1378,7 @@ function vWeek(){
       h+=`<td>${e?`<div class="card ${e.t}" style="${vars(e.c)}"><div class="cname">${C[e.c].short}</div><span class="tag">${tag(e)}${a==="y"?" ✓":a==="n"?" ✕":""}</span></div>`:""}</td>`}
     h+="</tr>"});
   return `<section class="panel"><div class="head"><div><h3>الأسبوع ${weekNo(wd[0])}</h3><p>${dShort(wd[0])} – ${dShort(wd[5])}</p></div>
-   <div class="wknav"><button data-wk="-1">‹ اللي فات</button>${wkOff?`<button data-wk="0">الأسبوع ده</button>`:""}<button data-wk="1">اللي جاي ›</button></div></div>
+   <div class="wknav"><button data-wk="-1">‹ اللي فات</button>${wkOff?`<button data-wk="0">${fri?"الأسبوع الجاي":"الأسبوع ده"}</button>`:""}<button data-wk="1">اللي جاي ›</button></div></div>
    <div style="margin-bottom:14px">${filtersHTML()}</div><div class="gridwrap"><table class="wk">${h}</tbody></table></div></section>`;
 }
 function vQuiz(){
@@ -1426,6 +1425,8 @@ let pomoDur=null, focusMode=false;
 const planMin=(d,c)=>{const ds=ymd(d);return planFor(ds).reduce((s,[tc,t],i)=>{const r=D.pl[pk(ds,i)];return s+(r&&!r.del&&(!c||tc===c)?taskMin(t):0)},0)};
 const timerMin=(d,c)=>{const a=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),z=a+864e5;return live(D.pm).filter(p=>p.at>=a&&p.at<z&&(!c||p.c===c)).reduce((s,p)=>s+(+p.min||0),0)};
 const dayMin=(d,c)=>Math.max(timerMin(d,c),planMin(d,c));
+// minutes per course over the last N days, counting ticked plan tasks too (same numbers as the chart bars)
+const courseMin=(c,days=7,skip=0)=>{let t=0;const n=new Date();for(let k=skip;k<days;k++){const d=new Date(n);d.setDate(n.getDate()-k);t+=dayMin(d,c)}return t};
 function streak(){const t=new Date();let d=new Date(t),n=0;if(dayMin(d)<30)d.setDate(d.getDate()-1);for(let k=0;k<400;k++){if(dayMin(d)>=30){n++;d.setDate(d.getDate()-1)}else break}return n}
 const mmss=ms=>`${String(Math.floor(ms/6e4)).padStart(2,"0")}:${String(Math.floor(ms%6e4/1e3)).padStart(2,"0")}`;
 const durTxt=m=>m===60?"ساعة":m===30?"نص ساعة":m===90?"ساعة ونص":m===120?"ساعتين":m+" دقيقة";
@@ -1451,11 +1452,11 @@ function renderFocus(){
   f.querySelectorAll("[data-focus]").forEach(x=>x.onclick=()=>{focusMode=false;renderView()});
 }
 function weekInsight(){
-  const m=Object.keys(C).map(k=>[k,pomoMinutes(k),pomoMinutes(k,14)-pomoMinutes(k)]),tot=m.reduce((a,x)=>a+x[1],0),prev=m.reduce((a,x)=>a+x[2],0);
+  const m=Object.keys(C).map(k=>[k,courseMin(k),courseMin(k,14,7)]),tot=m.reduce((a,x)=>a+x[1],0),prev=m.reduce((a,x)=>a+x[2],0);
   const out=[];const top=[...m].sort((a,b)=>b[1]-a[1])[0];
   if(tot)out.push(`🏆 أكتر مادة ذاكرتها: <bdi>${C[top[0]].ab}</bdi> (${hm(top[1])})`);
   if(prev)out.push(tot>=prev?`📈 ذاكرت أكتر من الأسبوع اللي فات بـ ${hm(tot-prev)}`:`📉 أقل من الأسبوع اللي فات بـ ${hm(prev-tot)}`);
-  upcoming().filter(q=>dayDiff(parseD(q.date),new Date())<=10).forEach(q=>{const mm=pomoMinutes(q.c);if(mm<120&&!out.some(x=>x.includes(C[q.c].ab+"</bdi> قرّب")))out.push(`⚠️ كويز <bdi>${C[q.c].ab}</bdi> قرّب (${leftText(dayDiff(parseD(q.date),new Date()))}) وذاكرتها ${mm?hm(mm):"ولا دقيقة"} بس الأسبوع ده`)});
+  upcoming().filter(q=>dayDiff(parseD(q.date),new Date())<=10).forEach(q=>{const mm=courseMin(q.c);if(mm<120&&!out.some(x=>x.includes(C[q.c].ab+"</bdi> قرّب")))out.push(`⚠️ كويز <bdi>${C[q.c].ab}</bdi> قرّب (${leftText(dayDiff(parseD(q.date),new Date()))}) ${mm?`وذاكرت منها ${hm(mm)} بس الأسبوع ده`:"ومذاكرتش منها ولا دقيقة الأسبوع ده"}`)});
   const zero=m.filter(x=>!x[1]).map(x=>C[x[0]].ab);if(zero.length&&zero.length<5)out.push(`💤 مذاكرتهاش خالص الأسبوع ده: ${zero.map(z=>`<bdi>${z}</bdi>`).join(" · ")}`);
   return out.length?`<div class="winsight">${out.slice(0,4).map(x=>`<div>${x}</div>`).join("")}</div>`:""}
 function vStudy(){
@@ -1490,7 +1491,7 @@ function vStudy(){
   const tot=per.map(a=>a.reduce((x,y)=>x+y,0)), mxd=Math.max(goal,...tot), wsum=tot.reduce((a,b)=>a+b,0);
   const week=`<section class="panel st-week"><div class="head"><div><h3>آخر 7 أيام</h3><p>المجموع ${hm(wsum)} · متوسط ${hm(Math.round(wsum/7))} في اليوم</p></div></div>${weekInsight()}
     <div class="wchart" style="--goal:${(1-goal/mxd)*100}%"><i class="gline" title="الهدف اليومي"></i>${days.map((d,i)=>`<div class="wcol${i===6?" today":""}"><span class="num v">${tot[i]?hm(tot[i]):""}</span><div class="stk">${Object.keys(C).map((k,j)=>per[i][j]?`<i style="${vars(k)};height:${per[i][j]/mxd*100}%" title="${C[k].ab}: ${hm(per[i][j])}"></i>`:"").join("")}</div><span class="d">${i===6?"النهارده":d.toLocaleDateString("ar-EG",{weekday:"short"})}</span></div>`).join("")}</div>
-    <div class="wleg">${Object.keys(C).map(k=>{const m=pomoMinutes(k);return `<span style="${vars(k)}"><i class="dot" style="background:var(--c)"></i><bdi>${C[k].ab}</bdi><b class="num">${hm(m)}</b></span>`}).join("")}</div>
+    <div class="wleg">${Object.keys(C).map(k=>{const m=courseMin(k);return `<span style="${vars(k)}"><i class="dot" style="background:var(--c)"></i><bdi>${C[k].ab}</bdi><b class="num">${hm(m)}</b></span>`}).join("")}</div>
     <details class="pmlog"><summary>تعديل الوقت المتسجّل</summary>
      <div class="pmadd"><select id="pmC">${courseOpts(c)}</select><input id="pmM" type="number" min="1" max="600" inputmode="numeric" placeholder="دقايق" value="60"><button class="btn" id="pmAdd">${ico("plus")}ضيف</button></div>
      <div class="pmlist">${live(D.pm).filter(x=>x.at>=Date.now()-7*864e5).sort((a,b)=>b.at-a.at).map(x=>`<div class="pmrow" style="${vars(x.c)}"><i class="dot" style="background:var(--c)"></i><bdi class="en">${C[x.c]?C[x.c].ab:""}</bdi><span class="num">${hm(+x.min||0)}</span><span class="muted">${new Date(x.at).toLocaleDateString("ar-EG",{weekday:"short",day:"numeric",month:"short"})}</span>${delBtn("pm",x.id)}</div>`).join("")||`<p class="muted">مفيش جلسات متسجلة</p>`}</div>
@@ -1519,7 +1520,7 @@ function vCourses(){
   ${gradesOverview()}${mkHTML(k)}
   <section class="chead" style="${vars(k)}"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><h3>${c.name}</h3><span style="color:var(--c);display:grid">${ico(k)}</span></div>
    <div class="meta"><span>الدكتور: <b>${c.dr}</b></span><span>المعيد: <b>${c.ta}</b></span>${nq?`<span>أقرب ${esc(nq.type)}: <b>${dShort(parseD(nq.date))} (${leftText(dayDiff(parseD(nq.date),n))})</b></span>`:""}</div>
-   <div class="progress" style="background:color-mix(in srgb,var(--c) 18%,transparent)"><i style="width:${studyPct(k)}%"></i></div><span style="font-size:12.5px;color:var(--ink)">خلصت ${studyPct(k)}% من المذاكرة · ذاكرت ${hm(pomoMinutes(k))} آخر أسبوع</span>
+   <div class="progress" style="background:color-mix(in srgb,var(--c) 18%,transparent)"><i style="width:${studyPct(k)}%"></i></div><span style="font-size:12.5px;color:var(--ink)">خلصت ${studyPct(k)}% من المذاكرة · ذاكرت ${hm(courseMin(k))} آخر أسبوع</span>
    <div class="chips" style="margin-top:4px"><button class="btn sm cbtn" data-studyc="${k}">${ico("play")}ذاكر المادة دي</button>${REC[k]?`<a class="btn ghost sm" href="${REC[k]}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="13" height="12" rx="2"/><path d="m15 10 6-3v10l-6-3z"/></svg>التسجيلات</a>`:""}${NOTION_C[k]?`<a class="btn ghost sm" href="${NOTION_C[k]}" target="_blank" rel="noopener">${ico("link")}صفحة المادة في Notion</a>`:""}</div></section>
   <div class="stats">
    <div class="stat"><b class="num">${a.sc.y}<small style="font-size:13px;color:var(--muted)"> / ${a.sc.y+a.sc.n}</small></b><span>حضرت سكشن</span></div>
