@@ -701,7 +701,7 @@ ol.howto b{color:var(--ink)}
       <div class="quick">
         <button class="qt qbtn" id="stTile" type="button"><span class="k">مذاكرة النهارده</span><b class="num" id="stToday">0د</b><small id="stGoal"></small></button>
         <div class="qt"><span class="k">مواعيد النهارده</span><b class="num" id="todayCount">0</b><small id="todayLeft"></small></div>
-        <div class="qt" id="nqTile"><span class="k">أقرب كويز</span><b id="nextQuiz">مفيش</b><small id="nextQuizW"></small></div>
+        <div class="qt" id="nqTile"><span class="k">أقرب امتحان</span><b id="nextQuiz">مفيش</b><small id="nextQuizW"></small></div>
       </div>
     </section>
     <div class="alerts reveal" style="--i:2" id="alerts"></div>
@@ -897,7 +897,7 @@ function rePlan(missed,opt={}){
   cands.sort((a,b)=>{const qa=qOf(a.c),qb=qOf(b.c);return (qa?qa.date:"9999").localeCompare(qb?qb.date:"9999")||a.c.localeCompare(b.c)||tSeq(a.c,a.t)-tSeq(b.c,b.t)}).forEach(it=>{
     const q=qOf(it.c),hi=q?addD(q.date,-1):addD(today,21),lo=lastFor[it.c]&&lastFor[it.c]>today?lastFor[it.c]:today;
     let pick=null,warn="";
-    if(hi<lo){pick=lo;if(it.late)warn=`مش هتلحقها قبل كويز ${C[it.c].ab}، اقرأ ملخص 🧸 بتاعها بدل الفيديو`}
+    if(hi<lo){pick=lo;if(it.late)warn=`مش هتلحقها قبل امتحان ${C[it.c].ab}، اقرأ ملخص 🧸 بتاعها بدل الفيديو`}
     else{const fits=ds=>endOf(ds,[...dayTasks(ds),[it.c,it.t]])<=LIMIT;
       if(!it.late&&it.ds>=lo&&it.ds<=hi&&fits(it.ds))pick=it.ds;
       for(let ds=lo;!pick&&ds<=hi;ds=addD(ds,1))if(fits(ds))pick=ds;
@@ -1159,7 +1159,7 @@ function renderHero(){
   $("#todayCount").textContent=todays.length;
   const left=todays.filter(e=>e.s*60>m0).length; $("#todayLeft").textContent=i<0?"الجمعة إجازة":!todays.length?"يوم فاضي":left?`فاضل ${left}`:"خلصوا";
   const u=upcoming()[0], ud=u?dayDiff(parseD(u.date),n):99;
-  $("#nextQuiz").innerHTML=u?`<span class="en">${C[u.c].ab}</span>`:"مفيش"; $("#nextQuizW").textContent=u?`${u.type} · ${leftText(ud)}`:"سجّل الكويزات من تابها";
+  $("#nextQuiz").innerHTML=u?`<span class="en">${C[u.c].ab}</span>`:"مفيش"; $("#nextQuizW").textContent=u?`${u.type} · ${leftText(ud)}`:"سجّل الامتحانات من تابها";
   $("#nqTile").classList.toggle("hot",!!u&&ud<=3);
   const box=$("#nowBox"), H=heroItems(), hcur=H.find(x=>x.a<=n), hn=hcur||H[0];
   if(hn){
@@ -1250,7 +1250,7 @@ function mkHTML(c){const ids=new Set(QB.map(mkId)),m=Object.entries(D.mk||{}).fi
    ${m.length?`<details class="box"><summary>📕 أخطائي (${m.length})</summary><div class="list" style="margin-top:8px">${m.sort((a,b)=>(b.n||0)-(a.n||0)).map(x=>`<div class="mkrow"><span class="muted">${esc(x.t)}${x.n>1?` · غلطت ${x.n} مرات`:""}</span><div dir="ltr">${esc(x.q)}</div><b dir="ltr">${esc(x.a)}</b></div>`).join("")}</div></details>`:""}</section>`}
 
 /* ---------- navigation ---------- */
-const VIEWS=[["today","اليوم","today"],["week","الأسبوع","week"],["quiz","الكويزات","quiz"],["study","المذاكرة","study"],["courses","المواد","courses"]];
+const VIEWS=[["today","اليوم","today"],["week","الأسبوع","week"],["quiz","الامتحانات","quiz"],["study","المذاكرة","study"],["courses","المواد","courses"]];
 const TITLES={today:["اليوم","مواعيدك بالترتيب، وسجّل حضورك من الكارت"],week:["الأسبوع","الجدول كله في نظرة"],quiz:["الكويزات والامتحانات","سجّل أي معاد، وهيظهرلك تنبيه قبله"],study:["المذاكرة","ذاكر بالمؤقت، وتابع هدفك اليومي والمحاضرات"],courses:["المواد","الحضور والدرجات والروابط لكل مادة"],settings:["الإعدادات","التزامن والتنبيهات والمظهر"]};
 function renderNav(){
   const b=upcoming().filter(q=>dayDiff(parseD(q.date),new Date())<=7).length;
@@ -1326,13 +1326,13 @@ function missedTasks(){const out=[],t=new Date();for(let k=7;k>=1;k--){const d=n
 let rdPrev=null;
 const showPrev=()=>setTimeout(()=>{const e=document.querySelector(".rdprev");if(e){e.scrollIntoView({behavior:"smooth",block:"center"});e.classList.add("flash")}},60);
 const dayName=ds=>{const d=parseD(ds),k=dayDiff(d,new Date());return k===0?"النهارده":k===1?"بكرة":`${d.toLocaleDateString("ar-EG",{weekday:"long"})} ${dShort(d)}`};
-function rdPrevHTML(){return `<div class="rdprev">${rdPrev.stay&&rdPrev.stay.length?`<small class="rdw">⚠️ دول كويزهم قبل أي يوم جاي، فمش هينفع يتأجلوا: ${rdPrev.stay.map(r=>`<bdi>${C[r.c].ab}</bdi> ${esc(r.t)}`).join("، ")}. اقرأ ملخصاتهم 🧸 بسرعة النهارده.</small>`:""}<b>${ico("week")}${rdPrev.length?"هتتنقل كده:":"مفيش حاجة ينفع تتأجل."}</b>${rdPrev.map(r=>`<div class="rdrow" style="${vars(r.c)}"><span class="pcn">${ico(r.c)}<bdi>${C[r.c].ab}</bdi></span><span class="pt">${esc(r.t)}</span><span class="rdto">← ${dayName(r.to)}</span>${r.warn?`<small class="rdw">⚠️ ${esc(r.warn)}</small>`:""}</div>`).join("")}
+function rdPrevHTML(){return `<div class="rdprev">${rdPrev.stay&&rdPrev.stay.length?`<small class="rdw">⚠️ دول امتحانهم قبل أي يوم جاي، فمش هينفع يتأجلوا: ${rdPrev.stay.map(r=>`<bdi>${C[r.c].ab}</bdi> ${esc(r.t)}`).join("، ")}. اقرأ ملخصاتهم 🧸 بسرعة النهارده.</small>`:""}<b>${ico("week")}${rdPrev.length?"هتتنقل كده:":"مفيش حاجة ينفع تتأجل."}</b>${rdPrev.map(r=>`<div class="rdrow" style="${vars(r.c)}"><span class="pcn">${ico(r.c)}<bdi>${C[r.c].ab}</bdi></span><span class="pt">${esc(r.t)}</span><span class="rdto">← ${dayName(r.to)}</span>${r.warn?`<small class="rdw">⚠️ ${esc(r.warn)}</small>`:""}</div>`).join("")}
      ${Object.entries(rdPrev.heavy||{}).map(([d,e])=>`<small class="rdw">⚠️ ${dayName(d)} ${e>=1440?`هيعدّي نص الليل ويخلص حوالي ${hhmm(e)} ${ap(Math.floor(e/60)%24)}${e>=1440+5*60?" من اليوم اللي بعده":""}`:`هيخلص حوالي الساعة ${hhmm(e)} ${ap(Math.floor(e/60)%24)}`}، يعني تقيل. ابدأ بدري واقرأ ملخص 🧸 قبل كل محاضرة عشان تمشي أسرع.</small>`).join("")}<div class="rdbtns"><button class="btn sm" id="rdOk">${ico("check")}تمام، انقلهم</button><button class="btn ghost sm" id="rdNo">إلغاء</button></div></div>`}
 function missedHTML(){const m=missedTasks();if(!m.length){if(rdPrev&&rdPrev.mode==="missed")rdPrev=null;return ""}
   const row=x=>`<label class="ptask" style="${x.c?vars(x.c):""}"><input type="checkbox" data-pl="${pk(x.ds,x.i)}"><span class="pbody"><span class="pline"><span class="ptm">${dShort(parseD(x.ds))}</span>${x.c?`<span class="pcn">${ico(x.c)}<bdi>${C[x.c].ab}</bdi></span>`:""}</span><span class="pt">${esc(x.t)}</span></span><span class="pact">${sumA(x.c,x.t)}${notionA(x.c,x.t)}${recA(x.c,x.t)}</span></label>`;
   const prev=rdPrev&&rdPrev.mode==="missed"?rdPrevHTML()
    :`<div class="rdbtns"><button class="btn sm" id="rdAuto">${ico("week")}وزّعهم على الأيام الجاية</button><button class="btn ghost sm" id="rdToday">هذاكرهم النهارده</button></div>`;
-  return `<details class="missed" open><summary>${ico("info")}فاتك ${m.length} ${m.length===1?"مهمة":m.length<=10?"مهام":"مهمة"} من الأيام اللي فاتت</summary><p class="muted">لو ذاكرت حاجة منهم علّم عليها. الباقي البرنامج يوزّعه بالترتيب، وقبل كويز كل مادة.</p><div class="ptasks">${m.map(row).join("")}</div>${prev}</details>`}
+  return `<details class="missed" open><summary>${ico("info")}فاتك ${m.length} ${m.length===1?"مهمة":m.length<=10?"مهام":"مهمة"} من الأيام اللي فاتت</summary><p class="muted">لو ذاكرت حاجة منهم علّم عليها. الباقي البرنامج يوزّعه بالترتيب، وقبل امتحان كل مادة.</p><div class="ptasks">${m.map(row).join("")}</div>${prev}</details>`}
 function planHTML(ds){
   let label="خطة المذاكرة", tasks=planFor(ds);
   if(!tasks.length){
@@ -1373,7 +1373,7 @@ function vToday(){
 function vWeek(){
   const n=new Date(), fri=n.getDay()===5, wd=weekDates(wkOff+(fri?1:0)), hours=[8,9,10,11,12,13,14,15,16,17]; // Friday: the week is over, show the coming one
   let h=`<thead><tr><th>الوقت</th>${DAYS.map((d,i)=>{const qn=quizzes().filter(q=>q.date===ymd(wd[i])).length;
-    return `<th class="${ymd(wd[i])===ymd(n)?"today":""}">${d}<small class="num">${dShort(wd[i])}</small>${qn?`<span class="qb">${qn} كويز</span>`:""}</th>`}).join("")}</tr></thead><tbody>`;
+    return `<th class="${ymd(wd[i])===ymd(n)?"today":""}">${d}<small class="num">${dShort(wd[i])}</small>${qn?`<span class="qb">${qn} امتحان</span>`:""}</th>`}).join("")}</tr></thead><tbody>`;
   hours.forEach(s=>{h+=`<tr class="${!wkOff&&idxOf(n.getDay())>=0&&n.getHours()===s?"nowrow":""}"><td class="tm num">${fmt(s)} ${ap(s)}</td>`;
     for(let d=0;d<6;d++){const e=E.find(x=>x.d===d&&x.s===s&&vis(x)),a=e?attOf(ymd(wd[d]),e):null;
       h+=`<td>${e?`<div class="card ${e.t}" style="${vars(e.c)}"><div class="cname">${C[e.c].short}</div><span class="tag">${tag(e)}${a==="y"?" ✓":a==="n"?" ✕":""}</span></div>`:""}</td>`}
@@ -1400,7 +1400,7 @@ function vQuiz(){
      <div class="err" id="qerr"></div><button class="btn" type="submit">${editing?"حفظ التعديل":"حفظ المعاد"}</button>${editing?`<button class="btn ghost" type="button" id="qcancel">إلغاء التعديل</button>`:""}</form>
    <div class="list">
      <div class="chips qfil" role="group" aria-label="فلترة حسب المادة"><button class="chip" data-qf="all" aria-pressed="${qFilter==="all"}">كل المواد</button>${Object.keys(C).map(c=>`<button class="chip c" style="${vars(c)}" data-qf="${c}" aria-pressed="${qFilter===c}"><bdi>${C[c].ab}</bdi></button>`).join("")}</div>
-     ${(wk.length||later.length)?"":`<div class="empty"><svg viewBox="0 0 24 24"><path d="M9 4h6l1 2h3v15H5V6h3z"/><path d="M9 13h6M9 17h4"/></svg><h4>${qFilter==="all"?"مفيش كويزات جاية":"مفيش مواعيد جاية للمادة دي"}</h4>أول ما تعرف معاد كويز، ضيفه من الفورم.</div>`}
+     ${(wk.length||later.length)?"":`<div class="empty"><svg viewBox="0 0 24 24"><path d="M9 4h6l1 2h3v15H5V6h3z"/><path d="M9 13h6M9 17h4"/></svg><h4>${qFilter==="all"?"مفيش امتحانات جاية":"مفيش مواعيد جاية للمادة دي"}</h4>أول ما تعرف معاد امتحان، ضيفه من الفورم.</div>`}
      ${wk.length?`<div class="lgroup">خلال أسبوع</div>${wk.map(q=>qItem(q,k++)).join("")}`:""}
      ${later.length?`<div class="lgroup">بعد كده</div>${later.map(q=>qItem(q,k++)).join("")}`:""}
      ${pastF.length?`<details class="box"><summary>اللي خلص (${pastF.length})</summary><div class="list" style="margin-top:8px">${pastF.map(q=>qItem(q,0)+(live(D.gr).some(g=>g.qid===q.id)?"":`<button class="btn ghost sm grq" data-grq="${q.id}" style="${vars(q.c)}">🎯 سجّل درجة ${esc(q.type)} ${C[q.c].ab}</button>`)).join("")}</div></details>`:""}
@@ -1514,7 +1514,7 @@ function weekInsight(){
   const out=[];const top=[...m].sort((a,b)=>b[1]-a[1])[0];
   if(tot)out.push(`🏆 أكتر مادة ذاكرتها: <bdi>${C[top[0]].ab}</bdi> (${hm(top[1])})`);
   if(prev)out.push(tot>=prev?`📈 ذاكرت أكتر من الأسبوع اللي فات بـ ${hm(tot-prev)}`:`📉 أقل من الأسبوع اللي فات بـ ${hm(prev-tot)}`);
-  upcoming().filter(q=>dayDiff(parseD(q.date),new Date())<=10).forEach(q=>{const mm=courseMin(q.c);if(mm<120&&!out.some(x=>x.includes(C[q.c].ab+"</bdi> قرّب")))out.push(`⚠️ كويز <bdi>${C[q.c].ab}</bdi> قرّب (${leftText(dayDiff(parseD(q.date),new Date()))}) ${mm?`وذاكرت منها ${hm(mm)} بس الأسبوع ده`:"ومذاكرتش منها ولا دقيقة الأسبوع ده"}`)});
+  upcoming().filter(q=>dayDiff(parseD(q.date),new Date())<=10).forEach(q=>{const mm=courseMin(q.c);if(mm<120&&!out.some(x=>x.includes(C[q.c].ab+"</bdi> قرّب")))out.push(`⚠️ ${q.type} <bdi>${C[q.c].ab}</bdi> قرّب (${leftText(dayDiff(parseD(q.date),new Date()))}) ${mm?`وذاكرت منها ${hm(mm)} بس الأسبوع ده`:"ومذاكرتش منها ولا دقيقة الأسبوع ده"}`)});
   const zero=m.filter(x=>!x[1]).map(x=>C[x[0]].ab);if(zero.length&&zero.length<5)out.push(`💤 مذاكرتهاش خالص الأسبوع ده: ${zero.map(z=>`<bdi>${z}</bdi>`).join(" · ")}`);
   return out.length?`<div class="winsight">${out.slice(0,4).map(x=>`<div>${x}</div>`).join("")}</div>`:""}
 function vStudy(){
@@ -1596,7 +1596,7 @@ function vCourses(){
     <form class="f" id="lf" novalidate><div class="row2"><div class="field"><label for="ltt">الاسم</label><input id="ltt" placeholder="فولدر الدرايف"></div><div class="field"><label for="lu">اللينك</label><input id="lu" type="url" placeholder="https://" dir="ltr"></div></div><div class="err" id="lerr"></div><button class="btn sm" type="submit">إضافة لينك</button></form>
    </section>
   </div>
-  <section class="panel"><div class="head"><div><h3>مواعيد المادة</h3></div><button class="btn sm ghost" data-addq="${k}">+ أضف كويز</button></div>
+  <section class="panel"><div class="head"><div><h3>مواعيد المادة</h3></div><button class="btn sm ghost" data-addq="${k}">+ أضف امتحان</button></div>
    <ul class="kv">${ev.map(e=>`<li><span>${TYPE[e.t]}${e.sec?" "+e.sec:""}</span><b class="num">${DAYS[e.d]} ${fmt(e.s)} ${ap(e.s)} · ${place(e)}</b></li>`).join("")}</ul></section>`;
 }
 function vSettings(){
@@ -1690,7 +1690,7 @@ function bind(){
   if(qt){qt.addEventListener("change",()=>{const v=qt.value,el=$("#qtv");if(v){const [h,mi]=v.split(":").map(Number);el.textContent=`${h12(h)}:${String(mi).padStart(2,"0")} ${ap(h)}`;el.classList.add("set")}else{el.textContent="اختار الساعة";el.classList.remove("set")}});
     qt.addEventListener("click",()=>{try{qt.showPicker&&qt.showPicker()}catch(e){}})}
   on("qf","onsubmit",ev=>{ev.preventDefault();const date=$("#qd").value;
-    if(!date){$("#qerr").textContent="اختار تاريخ الكويز الأول";$("#qd").focus();return}
+    if(!date){$("#qerr").textContent="اختار تاريخ الامتحان الأول";$("#qd").focus();return}
     const eid=$("#qf").dataset.edit;
     if(!eid&&dayDiff(parseD(date),new Date())<-1){$("#qerr").textContent="التاريخ ده عدّى. اختار تاريخ جاي";return}
     put("q",eid||uid(),{...(eid&&D.q[eid]&&!D.q[eid].del?D.q[eid]:{}),c:$("#qc").value,type:$('input[name="qtype"]:checked').value,date,time:$("#qt").value?$("#qtv").textContent:"",note:$("#qn").value.trim()});renderAll();updateBadge();toast(eid?"اتعدّل المعاد ✓":"اتحفظ المعاد ✓")});
@@ -1820,7 +1820,7 @@ function wgHTML(){
   <div class="wg-card"><div class="wg-k"><span>مذاكرة النهارده</span><span>${tasks.length?`${done} من ${tasks.length}`:""} · ${hm(tmn)} / ${hm(g)}</span></div><div class="wg-bar"><i style="width:${Math.min(100,Math.round(tmn/g*100))}%"></i></div>
    ${tl||`<p class="muted" style="margin:8px 0 0;font-size:13px">مفيش مذاكرة النهارده ✌️</p>`}</div>
   ${scs.length?`<div class="wg-card"><div class="wg-k"><span>سكاشن النهارده</span></div>${scs.map(e=>`<div class="wg-row"><span><bdi>${C[e.c].ab}</bdi></span><span>${fmt(e.s)} ${ap(e.s)} · ${place(e)}</span></div>`).join("")}</div>`:""}
-  ${qs.length?`<div class="wg-card"><div class="wg-k"><span>الكويزات الجاية</span></div>${qs.map(q=>{const dd=dayDiff(parseD(q.date),n);return `<div class="wg-row"><span>${esc(q.type)} <bdi>${C[q.c].ab}</bdi></span><span class="${dd<=2?"wg-hot":""}">${leftText(dd)}${q.time?" · "+esc(q.time):""}</span></div>`}).join("")}</div>`:""}`;
+  ${qs.length?`<div class="wg-card"><div class="wg-k"><span>الامتحانات الجاية</span></div>${qs.map(q=>{const dd=dayDiff(parseD(q.date),n);return `<div class="wg-row"><span>${esc(q.type)} <bdi>${C[q.c].ab}</bdi></span><span class="${dd<=2?"wg-hot":""}">${leftText(dd)}${q.time?" · "+esc(q.time):""}</span></div>`}).join("")}</div>`:""}`;
 }
 function renderWidget(){
   if(!wmode)return; const el=$("#wg"); if(el.contains(document.activeElement)&&document.activeElement.tagName==="INPUT")return;
