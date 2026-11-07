@@ -309,6 +309,10 @@ details.box summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:
 .linkrow a:hover{text-decoration:underline}
 
 #wg{display:none}
+/* desktop-wallpaper mode (Lively Wallpaper): the widget sits in a corner of the desktop */
+body.desk{background:var(--deskbg,radial-gradient(1200px 800px at 85% 10%,#2b3a8a 0%,#141a3a 55%,#0b0f22 100%))!important;min-height:100vh;overflow:hidden}
+body.desk #wg{position:fixed;top:56px;right:40px;width:380px;max-height:calc(100vh - 120px);min-height:0!important;overflow:auto;padding:14px;border-radius:22px;background:rgba(255,255,255,.80);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+body.desk.deskL #wg{right:auto;left:40px}
 body.wmode .shell,body.wmode .tabbar{display:none!important}
 body.wmode #wg{display:flex;flex-direction:column;gap:10px;padding:12px;min-height:100vh;box-sizing:border-box}
 .wg-h{display:flex;align-items:center;gap:8px}.wg-h b{font-family:'Readex Pro',sans-serif;font-size:15px;flex:1}
@@ -954,7 +958,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="9.32";
+const APP_VER="9.33";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -1900,8 +1904,8 @@ function renderAll(){renderHero();renderAlerts();renderView();renderWidget()}
   if("serviceWorker" in navigator&&location.protocol==="https:"){try{swReg=await navigator.serviceWorker.register("sw.js");swReg.update()}catch(e){}}
   // browser widget: ?w opens the compact view; on a computer the expand button opens it in a small window
   if(!window.nativeWidget){
-    if(new URLSearchParams(location.search).has("w")){setWidget(true);document.title="مذاكرة النهارده · Eng Faris"}
-    else if(matchMedia("(pointer:fine)").matches){const b=document.createElement("button");b.className="iconbtn";b.id="wgBtn";b.title="ويدجت مذاكرة النهارده";b.setAttribute("aria-label","افتح الويدجت");b.innerHTML=ico("expand");
+    const qs=new URLSearchParams(location.search);if(qs.has("w")||qs.has("desk")){setWidget(true);document.title="مذاكرة النهارده · Eng Faris";if(qs.has("desk")){document.body.classList.add("desk");const bg=qs.get("bg");if(bg&&/^[0-9a-fA-F]{3,8}$/.test(bg))document.body.style.setProperty("--deskbg","#"+bg);if(qs.get("side")!=="right")document.body.classList.add("deskL")}}
+    if(matchMedia("(pointer:fine)").matches){const b=document.createElement("button");b.className="iconbtn";b.id="wgBtn";b.title="ويدجت مذاكرة النهارده";b.setAttribute("aria-label","افتح الويدجت");b.innerHTML=ico("expand");
       b.onclick=()=>{const u=location.href.split(/[?#]/)[0]+"?w";const w=window.open(u,"fswidget","popup=yes,width=380,height=620,left="+(screen.availWidth-400)+",top=40");if(!w)setWidget(true)};$(".topbar .tools").prepend(b)}
   }
   if(window.nativeWidget){const b=document.createElement("button");b.className="iconbtn";b.id="wgBtn";b.title="ويدجت (W)";b.setAttribute("aria-label","افتح الويدجت");b.innerHTML=ico("expand");b.onclick=()=>setWidget(true);$(".topbar .tools").prepend(b);
