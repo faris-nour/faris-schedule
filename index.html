@@ -954,7 +954,7 @@ const MONTHS=["يناير","فبراير","مارس","أبريل","مايو","ي
 const STEPS=[["w","اتفرجت"],["s","لخّصت"],["p","حليت السكشن"]];
 const TERM_START="2026-10-03";
 const GIST_FILE="faris-schedule-data.json";
-const APP_VER="9.31";
+const APP_VER="9.32";
 let DIAG={found:"-",main:"-",err:"",at:0,counts:""};
 
 const I={
@@ -1826,7 +1826,7 @@ function renderWidget(){
   if(!wmode)return; const el=$("#wg"); if(el.contains(document.activeElement)&&document.activeElement.tagName==="INPUT")return;
   el.innerHTML=wgHTML();
   $$("[data-wpl]").forEach(x=>x.onchange=()=>{const k=x.dataset.wpl;if(x.checked){put("pl",k,{v:1});if(plSteps(D))saveD();toast("برافو ✓")}else del("pl",k);x.blur();renderWidget()});
-  $("#wgFull").onclick=()=>setWidget(false); $("#wgSync").onclick=()=>{sync();toast("بيزامن…")};
+  $("#wgFull").onclick=()=>{if(!window.nativeWidget&&window.opener&&!window.opener.closed){try{window.opener.focus()}catch(e){}window.close()}else setWidget(false)}; $("#wgSync").onclick=()=>{sync();toast("بيزامن…")};
 }
 async function setWidget(v){
   wmode=v; document.body.classList.toggle("wmode",v);
@@ -1898,6 +1898,12 @@ function renderAll(){renderHero();renderAlerts();renderView();renderWidget()}
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&focusMode){focusMode=false;renderView()}});
   window.addEventListener("online",()=>sync());
   if("serviceWorker" in navigator&&location.protocol==="https:"){try{swReg=await navigator.serviceWorker.register("sw.js");swReg.update()}catch(e){}}
+  // browser widget: ?w opens the compact view; on a computer the expand button opens it in a small window
+  if(!window.nativeWidget){
+    if(new URLSearchParams(location.search).has("w")){setWidget(true);document.title="مذاكرة النهارده · Eng Faris"}
+    else if(matchMedia("(pointer:fine)").matches){const b=document.createElement("button");b.className="iconbtn";b.id="wgBtn";b.title="ويدجت مذاكرة النهارده";b.setAttribute("aria-label","افتح الويدجت");b.innerHTML=ico("expand");
+      b.onclick=()=>{const u=location.href.split(/[?#]/)[0]+"?w";const w=window.open(u,"fswidget","popup=yes,width=380,height=620,left="+(screen.availWidth-400)+",top=40");if(!w)setWidget(true)};$(".topbar .tools").prepend(b)}
+  }
   if(window.nativeWidget){const b=document.createElement("button");b.className="iconbtn";b.id="wgBtn";b.title="ويدجت (W)";b.setAttribute("aria-label","افتح الويدجت");b.innerHTML=ico("expand");b.onclick=()=>setWidget(true);$(".topbar .tools").prepend(b);
     try{window.nativeAutostartGet().then(v=>{L.wgAuto=!!v;saveL()})}catch(e){}}
   if(window.__wg)setWidget(true);
