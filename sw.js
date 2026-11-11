@@ -1,5 +1,5 @@
-const V='fs-v9.37';
-const CORE=['./','index.html','manifest.webmanifest','icon-192-v2.png','icon-512-v2.png','apple-touch-icon-v2.png',
+const V='fs-v9.38';
+const CORE=['./','index.html','manifest.webmanifest','icon-192-v3.png','icon-512-v3.png','icon-192-v3m.png','icon-512-v3m.png','apple-touch-icon-v3.png',
 'fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2','fonts/ibm-plex-sans-arabic-arabic-500-normal.woff2','fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2',
 'fonts/ibm-plex-sans-arabic-latin-400-normal.woff2','fonts/ibm-plex-sans-arabic-latin-500-normal.woff2','fonts/ibm-plex-sans-arabic-latin-600-normal.woff2',
 'fonts/readex-pro-arabic-500-normal.woff2','fonts/readex-pro-arabic-700-normal.woff2','fonts/readex-pro-latin-500-normal.woff2','fonts/readex-pro-latin-700-normal.woff2'];
